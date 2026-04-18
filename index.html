@@ -1048,10 +1048,24 @@ input, textarea { font-family: inherit; }
 .you-goals-guidance.open::after {
   opacity: 0;
 }
+.you-goals-bullet-row {
+  margin-top: 8px;
+  margin-bottom: 2px;
+}
+.you-goals-bullet-btn {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--acc);
+  background: var(--accp);
+  border: 1px solid var(--acc);
+  border-radius: 20px;
+  padding: 4px 12px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
 .you-goals-footer-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   margin-bottom: 6px;
 }
 .you-goals-tip-toggle {
@@ -1067,6 +1081,7 @@ input, textarea { font-family: inherit; }
 .you-goals-charcount {
   font-size: 11px;
   color: var(--mt);
+  margin-left: auto;
 }
 .you-goals-guidance-title {
   font-size: 11.5px;
@@ -3095,14 +3110,17 @@ input, textarea { font-family: inherit; }
             <textarea class="you-goals-input" id="you-input-healthGoals" rows="4" maxlength="400" placeholder="e.g. Working to lower A1C and reduce blood pressure. Often feel bloated after meals. Want to understand how diet is affecting my energy levels."></textarea>
             <div class="you-goals-footer-row">
               <button class="you-goals-tip-toggle" id="you-goals-tip-toggle" type="button">… Show tips</button>
-              <div class="you-goals-charcount"><span id="you-goals-chars">0</span> / 400</div>
+              <span class="you-goals-charcount"><span id="you-goals-chars">0</span> / 400</span>
             </div>
             <div class="you-goals-guidance" id="you-goals-guidance">
               <div class="you-goals-guidance-title">💡 Tips for a better doctor report</div>
               <div class="you-goals-guidance-text">Include: your primary health goal, any conditions you're managing, and what you'd like your doctor's help with. This appears at the top of your health report and helps your doctor understand your visit in seconds.</div>
               <div class="you-goals-guidance-example">Example: "Working to lower A1C and manage mild hypertension. Experiencing frequent bloating after meals — looking for dietary guidance."</div>
             </div>
-            <div class="you-edit-actions" style="margin-top:10px;">
+            <div class="you-goals-bullet-row">
+              <button class="you-goals-bullet-btn" id="you-goals-bullet-btn" type="button">• Add bullet point</button>
+            </div>
+            <div class="you-edit-actions" style="margin-top:14px;">
               <button class="inv-cancel-btn" data-field-cancel="healthGoals">Cancel</button>
               <button class="inv-save-btn"   data-field-save="healthGoals">Save</button>
             </div>
@@ -6752,6 +6770,28 @@ var ScreenYou = (function() {
         var open = tipPanel.classList.contains('open');
         tipPanel.classList.toggle('open', !open);
         tipBtn.textContent = open ? '… Show tips' : '↑ Hide tips';
+      });
+    }
+
+    // Bullet button — inserts • at cursor position in goals textarea
+    var bulletBtn = document.getElementById('you-goals-bullet-btn');
+    if (bulletBtn) {
+      bulletBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var ta = document.getElementById('you-input-healthGoals');
+        if (!ta) return;
+        var start = ta.selectionStart;
+        var end   = ta.selectionEnd;
+        var val   = ta.value;
+        // Insert bullet at start of current line if at line start, else newline + bullet
+        var insert = (start === 0 || val[start-1] === '\n') ? '• ' : '\n• ';
+        ta.value = val.slice(0, start) + insert + val.slice(end);
+        var newPos = start + insert.length;
+        ta.selectionStart = ta.selectionEnd = newPos;
+        ta.focus();
+        // Update char count
+        var cc = document.getElementById('you-goals-chars');
+        if (cc) cc.textContent = ta.value.length;
       });
     }
 
