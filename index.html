@@ -425,13 +425,12 @@ input, textarea { font-family: inherit; }
   letter-spacing: 0.04em;
   text-transform: uppercase;
   transition: color 0.15s;
+  color: var(--mt);
 }
-/* Active label gets accent color + slight weight boost */
 .nav-item.active .nav-label {
   font-weight: 700;
   color: var(--acc);
 }
-
 /* FAB placeholder in center of nav */
 .nav-fab-spacer {
   flex: 1;
@@ -779,6 +778,97 @@ input, textarea { font-family: inherit; }
   font-size: 13px;
   color: var(--tx);
   line-height: 1.5;
+}
+
+/* Supplement / medication reminder strip */
+.today-supp-strip {
+  margin: 12px 20px 0;
+  padding: 11px 14px;
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  border-left: 3px solid var(--acc);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  color: var(--tx);
+  line-height: 1.5;
+}
+.today-supp-strip-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--acc);
+  margin-bottom: 3px;
+}
+
+/* Last BP / glucose metrics strip */
+.today-metrics-strip {
+  margin: 10px 20px 0;
+  display: flex;
+  gap: 10px;
+}
+.today-metric-pill {
+  flex: 1;
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  border-radius: var(--r-md);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.today-metric-pill-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mt);
+}
+.today-metric-pill-value {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--hdr);
+  line-height: 1.2;
+}
+.today-metric-pill-age {
+  font-size: 11px;
+  color: var(--mt);
+}
+
+/* Today nudge */
+.today-nudge {
+  margin: 14px 20px 0;
+  font-size: 13px;
+  color: var(--mt);
+  text-align: center;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Timeline overflow indicator */
+.timeline-overflow {
+  font-size: 11px;
+  color: var(--mt);
+  text-align: center;
+  padding: 8px 0 4px;
+  border-bottom: 1px solid var(--bd);
+  margin-bottom: 2px;
+}
+
+/* Insight strip tappable state */
+.insight-strip {
+  cursor: pointer;
+}
+.insight-strip:active {
+  opacity: 0.75;
+}
+.insight-strip-see-all {
+  font-size: 11px;
+  color: var(--acc);
+  font-weight: 600;
+  margin-top: 6px;
+  display: block;
 }
 
 /* Empty state */
@@ -3056,6 +3146,9 @@ input, textarea { font-family: inherit; }
             <div class="screen-title">Today</div>
           </div>
           <div class="header-actions">
+            <button class="icon-btn" id="shop-btn-today" aria-label="Shopping list">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            </button>
             <button class="icon-btn" id="settings-btn" aria-label="Settings">
               <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
             </button>
@@ -3096,17 +3189,23 @@ input, textarea { font-family: inherit; }
         </div>
       </div>
 
-      <!-- Shop strip -->
-      <div class="shop-strip" id="shop-strip-btn" role="button" aria-label="Open shop">
-        <div class="shop-strip-left">
-          <span class="shop-strip-icon">🛒</span>
-          <div>
-            <div class="shop-strip-text">Shopping List</div>
-            <div class="shop-strip-count" id="shop-strip-count">Tap to get started</div>
+      <!-- Timeline -->
+      <div class="mt-md">
+        <div class="section-label">Today's Log</div>
+        <div class="timeline-wrap card" id="today-timeline" style="margin:0 20px;">
+          <div class="empty-state">
+            <div class="empty-icon">✦</div>
+            <div class="empty-title">Nothing logged yet</div>
+            <div class="empty-sub">Tap the + button below to start tracking your day.</div>
           </div>
         </div>
-        <span class="shop-strip-arrow">›</span>
       </div>
+
+      <!-- Supplement / medication reminder -->
+      <div id="today-supp-strip" class="today-supp-strip" style="display:none;"></div>
+
+      <!-- Last BP / glucose at a glance -->
+      <div id="today-metrics-strip" class="today-metrics-strip" style="display:none;"></div>
 
       <!-- Timeline -->
       <div class="mt-md">
@@ -3124,7 +3223,11 @@ input, textarea { font-family: inherit; }
       <div class="insight-strip" id="today-insight-strip" style="display:none;">
         <div class="insight-strip-label">Pattern noticed</div>
         <div class="insight-strip-text" id="today-insight-text"></div>
+        <span class="insight-strip-see-all">See all insights →</span>
       </div>
+
+      <!-- Awareness nudge -->
+      <div id="today-nudge" class="today-nudge" style="display:none;"></div>
 
       <div style="height:24px;"></div>
     </div><!-- /screen-today -->
@@ -3138,12 +3241,11 @@ input, textarea { font-family: inherit; }
             <div class="screen-title">Track</div>
           </div>
           <div class="header-actions">
+            <button class="icon-btn" data-shop aria-label="Shopping list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
             <button class="icon-btn" data-settings aria-label="Settings">
               <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
             </button>
-            <button class="icon-btn" data-profile aria-label="Profile">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg>
-            </button>
+            <button class="avatar-btn-photo" data-profile aria-label="Profile photo"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></button>
           </div>
         </div>
       </div>
@@ -3215,12 +3317,11 @@ input, textarea { font-family: inherit; }
             <button class="icon-btn" id="insights-info-btn" aria-label="How insights work">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8.5"/><polyline points="11 11 12 11 12 16 13 16"/></svg>
             </button>
+            <button class="icon-btn" data-shop aria-label="Shopping list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
             <button class="icon-btn" data-settings aria-label="Settings">
               <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
             </button>
-            <button class="icon-btn" data-profile aria-label="Profile">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg>
-            </button>
+            <button class="avatar-btn-photo" data-profile aria-label="Profile photo"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></button>
           </div>
         </div>
       </div>
@@ -3244,12 +3345,11 @@ input, textarea { font-family: inherit; }
             <div class="screen-title">You</div>
           </div>
           <div class="header-actions">
+            <button class="icon-btn" data-shop aria-label="Shopping list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
             <button class="icon-btn" data-settings aria-label="Settings">
               <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
             </button>
-            <button class="icon-btn" data-profile aria-label="Profile">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg>
-            </button>
+            <button class="avatar-btn-photo" data-profile aria-label="Profile photo"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></button>
           </div>
         </div>
       </div>
@@ -4491,7 +4591,7 @@ input, textarea { font-family: inherit; }
       <div class="nav-fab-spacer" aria-hidden="true"></div>
 
       <button class="nav-item" data-screen="insights" aria-label="Insights">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <span class="nav-label">Insights</span>
       </button>
       <button class="nav-item" data-screen="you" aria-label="You">
@@ -5032,7 +5132,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v14-03',
+  version:            'v15-10',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -5836,8 +5936,11 @@ var ScreenToday = (function() {
   function render() {
     _renderDate();
     _renderHydration();
+    _renderSuppStrip();
+    _renderMetricsStrip();
     _renderTimeline();
-    _renderShopStrip();
+    _renderInsightStrip();
+    _renderNudge();
   }
 
   function _renderDate() {
@@ -5898,7 +6001,7 @@ var ScreenToday = (function() {
       items.push({ ts: l.ts, icon: '💧', title: Utils.fmtOz(l.oz) + ' — ' + drinkLabel, sub: '', color: 'ti-hydration' });
     });
     s.logs.meals.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
-      items.push({ ts: l.ts, icon: '🍽️', title: _capitalize(l.mealType), sub: l.foods ? Utils.esc(l.foods) : '', color: 'ti-meal' });
+      items.push({ ts: l.ts, icon: '🍽️', title: _capitalize(l.slot || l.type || 'Meal'), sub: l.text ? Utils.esc(l.text) : '', color: 'ti-meal' });
     });
     s.logs.bowel.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
       var typeLabel = _BRISTOL_LABELS[l.bristolType] || ('Type ' + l.bristolType);
@@ -5934,8 +6037,15 @@ var ScreenToday = (function() {
       return;
     }
 
+    // Cap at 12 most recent — show tail if more exist
+    var overflow = items.length > 12 ? items.length - 12 : 0;
+    var visible  = overflow ? items.slice(items.length - 12) : items;
+
     var html = '';
-    items.forEach(function(item) {
+    if (overflow) {
+      html += '<div class="timeline-overflow">+ ' + overflow + ' earlier entr' + (overflow === 1 ? 'y' : 'ies') + ' · tap Track to see all</div>';
+    }
+    visible.forEach(function(item) {
       html += '<div class="timeline-item">';
       html += '<div class="timeline-dot"></div>';
       html += '<div class="timeline-time">' + Utils.esc(Utils.fmtTime(item.ts)) + '</div>';
@@ -5947,10 +6057,87 @@ var ScreenToday = (function() {
     el.innerHTML = html;
   }
 
-  function _renderShopStrip() {
-    // Placeholder until Shop module exists
-    var el = document.getElementById('shop-strip-count');
-    if (el) el.textContent = 'Tap to manage your list';
+  // Show due supplements/medications for current time slot.
+  // Slot is determined by hour: morning <12, afternoon 12–17, evening 17+.
+  // Only shows items not yet logged today for that slot.
+  function _renderSuppStrip() {
+    var el = document.getElementById('today-supp-strip');
+    if (!el) return;
+    var s    = State.get();
+    var hour = new Date().getHours();
+    var slot = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+    var today = Utils.dayStart();
+
+    // Items with this slot assigned
+    var allItems = (s.supplements || []).concat(s.medications || []);
+    var due = allItems.filter(function(item) {
+      return item.slots && item.slots.indexOf(slot) !== -1;
+    });
+    if (!due.length) { el.style.display = 'none'; return; }
+
+    // Which have already been logged today for this slot?
+    var logged = (s.logs.suppLogs || []).filter(function(l) {
+      return l.ts >= today && l.slot === slot;
+    }).map(function(l) { return l.itemId; });
+
+    var remaining = due.filter(function(item) {
+      return logged.indexOf(item.id) === -1;
+    });
+    if (!remaining.length) { el.style.display = 'none'; return; }
+
+    var slotLabel = slot.charAt(0).toUpperCase() + slot.slice(1);
+    var names = remaining.slice(0, 3).map(function(i) { return Utils.esc(i.name); });
+    if (remaining.length > 3) names.push('+ ' + (remaining.length - 3) + ' more');
+
+    el.innerHTML = '<div class="today-supp-strip-label">' + slotLabel + ' reminder</div>' +
+                   names.join(' · ');
+    el.style.display = '';
+  }
+
+  // Show last BP and glucose readings with how long ago they were taken.
+  // Hidden if neither has any data.
+  function _renderMetricsStrip() {
+    var el = document.getElementById('today-metrics-strip');
+    if (!el) return;
+    var s = State.get();
+
+    var bpLogs  = (s.logs.bp      || []).slice().sort(function(a,b){ return b.ts - a.ts; });
+    var glLogs  = (s.logs.glucose || []).slice().sort(function(a,b){ return b.ts - a.ts; });
+    var lastBP  = bpLogs[0]  || null;
+    var lastGL  = glLogs[0]  || null;
+
+    if (!lastBP && !lastGL) { el.style.display = 'none'; return; }
+
+    var html = '';
+    if (lastBP) {
+      html += '<div class="today-metric-pill">' +
+        '<div class="today-metric-pill-label">Last BP</div>' +
+        '<div class="today-metric-pill-value">' + Utils.esc(lastBP.sys + '/' + lastBP.dia) + '</div>' +
+        '<div class="today-metric-pill-age">' + _timeAgo(lastBP.ts) + '</div>' +
+        '</div>';
+    }
+    if (lastGL) {
+      var unit = (s.units === 'metric') ? ' mmol' : ' mg/dL';
+      html += '<div class="today-metric-pill">' +
+        '<div class="today-metric-pill-label">Last Glucose</div>' +
+        '<div class="today-metric-pill-value">' + Utils.esc(String(lastGL.val)) + '<span style="font-size:11px;color:var(--mt);">' + unit + '</span></div>' +
+        '<div class="today-metric-pill-age">' + _timeAgo(lastGL.ts) + '</div>' +
+        '</div>';
+    }
+
+    el.innerHTML = html;
+    el.style.display = 'flex';
+  }
+
+  // Returns a human-readable "X ago" string for a timestamp.
+  function _timeAgo(ts) {
+    var diff = Date.now() - ts;
+    var mins = Math.floor(diff / 60000);
+    if (mins < 60)  return mins <= 1 ? 'just now' : mins + ' min ago';
+    var hrs = Math.floor(mins / 60);
+    if (hrs < 24)   return hrs === 1 ? '1 hr ago' : hrs + ' hrs ago';
+    var days = Math.floor(hrs / 24);
+    return days === 1 ? 'yesterday' : days + ' days ago';
   }
 
   function _capitalize(str) {
@@ -5958,7 +6145,105 @@ var ScreenToday = (function() {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  return { render };
+  // Show top insight as a compact tappable teaser. Hidden if no insights yet.
+  function _renderInsightStrip() {
+    var strip = document.getElementById('today-insight-strip');
+    var textEl = document.getElementById('today-insight-text');
+    if (!strip || !textEl) return;
+    var insights = InsightEngine.run();
+    if (!insights || !insights.length) {
+      strip.style.display = 'none';
+      return;
+    }
+    var top = insights[0];
+    // Truncate to ~80 chars so it reads as a teaser
+    var truncated = top.text.length > 80 ? top.text.slice(0, 78).trim() + '…' : top.text;
+    textEl.textContent = top.icon + ' ' + truncated;
+    strip.style.display = '';
+  }
+
+  // One calm observation sentence based on today's activity.
+  // Never prescriptive. Never alarming.
+  function _renderNudge() {
+    var el = document.getElementById('today-nudge');
+    if (!el) return;
+    var s    = State.get();
+    var today = Utils.dayStart();
+    var msg  = _calcNudge(s, today);
+    el.textContent = msg;
+    el.style.display = msg ? '' : 'none';
+  }
+
+  function _calcNudge(s, today) {
+    var todayItems = [].concat(
+      s.logs.hydration.filter(function(l) { return l.ts >= today; }),
+      s.logs.meals.filter(function(l)     { return l.ts >= today; }),
+      s.logs.bowel.filter(function(l)     { return l.ts >= today; }),
+      s.logs.bp.filter(function(l)        { return l.ts >= today; }),
+      s.logs.glucose.filter(function(l)   { return l.ts >= today; })
+    );
+
+    // Nothing logged yet today
+    if (todayItems.length === 0) return "You haven't logged anything yet today.";
+
+    // Hydration pacing check
+    var goal = s.goals.hydrationOz || 64;
+    var totalOz = s.logs.hydration
+      .filter(function(l) { return l.ts >= today; })
+      .reduce(function(sum, l) { return sum + l.oz; }, 0);
+    var hourOfDay = new Date().getHours();
+    // Expected pace: oz logged / hours elapsed vs goal / 16 waking hours
+    var expectedByNow = goal * (Math.max(hourOfDay - 7, 0) / 16);
+    if (totalOz >= expectedByNow * 1.2 && hourOfDay >= 9) {
+      return "Your hydration is ahead of pace today.";
+    }
+
+    // Streak: how many consecutive days had at least 1 log entry?
+    var streak = _calcStreak(s);
+    if (streak >= 7) return "You've been logging consistently for " + streak + " days. That's a real pattern.";
+    if (streak >= 3) return "You've logged something for " + streak + " days in a row.";
+
+    // Busy day acknowledgement
+    if (todayItems.length >= 6) return "You've logged a lot today — good data.";
+
+    // Gentle opening if only 1–2 things logged
+    return "Good start. Keep going as your day unfolds.";
+  }
+
+  // Count consecutive days (including today) with at least 1 log entry
+  function _calcStreak(s) {
+    var allLogs = [].concat(
+      s.logs.hydration, s.logs.meals, s.logs.bowel, s.logs.bp, s.logs.glucose
+    );
+    var streak = 0;
+    var d = new Date();
+    for (var i = 0; i < 30; i++) {
+      var start = new Date(d.getFullYear(), d.getMonth(), d.getDate() - i).getTime();
+      var end   = start + 864e5;
+      var hasLog = allLogs.some(function(l) { return l.ts >= start && l.ts < end; });
+      if (!hasLog) break;
+      streak++;
+    }
+    return streak;
+  }
+
+  // Wire insight strip tap → Insights screen
+  function bindEvents() {
+    var strip = document.getElementById('today-insight-strip');
+    if (strip) {
+      strip.addEventListener('click', function() {
+        Router.go('insights');
+      });
+    }
+    var shopBtn = document.getElementById('shop-btn-today');
+    if (shopBtn) {
+      shopBtn.addEventListener('click', function() {
+        Router.go('shop');
+      });
+    }
+  }
+
+  return { render, bindEvents };
 
 })();
 
@@ -7479,10 +7764,22 @@ var PhotoManager = (function() {
   // Apply stored photo to all photo elements in the DOM
   function applyAll() {
     var dataUrl = load();
+    // Today screen avatar (unique ids)
     _applyToEl('avatar-img', 'avatar-svg', dataUrl);
+    // Settings screen photo
     _applyToEl('settings-photo-img', 'settings-photo-svg', dataUrl);
     var hint = document.getElementById('settings-photo-hint');
     if (hint) hint.textContent = dataUrl ? 'Tap to change photo' : 'Tap to add a photo';
+    // Track / Insights / You headers (shared classes)
+    var imgs = document.querySelectorAll('.avatar-img-all');
+    var svgs = document.querySelectorAll('.avatar-svg-all');
+    imgs.forEach(function(img) {
+      img.src = dataUrl || '';
+      img.style.display = dataUrl ? 'block' : 'none';
+    });
+    svgs.forEach(function(svg) {
+      svg.style.display = dataUrl ? 'none' : '';
+    });
   }
 
   function _applyToEl(imgId, svgId, dataUrl) {
@@ -10510,6 +10807,7 @@ var App = (function() {
     _bindTrackRows();
 
     // 3b. Hydration sub-screen events
+    ScreenToday.bindEvents();
     ScreenInsights.bindEvents();
     ScreenHydration.bindEvents();
     ScreenDrinkLibrary.bindEvents();
@@ -10560,6 +10858,7 @@ var App = (function() {
     });
     document.addEventListener('click', function(e) {
       if (e.target.closest('[data-settings]')) Router.go('settings');
+      if (e.target.closest('[data-shop]'))     Router.go('shop');
       if (e.target.closest('[data-profile]')) {
         var input = document.getElementById('avatar-file-input');
         if (input) input.click();
