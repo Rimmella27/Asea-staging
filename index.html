@@ -2467,6 +2467,321 @@ input, textarea { font-family: inherit; }
 }
 .gluc-hint.nudge { color: var(--acc); }
 
+/* ── Shop screen ── */
+#screen-shop .screen-header { position: sticky; top: 0; z-index: 10; padding-bottom: 0; }
+
+.shop-toggle-row {
+  display: flex;
+  justify-content: center;
+  padding: 10px 16px 0;
+}
+.shop-toggle {
+  display: flex;
+  background: var(--bg2);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+  width: 100%;
+  max-width: 280px;
+}
+.shop-toggle-btn {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mt);
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.shop-toggle-btn.active {
+  background: var(--sf);
+  color: var(--acc);
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.shop-progress-wrap { padding: 10px 16px 12px; }
+.shop-progress-bar-track {
+  height: 5px;
+  background: var(--bg2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+.shop-progress-bar-fill {
+  height: 100%;
+  background: var(--acc);
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.35s ease;
+}
+.shop-progress-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; }
+.shop-collapse-all-btn {
+  font-size: 11px; color: var(--acc); background: none; border: none;
+  cursor: pointer; padding: 2px 0; font-weight: 600; letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+.shop-collapse-all-btn:active { opacity: 0.6; }
+
+/* My Usuals strip */
+.shop-usuals-zone { padding: 10px 0 4px; }
+.shop-usuals-strip {
+  display: flex; gap: 7px; overflow-x: auto;
+  padding: 2px 16px 6px;   /* 16px left matches screen padding */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.shop-usuals-strip::-webkit-scrollbar { display: none; }
+/* Inline label chip — first item, non-interactive */
+.shop-usual-label-chip {
+  display: flex; align-items: center; gap: 4px;
+  padding: 5px 10px;
+  background: transparent;
+  border: 1.5px solid transparent;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+.shop-usual-label-chip-icon { font-size: 10px; color: var(--acc); }
+.shop-usual-label-chip-text { font-size: 11px; font-weight: 700; color: var(--mt); letter-spacing: 0.04em; text-transform: uppercase; }
+/* Item chips */
+.shop-usual-chip {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 11px;
+  background: var(--sf);
+  border: 1.5px solid var(--bg2);
+  border-radius: 20px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  flex-shrink: 0;
+}
+.shop-usual-chip:active { background: var(--accp); border-color: var(--acc); }
+.shop-usual-chip:active .shop-usual-chip-name { color: var(--acc); }
+/* Checked state — clearly distinct: accent fill tint + accent border + checkmark */
+.shop-usual-chip.is-needed {
+  background: var(--acc);
+  border-color: var(--acc);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+.shop-usual-chip.is-needed .shop-usual-chip-name { color: #fff; font-weight: 600; }
+.shop-usual-chip-name { font-size: 12px; font-weight: 500; color: var(--tx); }
+.shop-usual-chip-check { font-size: 10px; color: #fff; opacity: 0; transition: opacity 0.15s; }
+.shop-usual-chip.is-needed .shop-usual-chip-check { opacity: 1; }
+
+/* Last trip row */
+.shop-lasttrip-zone { padding: 0 16px 8px; }
+.shop-lasttrip-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: none; border: none; cursor: pointer;
+  padding: 4px 0; color: var(--mt); font-size: 13px;
+  transition: color 0.15s;
+}
+.shop-lasttrip-btn:active { color: var(--acc); }
+.shop-lasttrip-btn svg { stroke: var(--mt); transition: stroke 0.15s; }
+.shop-lasttrip-btn:active svg { stroke: var(--acc); }
+
+/* Category header enhancements */
+.shop-cat-emoji { font-size: 15px; margin-right: 4px; }
+.shop-cat-count { font-size: 10px; color: var(--mt); font-weight: 500; margin-left: 6px; text-transform: none; letter-spacing: 0; }
+
+/* Options sheet */
+.shop-options-list { padding: 8px 16px 32px; display: flex; flex-direction: column; gap: 8px; }
+.shop-options-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  background: var(--sf2); border: none; border-radius: 12px;
+  cursor: pointer; text-align: left; width: 100%;
+  transition: background 0.15s;
+}
+.shop-options-item:active { background: var(--bg2); }
+.shop-options-icon { font-size: 20px; flex-shrink: 0; }
+.shop-options-label { font-size: 15px; font-weight: 600; color: var(--tx); }
+.shop-options-sub { font-size: 12px; color: var(--mt); margin-top: 2px; }
+.shop-options-item--danger .shop-options-label { color: #c0392b; }
+
+/* ── Cart icon — accent fill to stand out from plain icon-btns ── */
+.icon-btn--cart {
+  background: var(--acc);
+  border-color: var(--acc);
+  border-radius: 18px;       /* pill shape — wider than circle */
+  width: auto;               /* override fixed 32px width */
+  padding: 0 14px;           /* horizontal breathing room */
+  min-width: 52px;           /* not too stubby */
+  height: 32px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28), 0 1px 4px rgba(0,0,0,0.15);
+  color: #fff;
+}
+.icon-btn--cart svg { stroke: #fff; width: 16px; height: 16px; }
+.icon-btn--cart:active {
+  background: var(--hdr); border-color: var(--hdr);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transform: translateY(1px);
+}
+
+/* Shop screen header — extra gap between ··· and ℹ buttons */
+#screen-shop .screen-header-row .icon-btn + .icon-btn {
+  margin-left: 6px;
+}
+
+/* Main screen headers — cart separates visually from gear+avatar group.
+   Cart gets extra right margin (wider gap to gear).
+   Gear gets negative right margin (tighter gap to avatar). */
+.header-actions .icon-btn--cart {
+  margin-right: 0;
+}
+.header-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg2);
+  border-radius: 20px;
+  padding: 3px 6px;
+}
+
+/* ── Grocery store order reorder sheet ── */
+.shop-reorder-intro {
+  font-size: 13px; color: var(--mt); line-height: 1.5;
+  padding: 4px 0 16px; font-style: italic;
+}
+.shop-reorder-list { display: flex; flex-direction: column; gap: 4px; padding-bottom: 40px; }
+.shop-reorder-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: var(--sf2); border-radius: 10px;
+  cursor: grab; user-select: none;
+  transition: box-shadow 0.15s, background 0.15s;
+  touch-action: none;
+  border: 2px solid transparent;
+}
+.shop-reorder-row.dragging {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  background: var(--sf); opacity: 0.95; cursor: grabbing;
+}
+.shop-reorder-row.drag-over { border-color: var(--acc); background: var(--accp); }
+.shop-reorder-emoji { font-size: 18px; flex-shrink: 0; }
+.shop-reorder-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--tx); }
+.shop-reorder-handle { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; opacity: 0.35; }
+.shop-reorder-handle span { display: block; width: 18px; height: 2px; background: var(--tx); border-radius: 1px; }
+
+
+.shop-scroll-body { overflow-y: auto; padding: 0 0 20px; -webkit-overflow-scrolling: touch; }
+
+/* Quick add */
+.shop-quickadd-row { display: flex; align-items: center; gap: 8px; padding: 12px 16px 6px; }
+.shop-quickadd-input {
+  flex: 1;
+  height: 40px;
+  border: 1.5px solid var(--bg2);
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 14px;
+  background: var(--sf);
+  color: var(--tx);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.shop-quickadd-input:focus { border-color: var(--acc); }
+.shop-quickadd-btn {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--acc);
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+}
+.shop-quickadd-btn svg { width: 18px; height: 18px; stroke: #fff; }
+
+/* Autocomplete */
+.shop-ac-list {
+  margin: 0 16px 4px;
+  background: var(--sf);
+  border: 1px solid var(--bg2);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.shop-ac-item {
+  display: flex; flex-direction: column;
+  padding: 9px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--bg2);
+  transition: background 0.12s;
+}
+.shop-ac-item:last-child { border-bottom: none; }
+.shop-ac-item:active { background: var(--accp); }
+.shop-ac-name { font-size: 14px; color: var(--tx); font-weight: 500; }
+.shop-ac-cat { font-size: 11px; color: var(--mt); margin-top: 1px; }
+
+/* Category sections */
+.shop-cat-section { margin: 8px 0 0; }
+.shop-cat-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 16px 6px;
+  cursor: pointer; user-select: none;
+}
+.shop-cat-title {
+  font-size: 11px; font-weight: 700;
+  color: var(--acc);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border-left: 3px solid var(--acc);
+  padding-left: 8px;
+}
+.shop-cat-chevron { width: 16px; height: 16px; stroke: var(--mt); transition: transform 0.2s; flex-shrink: 0; }
+.shop-cat-header.collapsed .shop-cat-chevron { transform: rotate(-90deg); }
+.shop-cat-items { padding: 0 16px 4px; }
+.shop-cat-items.collapsed { display: none; }
+
+/* Item row */
+.shop-item-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--bg2);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.shop-item-row:last-child { border-bottom: none; }
+.shop-item-check {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  border: 2px solid var(--bg2);
+  background: var(--sf2);
+  flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+.shop-item-row.is-needed .shop-item-check,
+.shop-item-row.is-incart .shop-item-check {
+  background: var(--acc); border-color: var(--acc);
+}
+.shop-item-check svg { width: 13px; height: 13px; stroke: #fff; stroke-width: 2.5; opacity: 0; transition: opacity 0.15s; }
+.shop-item-row.is-needed .shop-item-check svg,
+.shop-item-row.is-incart .shop-item-check svg { opacity: 1; }
+.shop-item-info { flex: 1; min-width: 0; }
+.shop-item-name { font-size: 14px; color: var(--tx); font-weight: 500; line-height: 1.3; }
+.shop-item-row.is-incart .shop-item-name { text-decoration: line-through; color: var(--mt); }
+.shop-item-benefits { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+.shop-benefit-tag { font-size: 10px; color: var(--mt); opacity: 0.85; }
+.shop-benefit-tag + .shop-benefit-tag::before { content: '·'; margin-right: 4px; }
+.shop-item-delete {
+  width: 28px; height: 28px;
+  border: none; background: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; opacity: 0.35; flex-shrink: 0; padding: 0;
+  border-radius: 6px; transition: opacity 0.15s;
+}
+.shop-item-delete:active { opacity: 0.8; }
+.shop-item-delete svg { width: 14px; height: 14px; stroke: var(--tx); }
+
+/* Store empty state */
+.shop-store-empty { text-align: center; padding: 60px 32px 40px; color: var(--mt); }
+.shop-store-empty-icon { font-size: 36px; margin-bottom: 12px; }
+.shop-store-empty-title { font-size: 16px; font-weight: 600; color: var(--tx); margin-bottom: 6px; }
+.shop-store-empty-sub { font-size: 13px; line-height: 1.5; }
+
 /* ── Meals screen ── */
 #screen-meals .screen-header { position: sticky; top: 0; z-index: 10; }
 .meals-scroll-body { padding: 0 20px; padding-top: 12px; padding-bottom: 120px; }
@@ -3146,20 +3461,22 @@ input, textarea { font-family: inherit; }
             <div class="screen-title">Today</div>
           </div>
           <div class="header-actions">
-            <button class="icon-btn" id="shop-btn-today" aria-label="Shopping list">
+            <button class="icon-btn icon-btn--cart" id="shop-btn-today" aria-label="Shopping list">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
             </button>
-            <button class="icon-btn" id="settings-btn" aria-label="Settings">
-              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
-            </button>
-            <button class="avatar-btn-photo" id="avatar-btn" aria-label="Profile photo">
-              <img id="avatar-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">
-              <svg id="avatar-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
-                <circle cx="12" cy="8" r="3.5"/>
-                <path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/>
-              </svg>
-            </button>
-            <input type="file" id="avatar-file-input" accept="image/*" style="display:none;" aria-label="Choose profile photo">
+            <div class="header-btn-group">
+              <button class="icon-btn" id="settings-btn" aria-label="Settings">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+              </button>
+              <label class="avatar-btn-photo" id="avatar-btn" aria-label="Profile photo — tap to add or change photo" style="cursor:pointer;overflow:hidden;position:relative;">
+                <input type="file" id="avatar-file-input" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" aria-label="Choose profile photo or take a new one">
+                <img id="avatar-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                <svg id="avatar-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
+                  <circle cx="12" cy="8" r="3.5"/>
+                  <path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/>
+                </svg>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -3241,11 +3558,13 @@ input, textarea { font-family: inherit; }
             <div class="screen-title">Track</div>
           </div>
           <div class="header-actions">
-            <button class="icon-btn" data-shop aria-label="Shopping list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
-            <button class="icon-btn" data-settings aria-label="Settings">
-              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
-            </button>
-            <button class="avatar-btn-photo" data-profile aria-label="Profile photo"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></button>
+            <button class="icon-btn icon-btn--cart" data-shop aria-label="Shopping list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
+            <div class="header-btn-group">
+              <button class="icon-btn" data-settings aria-label="Settings">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+              </button>
+              <label class="avatar-btn-photo" data-profile aria-label="Profile photo — tap to add or change photo" style="cursor:pointer;overflow:hidden;position:relative;"><input type="file" class="avatar-file-all" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" aria-label="Choose profile photo or take a new one"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></label>
+            </div>
           </div>
         </div>
       </div>
@@ -3317,11 +3636,13 @@ input, textarea { font-family: inherit; }
             <button class="icon-btn" id="insights-info-btn" aria-label="How insights work">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8.5"/><polyline points="11 11 12 11 12 16 13 16"/></svg>
             </button>
-            <button class="icon-btn" data-shop aria-label="Shopping list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
-            <button class="icon-btn" data-settings aria-label="Settings">
-              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
-            </button>
-            <button class="avatar-btn-photo" data-profile aria-label="Profile photo"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></button>
+            <button class="icon-btn icon-btn--cart" data-shop aria-label="Shopping list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
+            <div class="header-btn-group">
+              <button class="icon-btn" data-settings aria-label="Settings">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+              </button>
+              <label class="avatar-btn-photo" data-profile aria-label="Profile photo — tap to add or change photo" style="cursor:pointer;overflow:hidden;position:relative;"><input type="file" class="avatar-file-all" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" aria-label="Choose profile photo or take a new one"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></label>
+            </div>
           </div>
         </div>
       </div>
@@ -3345,11 +3666,13 @@ input, textarea { font-family: inherit; }
             <div class="screen-title">You</div>
           </div>
           <div class="header-actions">
-            <button class="icon-btn" data-shop aria-label="Shopping list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
-            <button class="icon-btn" data-settings aria-label="Settings">
-              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
-            </button>
-            <button class="avatar-btn-photo" data-profile aria-label="Profile photo"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></button>
+            <button class="icon-btn icon-btn--cart" data-shop aria-label="Shopping list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
+            <div class="header-btn-group">
+              <button class="icon-btn" data-settings aria-label="Settings">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+              </button>
+              <label class="avatar-btn-photo" data-profile aria-label="Profile photo — tap to add or change photo" style="cursor:pointer;overflow:hidden;position:relative;"><input type="file" class="avatar-file-all" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" aria-label="Choose profile photo or take a new one"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></label>
+            </div>
           </div>
         </div>
       </div>
@@ -4201,6 +4524,68 @@ input, textarea { font-family: inherit; }
       </div><!-- /meals-scroll-body -->
     </div><!-- /screen-meals -->
 
+    <!-- ── SHOP ── -->
+    <div id="screen-shop" class="screen" role="main" aria-label="Shopping List">
+      <div class="screen-header">
+        <div class="screen-header-row">
+          <button class="icon-btn" id="shop-back-btn" aria-label="Back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="screen-title" style="flex:1;margin:0 0 0 10px;">Shopping</div>
+          <button class="icon-btn" id="shop-options-btn" aria-label="Options">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </button>
+          <button class="icon-btn" id="shop-info-btn" aria-label="About this list">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8.5"/><polyline points="11 11 12 11 12 16 13 16"/></svg>
+          </button>
+        </div>
+        <!-- Home / Store toggle -->
+        <div class="shop-toggle-row">
+          <div class="shop-toggle" id="shop-toggle">
+            <button class="shop-toggle-btn active" data-tab="home">Home</button>
+            <button class="shop-toggle-btn" data-tab="store">Store</button>
+          </div>
+        </div>
+        <!-- Progress bar + collapse-all -->
+        <div class="shop-progress-wrap" id="shop-progress-wrap">
+          <div class="shop-progress-bar-track">
+            <div class="shop-progress-bar-fill" id="shop-progress-fill"></div>
+          </div>
+          <div class="shop-progress-actions">
+            <div class="shop-progress-label" id="shop-progress-label">Tap items to mark needed</div>
+            <button class="shop-collapse-all-btn" id="shop-collapse-all-btn" aria-label="Collapse all categories">Collapse all</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="shop-scroll-body">
+        <!-- My Usuals strip — hidden until first trip completed -->
+        <div id="shop-usuals-zone" style="display:none;">
+          <div class="shop-usuals-strip" id="shop-usuals-strip"></div>
+        </div>
+        <!-- Last trip row — hidden until trip history exists -->
+        <div id="shop-lasttrip-zone" style="display:none;">
+          <button class="shop-lasttrip-btn" id="shop-lasttrip-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+            <span id="shop-lasttrip-label">Repeat last trip</span>
+          </button>
+        </div>
+        <!-- Quick add row -->
+        <div class="shop-quickadd-row" id="shop-quickadd-row">
+          <input class="shop-quickadd-input" id="shop-quickadd-input"
+            type="text" placeholder="Quick add — type any item…" autocomplete="off" autocorrect="off">
+          <button class="shop-quickadd-btn" id="shop-quickadd-btn" aria-label="Add item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+        <!-- Autocomplete suggestions -->
+        <div class="shop-ac-list" id="shop-ac-list" style="display:none;"></div>
+        <!-- List render target -->
+        <div id="shop-list-body"></div>
+        <div style="height:100px;"></div>
+      </div>
+    </div><!-- /screen-shop -->
+
   </div><!-- /screen-host -->
 
   <!-- Coffee customization sheet -->
@@ -4406,6 +4791,140 @@ input, textarea { font-family: inherit; }
           <p class="bowel-info-intro">Research in behavioral psychology consistently shows that people change habits most effectively when they discover connections themselves — not when they're told what to do.</p>
           <p class="bowel-info-intro">Asëa is designed around this. When you see "caffeine may be followed by urgency — 4 out of 5 times," something clicks that a general warning never achieves. That recognition is yours. The next time you reach for coffee, you'll notice differently.</p>
           <p class="bowel-info-intro">That moment of noticing — what psychologists call an <em>implementation intention</em> — is where real change begins. Asëa doesn't tell you what to do. It shows you what you've already been experiencing, clearly enough that you can decide what, if anything, to do about it.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Shop options sheet -->
+  <div class="sheet" id="sheet-shop-options" aria-modal="true" role="dialog">
+    <div class="sheet-inner">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title-row">
+        <div class="sheet-title">Options</div>
+        <button class="icon-btn" id="shop-options-close-btn" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="shop-options-list">
+        <button class="shop-options-item" id="shop-opt-store-order">
+          <span class="shop-options-icon">🗺️</span>
+          <div class="shop-options-text">
+            <div class="shop-options-label">Set your grocery store order</div>
+            <div class="shop-options-sub">Drag categories to match your grocery store's aisles — your list will follow along</div>
+          </div>
+        </button>
+        <button class="shop-options-item" id="shop-opt-clear-needs">
+          <span class="shop-options-icon">🗑️</span>
+          <div class="shop-options-text">
+            <div class="shop-options-label">Clear all needed</div>
+            <div class="shop-options-sub">Unmark everything — keep your list intact</div>
+          </div>
+        </button>
+        <button class="shop-options-item" id="shop-opt-clear-cart">
+          <span class="shop-options-icon">🛒</span>
+          <div class="shop-options-text">
+            <div class="shop-options-label">Clear cart</div>
+            <div class="shop-options-sub">Mark all in-cart items as no longer needed</div>
+          </div>
+        </button>
+        <button class="shop-options-item shop-options-item--danger" id="shop-opt-reset">
+          <span class="shop-options-icon">⚡</span>
+          <div class="shop-options-text">
+            <div class="shop-options-label">Reset list</div>
+            <div class="shop-options-sub">Remove all custom items and clear all states</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grocery store aisle order sheet -->
+  <div class="sheet" id="sheet-shop-reorder" aria-modal="true" role="dialog">
+    <div class="sheet-inner">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title-row">
+        <div class="sheet-title">Grocery store order</div>
+        <button class="icon-btn" id="shop-reorder-close-btn" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div style="padding:0 20px 32px;">
+        <div class="shop-reorder-intro">Drag to match the order you walk your grocery store. Shop faster every time.</div>
+        <div class="shop-reorder-list" id="shop-reorder-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shop education sheet -->
+  <div class="sheet" id="sheet-shop-info" aria-modal="true" role="dialog">
+    <div class="sheet-inner">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title-row">
+        <div class="sheet-title">About this list</div>
+        <button class="icon-btn" id="shop-info-close-btn" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div style="padding:0 20px 32px;">
+
+        <button class="bowel-info-toggle" id="shop-info-src-btn" data-target="shop-info-src-body">
+          <span>Where this list comes from</span>
+          <svg class="bowel-info-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div id="shop-info-src-body" class="bowel-info-body" style="display:none;">
+          <p class="bowel-info-intro">The foods in Asëa's list were selected using four evidence-based lenses:</p>
+          <div class="bowel-info-card">
+            <div class="bowel-info-card-text">
+              <div class="bowel-info-card-label">Functional Medicine</div>
+              <div class="bowel-info-card-sub">Treats food as information — not just fuel. Focuses on gut microbiome health, inflammation as a root driver of chronic symptoms, and the whole-system effect of what you eat.</div>
+            </div>
+          </div>
+          <div class="bowel-info-card">
+            <div class="bowel-info-card-text">
+              <div class="bowel-info-card-label">Clinical Nutrition</div>
+              <div class="bowel-info-card-sub">Glycemic load, micronutrient density, fiber types, and macronutrient timing. The science behind what registered dietitians recommend.</div>
+            </div>
+          </div>
+          <div class="bowel-info-card">
+            <div class="bowel-info-card-text">
+              <div class="bowel-info-card-label">Integrative &amp; Naturopathic</div>
+              <div class="bowel-info-card-sub">Phytonutrients, polyphenols, and synergistic food combinations. Example: turmeric paired with black pepper increases absorption dramatically. These pairings are built into the benefit data.</div>
+            </div>
+          </div>
+          <div class="bowel-info-card">
+            <div class="bowel-info-card-text">
+              <div class="bowel-info-card-label">Behavioral Nutrition</div>
+              <div class="bowel-info-card-sub">Why certain foods reduce the urge to reach for something harmful. Satiety signaling, craving architecture, and habit formation — because knowing what to eat is only half the equation.</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="bowel-info-toggle" id="shop-info-ben-btn" data-target="shop-info-ben-body">
+          <span>What the benefit tags mean</span>
+          <svg class="bowel-info-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div id="shop-info-ben-body" class="bowel-info-body" style="display:none;">
+          <p class="bowel-info-intro">Each food shows small tags summarizing its primary health contributions. These are not medical claims — they reflect the research-supported properties of each food when eaten as part of a balanced diet.</p>
+          <p class="bowel-info-intro">These same tags connect to Asëa's insight engine. When you log a food consistently, the engine can detect patterns between what you eat and how your body responds.</p>
+        </div>
+
+        <button class="bowel-info-toggle" id="shop-info-add-btn" data-target="shop-info-add-body">
+          <span>Adding your own foods</span>
+          <svg class="bowel-info-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div id="shop-info-add-body" class="bowel-info-body" style="display:none;">
+          <p class="bowel-info-intro">Use the quick-add field to add any food not in the list. Custom items won't have benefit tags — that's expected. They'll still appear on your shopping list and carry over to your Store tab when marked as needed.</p>
+        </div>
+
+        <button class="bowel-info-toggle" id="shop-info-tabs-btn" data-target="shop-info-tabs-body">
+          <span>Home tab vs Store tab</span>
+          <svg class="bowel-info-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div id="shop-info-tabs-body" class="bowel-info-body" style="display:none;">
+          <p class="bowel-info-intro"><strong>Home</strong> is your master list. Browse all categories, mark what you need, and add anything custom.</p>
+          <p class="bowel-info-intro"><strong>Store</strong> shows only items marked needed — your active shopping list. Tap an item to mark it as in-cart as you shop.</p>
         </div>
 
       </div>
@@ -5132,7 +5651,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v15-10',
+  version:            'v16-13',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -5406,6 +5925,279 @@ var COMMON_MEDS = [
 ];
 
 /* ══════════════════════════════════════════════════════════════
+   FOOD DATABASE
+   future: data/food.js
+   ──────────────────────────────────────────────────────────────
+   Source: Functional Medicine + Clinical Nutrition + Integrative
+   Each entry: { name, cat, shopCat, tags[], benefits[] }
+   tags[]     → drive insight engine (maps to PATTERN_RULES inputTag)
+   benefits[] → display-only labels in Shop + Meals autocomplete
+   shopCat    → grocery aisle grouping in Shop screen
+══════════════════════════════════════════════════════════════ */
+var FOOD_DB = [
+
+  // ── PRODUCE — FRESH ──────────────────────────────────────
+  { name:'Baby spinach',     cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic','leafy_green'],
+    benefits:['Blood Sugar','Inflammation','Antioxidant'] },
+  { name:'Arugula',          cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['leafy_green'],
+    benefits:['Inflammation','Antioxidant'] },
+  { name:'Kale',             cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['leafy_green','low_glycemic'],
+    benefits:['Inflammation','Antioxidant','Blood Sugar'] },
+  { name:'Bell peppers',     cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','Inflammation','Antioxidant'] },
+  { name:'Cherry tomatoes',  cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic'],
+    benefits:['Inflammation','Antioxidant'] },
+  { name:'Cucumber',         cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','Satiety'] },
+  { name:'Celery',           cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','Satiety'] },
+  { name:'Zucchini',         cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','Inflammation'] },
+  { name:'Mushrooms',        cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic'],
+    benefits:['Inflammation','Antioxidant','Brain'] },
+  { name:'Broccoli',         cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic','high_fiber'],
+    benefits:['Blood Sugar','Inflammation','Antioxidant'] },
+  { name:'Green beans',      cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','Inflammation'] },
+  { name:'Brussels sprouts', cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic','high_fiber'],
+    benefits:['Blood Sugar','Inflammation','Antioxidant'] },
+  { name:'Asparagus',        cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic'],
+    benefits:['Inflammation','Blood Sugar','Gut Health'] },
+  { name:'Cabbage',          cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic','high_fiber'],
+    benefits:['Inflammation','Gut Health'] },
+  { name:'Avocado',          cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['high_fat','low_glycemic'],
+    benefits:['Inflammation','Heart','Satiety','Brain'] },
+  { name:'Blueberries',      cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic','high_fiber'],
+    benefits:['Blood Sugar','A1c','Inflammation','Antioxidant'] },
+  { name:'Raspberries',      cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic','high_fiber'],
+    benefits:['Blood Sugar','Inflammation','Antioxidant'] },
+  { name:'Lemons',           cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic'],
+    benefits:['Inflammation','Antioxidant','Liver'] },
+  { name:'Baby carrots',     cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','Antioxidant'] },
+  { name:'Snap peas',        cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['low_glycemic','high_fiber'],
+    benefits:['Blood Sugar','Satiety'] },
+  { name:'Olives',           cat:'produce_fresh', shopCat:'Produce — Fresh',
+    tags:['high_fat','low_glycemic'],
+    benefits:['Inflammation','Heart','Satiety'] },
+
+  // ── PRODUCE — PANTRY ─────────────────────────────────────
+  { name:'Sweet potatoes',   cat:'produce_pantry', shopCat:'Produce — Pantry',
+    tags:['low_glycemic','high_fiber'],
+    benefits:['Blood Sugar','A1c','Inflammation'] },
+  { name:'Onions',           cat:'produce_pantry', shopCat:'Produce — Pantry',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','Inflammation','Heart'] },
+  { name:'Garlic',           cat:'produce_pantry', shopCat:'Produce — Pantry',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','Inflammation','Heart','Gut Health'] },
+  { name:'Fresh ginger',     cat:'produce_pantry', shopCat:'Produce — Pantry',
+    tags:['low_glycemic'],
+    benefits:['Inflammation','Gut Health','Blood Sugar'] },
+
+  // ── PROTEIN ──────────────────────────────────────────────
+  { name:'Eggs',             cat:'protein', shopCat:'Protein',
+    tags:['balanced_meal'],
+    benefits:['Blood Sugar','Satiety','Brain'] },
+  { name:'Chicken breast',   cat:'protein', shopCat:'Protein',
+    tags:['balanced_meal'],
+    benefits:['Blood Sugar','Satiety'] },
+  { name:'Chicken thighs',   cat:'protein', shopCat:'Protein',
+    tags:['balanced_meal','high_fat'],
+    benefits:['Blood Sugar','Satiety'] },
+  { name:'Salmon',           cat:'protein', shopCat:'Protein',
+    tags:['balanced_meal','high_fat'],
+    benefits:['Inflammation','Heart','Omega-3','Triglycerides','A1c','Brain'] },
+  { name:'Ground turkey',    cat:'protein', shopCat:'Protein',
+    tags:['balanced_meal'],
+    benefits:['Blood Sugar','Satiety'] },
+  { name:'Shrimp',           cat:'protein', shopCat:'Protein',
+    tags:['balanced_meal'],
+    benefits:['Blood Sugar','Satiety'] },
+  { name:'Sardines',         cat:'protein', shopCat:'Protein',
+    tags:['balanced_meal','high_fat'],
+    benefits:['Inflammation','Heart','Omega-3','Triglycerides','Brain'] },
+  { name:'Mackerel',         cat:'protein', shopCat:'Protein',
+    tags:['balanced_meal','high_fat'],
+    benefits:['Inflammation','Heart','Omega-3','Triglycerides'] },
+  { name:'Canned tuna',      cat:'protein', shopCat:'Protein',
+    tags:['balanced_meal'],
+    benefits:['Blood Sugar','Satiety'] },
+  { name:'String cheese',    cat:'protein', shopCat:'Protein',
+    tags:['balanced_meal'],
+    benefits:['Blood Sugar','Satiety'] },
+  { name:'Hard-boiled eggs', cat:'protein', shopCat:'Protein',
+    tags:['balanced_meal'],
+    benefits:['Blood Sugar','Satiety','Brain'] },
+
+  // ── DAIRY & REFRIGERATED ─────────────────────────────────
+  { name:'Plain Greek yogurt', cat:'dairy', shopCat:'Dairy & Refrigerated',
+    tags:['dairy','balanced_meal'],
+    benefits:['Blood Sugar','A1c','Gut Health','Satiety'] },
+  { name:'Unsweetened almond milk', cat:'dairy', shopCat:'Dairy & Refrigerated',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','Satiety'] },
+  { name:'Hummus',           cat:'dairy', shopCat:'Dairy & Refrigerated',
+    tags:['high_fiber','balanced_meal'],
+    benefits:['Blood Sugar','Satiety','Gut Health'] },
+  { name:'Kefir',            cat:'dairy', shopCat:'Dairy & Refrigerated',
+    tags:['dairy'],
+    benefits:['Gut Health','Inflammation','Blood Sugar'] },
+
+  // ── FROZEN ───────────────────────────────────────────────
+  { name:'Cauliflower rice', cat:'frozen', shopCat:'Frozen',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','A1c'] },
+  { name:'Frozen salmon',    cat:'frozen', shopCat:'Frozen',
+    tags:['balanced_meal','high_fat'],
+    benefits:['Inflammation','Omega-3','Heart','Triglycerides'] },
+  { name:'Frozen broccoli',  cat:'frozen', shopCat:'Frozen',
+    tags:['low_glycemic','high_fiber'],
+    benefits:['Blood Sugar','Inflammation','Antioxidant'] },
+  { name:'Frozen green beans', cat:'frozen', shopCat:'Frozen',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','Inflammation'] },
+  { name:'Frozen spinach',   cat:'frozen', shopCat:'Frozen',
+    tags:['low_glycemic','leafy_green'],
+    benefits:['Blood Sugar','Inflammation','Antioxidant'] },
+  { name:'Frozen shrimp',    cat:'frozen', shopCat:'Frozen',
+    tags:['balanced_meal'],
+    benefits:['Blood Sugar','Satiety'] },
+  { name:'Frozen blueberries', cat:'frozen', shopCat:'Frozen',
+    tags:['low_glycemic','high_fiber'],
+    benefits:['Blood Sugar','Inflammation','Antioxidant'] },
+  { name:'Frozen raspberries', cat:'frozen', shopCat:'Frozen',
+    tags:['low_glycemic','high_fiber'],
+    benefits:['Blood Sugar','Inflammation','Antioxidant'] },
+  { name:'Frozen edamame',   cat:'frozen', shopCat:'Frozen',
+    tags:['high_fiber','balanced_meal'],
+    benefits:['Blood Sugar','Satiety'] },
+
+  // ── NUTS & SEEDS ─────────────────────────────────────────
+  { name:'Walnuts',          cat:'nuts_seeds', shopCat:'Nuts & Seeds',
+    tags:['high_fat','low_glycemic'],
+    benefits:['Inflammation','Omega-3','Blood Sugar','Brain'] },
+  { name:'Almonds',          cat:'nuts_seeds', shopCat:'Nuts & Seeds',
+    tags:['high_fat','low_glycemic'],
+    benefits:['Blood Sugar','Insulin Sensitivity','Heart'] },
+  { name:'Cashews',          cat:'nuts_seeds', shopCat:'Nuts & Seeds',
+    tags:['high_fat','low_glycemic'],
+    benefits:['Blood Sugar','Satiety'] },
+  { name:'Mixed nuts',       cat:'nuts_seeds', shopCat:'Nuts & Seeds',
+    tags:['high_fat','low_glycemic'],
+    benefits:['Blood Sugar','Satiety','Heart'] },
+  { name:'Pumpkin seeds',    cat:'nuts_seeds', shopCat:'Nuts & Seeds',
+    tags:['high_fat','low_glycemic'],
+    benefits:['Blood Sugar','Insulin Sensitivity','Inflammation'] },
+  { name:'Ground flaxseed',  cat:'nuts_seeds', shopCat:'Nuts & Seeds',
+    tags:['high_fiber','high_fat'],
+    benefits:['Inflammation','Omega-3','Blood Sugar','Triglycerides'] },
+  { name:'Almond butter',    cat:'nuts_seeds', shopCat:'Nuts & Seeds',
+    tags:['high_fat','low_glycemic'],
+    benefits:['Blood Sugar','Satiety','Heart'] },
+  { name:'Peanut butter',    cat:'nuts_seeds', shopCat:'Nuts & Seeds',
+    tags:['high_fat','low_glycemic'],
+    benefits:['Blood Sugar','Satiety'] },
+
+  // ── PANTRY — GRAINS & LEGUMES ────────────────────────────
+  { name:'Gluten-free oats', cat:'grains', shopCat:'Pantry — Grains & Legumes',
+    tags:['low_glycemic','high_fiber'],
+    benefits:['Blood Sugar','A1c','Triglycerides'] },
+  { name:'Quinoa',           cat:'grains', shopCat:'Pantry — Grains & Legumes',
+    tags:['low_glycemic','high_fiber','balanced_meal'],
+    benefits:['Blood Sugar','A1c','Satiety'] },
+  { name:'Black beans',      cat:'grains', shopCat:'Pantry — Grains & Legumes',
+    tags:['high_fiber','low_glycemic'],
+    benefits:['Blood Sugar','A1c','Inflammation','Gut Health'] },
+  { name:'Chickpeas',        cat:'grains', shopCat:'Pantry — Grains & Legumes',
+    tags:['high_fiber','low_glycemic'],
+    benefits:['Blood Sugar','A1c','Inflammation'] },
+  { name:'Lentils',          cat:'grains', shopCat:'Pantry — Grains & Legumes',
+    tags:['high_fiber','low_glycemic','balanced_meal'],
+    benefits:['Blood Sugar','A1c','Inflammation','Heart'] },
+
+  // ── PANTRY — OILS & CONDIMENTS ───────────────────────────
+  { name:'Extra virgin olive oil', cat:'pantry_oils', shopCat:'Pantry — Oils & Condiments',
+    tags:['high_fat','low_glycemic'],
+    benefits:['Inflammation','Heart','Cholesterol','Blood Sugar'] },
+  { name:'Ceylon cinnamon',  cat:'pantry_oils', shopCat:'Pantry — Oils & Condiments',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','A1c','Insulin Sensitivity','Inflammation'] },
+  { name:'Apple cider vinegar', cat:'pantry_oils', shopCat:'Pantry — Oils & Condiments',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','A1c','Insulin Sensitivity','Triglycerides'] },
+  { name:'Turmeric',         cat:'pantry_oils', shopCat:'Pantry — Oils & Condiments',
+    tags:['low_glycemic'],
+    benefits:['Inflammation','Antioxidant','Liver','Brain'] },
+  { name:'Black pepper',     cat:'pantry_oils', shopCat:'Pantry — Oils & Condiments',
+    tags:['low_glycemic'],
+    benefits:['Inflammation','Antioxidant'] },
+  { name:'Unsweetened cocoa powder', cat:'pantry_oils', shopCat:'Pantry — Oils & Condiments',
+    tags:['low_glycemic'],
+    benefits:['Inflammation','Heart','Antioxidant','Blood Sugar'] },
+  { name:'Coconut aminos',   cat:'pantry_oils', shopCat:'Pantry — Oils & Condiments',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar'] },
+  { name:'Dijon mustard',    cat:'pantry_oils', shopCat:'Pantry — Oils & Condiments',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar'] },
+
+  // ── BEVERAGES ────────────────────────────────────────────
+  { name:'Green tea',        cat:'beverages', shopCat:'Beverages',
+    tags:['caffeine','low_glycemic'],
+    benefits:['Blood Sugar','Inflammation','Insulin Sensitivity','Liver','A1c'] },
+  { name:'Sparkling water',  cat:'beverages', shopCat:'Beverages',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar'] },
+  { name:'Coffee',           cat:'beverages', shopCat:'Beverages',
+    tags:['caffeine'],
+    benefits:['Brain','Antioxidant'] },
+
+  // ── FERMENTED FOODS ──────────────────────────────────────
+  { name:'Kimchi',           cat:'fermented', shopCat:'Fermented Foods',
+    tags:['low_glycemic'],
+    benefits:['Gut Health','Inflammation','Blood Sugar','A1c'] },
+  { name:'Sauerkraut',       cat:'fermented', shopCat:'Fermented Foods',
+    tags:['low_glycemic'],
+    benefits:['Gut Health','Inflammation','Blood Sugar'] },
+
+  // ── SWEET REPLACEMENTS ───────────────────────────────────
+  { name:'85% dark chocolate', cat:'sweet', shopCat:'Sweet Replacements',
+    tags:['low_glycemic','high_fat'],
+    benefits:['Inflammation','Heart','Antioxidant','Craving Control','Blood Sugar'] },
+  { name:'Monk fruit drops', cat:'sweet', shopCat:'Sweet Replacements',
+    tags:['low_glycemic'],
+    benefits:['Blood Sugar','A1c','Craving Control','Insulin Sensitivity'] },
+  { name:'Pure vanilla extract', cat:'sweet', shopCat:'Sweet Replacements',
+    tags:['low_glycemic'],
+    benefits:['Craving Control','Blood Sugar'] },
+  { name:'Whey protein isolate', cat:'sweet', shopCat:'Sweet Replacements',
+    tags:['balanced_meal'],
+    benefits:['Blood Sugar','Satiety','A1c'] },
+
+];
+
+/* ══════════════════════════════════════════════════════════════
    SECTION 02 — STATE
    future: state.js
    Single source of truth. Never mutate directly — use setState().
@@ -5426,6 +6218,9 @@ var State = (function() {
     },
     supplements: [],
     medications: [],
+    shop: [],  // [{ id, name, shopCat, needed:bool, inCart:bool, benefits:[], tags:[], custom:bool, usualCount:int }]
+    shopLastTrip: [],   // snapshot of last completed trip item names — powers "Repeat last trip"
+    shopCatOrder: [],   // user-defined grocery store aisle order — [] means use FOOD_DB default
     logs: {
       hydration: [],  // { id, ts, oz, type }
       meals:     [],  // { id, ts, slot, type:'food'|'snack', text, tags[], mealTs }
@@ -5698,7 +6493,7 @@ var Router = (function() {
 
   var _current = null;
   var _previous = null;
-  var _screens = ['today', 'track', 'insights', 'you', 'onboarding', 'settings', 'hydration', 'drink-library', 'bowel', 'bp', 'glucose', 'meals'];
+  var _screens = ['today', 'track', 'insights', 'you', 'onboarding', 'settings', 'hydration', 'drink-library', 'bowel', 'bp', 'glucose', 'meals', 'shop'];
   var _onActivate = null; // registered by App after init
 
   function onActivate(fn) { _onActivate = fn; }
@@ -6999,6 +7794,7 @@ var ScreenInsights = (function() {
     if (ins.type === 'early') return _CATS.early;
     if (ins.id === 'D8' || ins.id === 'G6' || ins.id === 'G7' || ins.id === 'BP5') return _CATS.positive;
     var prefix = ins.id.replace(/\d+$/, '');
+    if (prefix === 'FQ') return _CATS.positive;  // Food Quality rules are always positive reinforcement
     if (prefix === 'G')  return _CATS.glucose;
     if (prefix === 'BP') return _CATS.bp;
     if (prefix === 'E')  return _CATS.energy;
@@ -8284,6 +9080,41 @@ var InsightEngine = (function() {
       // when hydration AND normal BP readings co-occur over time.
     },
 
+    // ── FOOD QUALITY RULES (FQ-series) ───────────────────────
+    // Fires when FOOD_DB-tagged foods are logged consistently and
+    // positive output trends appear in logged metrics.
+    // All FQ rules are positive reinforcement (category: Positive).
+    // Introduced v16-00 alongside FOOD_DB and FoodEngine.
+    // Clinical sources noted per rule below.
+
+    {
+      id: 'FQ1', priority: 2,
+      inputTag: 'low_glycemic', outputType: 'trend', outputKey: 'stable',
+      windowH: null, threshold: 3, icon: '🥗',
+      text: 'Consistently choosing lower-glycemic foods may be helping keep glucose stable.',
+      // Rationale: Low-glycemic index foods blunt the postprandial
+      // glucose response by slowing carbohydrate absorption. Positive
+      // trend rule — fires when low_glycemic meal tags co-occur with
+      // stable glucose readings over 7+ days.
+      // Source: Jenkins et al., AJCN glycemic index research (1981–);
+      // Brand-Miller GI framework; ADA dietary guidance.
+    },
+
+    {
+      id: 'FQ2', priority: 2,
+      inputTag: 'high_fiber', outputType: 'trend', outputKey: 'improved_stool',
+      windowH: null, threshold: 3, icon: '🌿',
+      text: 'Higher-fiber foods may be contributing to more consistent digestion.',
+      // Rationale: Dietary fiber (soluble + insoluble) increases stool
+      // bulk, supports motility, and feeds beneficial gut microbiota.
+      // Positive trend rule — fires when high_fiber meal tags co-occur
+      // with Bristol type 3–4 bowel logs over multiple days.
+      // outputType:'trend' because Bristol-type checking lives in
+      // _checkTrend, not _hasOutput (which only reads bowel symptoms).
+      // Source: Slavin JL, Nutrition 2013; WHO fiber recommendations;
+      // IFM gut microbiome research.
+    },
+
   ];
 
   // ── Early insight: fx[] side-effect map ────────────────────
@@ -8592,6 +9423,30 @@ var InsightEngine = (function() {
         return b.ts >= cutoff && parseInt(b.sys, 10) <= BP_ELEVATED_SYS;
       }).length;
       return (hydrDays >= 3 && stableBP >= 3) ? Math.min(hydrDays, stableBP) : 0;
+    }
+
+    // FQ1: consistent low-glycemic food logging → stable glucose readings
+    // Positive reinforcement: rewards users choosing FOOD_DB low_glycemic items.
+    if (rule.id === 'FQ1') {
+      var lgMeals = (s.logs.meals || []).filter(function(m) {
+        return m.mealTs >= cutoff && m.tags && m.tags.indexOf('low_glycemic') !== -1;
+      }).length;
+      var stableGlucFQ1 = (s.logs.glucose || []).filter(function(g) {
+        return g.ts >= cutoff && parseFloat(g.val) > 0 && parseFloat(g.val) <= GLUCOSE_ELEVATED;
+      }).length;
+      return (lgMeals >= 3 && stableGlucFQ1 >= 3) ? Math.min(lgMeals, stableGlucFQ1) : 0;
+    }
+
+    // FQ2: consistent high-fiber food logging → healthy Bristol 3–4 stool type
+    // Positive reinforcement: rewards users choosing FOOD_DB high_fiber items.
+    if (rule.id === 'FQ2') {
+      var hfMeals = (s.logs.meals || []).filter(function(m) {
+        return m.mealTs >= cutoff && m.tags && m.tags.indexOf('high_fiber') !== -1;
+      }).length;
+      var goodBowelFQ2 = (s.logs.bowel || []).filter(function(b) {
+        return b.ts >= cutoff && b.bristolType >= 3 && b.bristolType <= 4;
+      }).length;
+      return (hfMeals >= 3 && goodBowelFQ2 >= 3) ? Math.min(hfMeals, goodBowelFQ2) : 0;
     }
 
     return 0;
@@ -10767,6 +11622,943 @@ var HealthReport = (function() {
 })();
 
 /* ══════════════════════════════════════════════════════════════
+   SECTION 15h — FOOD ENGINE + SCREEN: SHOP
+   future: engine/food.js + screens/shop.js
+   ──────────────────────────────────────────────────────────────
+
+   ARCHITECTURE OVERVIEW
+   ─────────────────────
+   FoodEngine  — the intelligence layer. Owns all food data operations.
+                 Stateless. Reads FOOD_DB and State. Never touches DOM.
+   ScreenShop  — the presentation layer. Consumes FoodEngine.
+                 Owns all DOM rendering and user interaction for the
+                 Shop screen.
+
+   DATA FLOW
+   ─────────
+   FOOD_DB[] (CONFIG constants)
+     ↓ FoodEngine.search()        → powers quick-add autocomplete
+     ↓ FoodEngine.getCategories() → drives Home tab category grouping
+     ↓ FoodEngine.lookup()        → enriches custom items with tags/benefits
+   State.shop[]
+     ↓ ScreenShop._renderHome()  → master list with needed checkboxes
+     ↓ ScreenShop._renderStore() → needed-only list with in-cart toggle
+   State.logs.meals[]             (future Pass 3: Meals autocomplete)
+     ↓ FoodEngine tags[]          → auto-populate meal.tags on food select
+
+   STATE SCHEMA (shop array)
+   ─────────────────────────
+   shop: [{
+     id:       string   — Utils.uid()
+     name:     string   — display name
+     shopCat:  string   — grocery aisle category (from FOOD_DB or user)
+     needed:   bool     — marked needed on Home tab
+     inCart:   bool     — marked collected on Store tab
+     benefits: string[] — display labels ([] for custom items)
+     tags:     string[] — insight engine inputs ([] for custom items)
+     custom:   bool     — true if user-added, false if from FOOD_DB
+   }]
+
+   ADDING NEW FOOD DB ITEMS
+   ────────────────────────
+   Add one object to FOOD_DB[] in the CONFIG block above Section 02.
+   FoodEngine picks it up automatically — no other changes needed.
+
+   ADDING NEW BENEFIT CATEGORIES
+   ──────────────────────────────
+   1. Add the label string to relevant FOOD_DB entries (benefits[])
+   2. Add the tag string to relevant FOOD_DB entries (tags[])
+   3. If an insight rule is needed: add to PATTERN_RULES[] in Section 15
+   FoodEngine and ScreenShop require no changes.
+
+   DEFENSIBILITY NOTE
+   ──────────────────
+   All benefit labels map to peer-reviewed nutritional science.
+   No item claims to treat, cure, or diagnose any condition.
+   Language is observational throughout.
+   Source frameworks: Functional Medicine (IFM), AND clinical guidelines,
+   integrative nutrition research (NIH, PubMed-indexed studies).
+══════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────
+   FOOD ENGINE
+   Stateless intelligence layer. All food data operations live here.
+   Consumed by ScreenShop now; ScreenMeals autocomplete in Pass 3.
+───────────────────────────────────────────────────────────── */
+var FoodEngine = (function() {
+
+  // ── SEARCH ──────────────────────────────────────────────
+  // Returns FOOD_DB items whose name contains query (case-insensitive).
+  // Used by: Shop quick-add autocomplete, future Meals autocomplete.
+  function search(query, maxResults) {
+    if (!query || query.trim().length < 1) return [];
+    var q = query.trim().toLowerCase();
+    var cap = maxResults || 6;
+    var results = [];
+    for (var i = 0; i < FOOD_DB.length; i++) {
+      if (FOOD_DB[i].name.toLowerCase().indexOf(q) >= 0) {
+        results.push(FOOD_DB[i]);
+        if (results.length >= cap) break;
+      }
+    }
+    return results;
+  }
+
+  // ── LOOKUP ───────────────────────────────────────────────
+  // Returns the FOOD_DB entry for an exact name match, or null.
+  // Used when promoting a quick-add item to enrich with tags/benefits.
+  function lookup(name) {
+    var n = (name || '').toLowerCase();
+    for (var i = 0; i < FOOD_DB.length; i++) {
+      if (FOOD_DB[i].name.toLowerCase() === n) return FOOD_DB[i];
+    }
+    return null;
+  }
+
+  // ── GET CATEGORIES ───────────────────────────────────────
+  // Returns ordered unique shopCat values from FOOD_DB.
+  // Order matches grocery store aisle flow (produce first, condiments last).
+  function getCategories() {
+    var seen = {};
+    var cats = [];
+    for (var i = 0; i < FOOD_DB.length; i++) {
+      var c = FOOD_DB[i].shopCat;
+      if (!seen[c]) { seen[c] = true; cats.push(c); }
+    }
+    return cats;
+  }
+
+  // ── GET ITEMS FOR CATEGORY ───────────────────────────────
+  // Returns FOOD_DB items for a given shopCat, merged with matching
+  // State.shop entries so needed/inCart state is current.
+  // Also appends custom State.shop items belonging to this category.
+  function getItemsForCategory(shopCat, shopState) {
+    var dbItems = FOOD_DB.filter(function(f) { return f.shopCat === shopCat; });
+    var result = dbItems.map(function(f) {
+      var saved = _findSaved(f.name, shopState);
+      return {
+        id:       saved ? saved.id     : null,
+        name:     f.name,
+        shopCat:  f.shopCat,
+        needed:   saved ? saved.needed : false,
+        inCart:   saved ? saved.inCart : false,
+        benefits: f.benefits,
+        tags:     f.tags,
+        custom:   false,
+      };
+    });
+    // Append custom items in this category
+    (shopState || []).forEach(function(s) {
+      if (s.custom && s.shopCat === shopCat) result.push(s);
+    });
+    return result;
+  }
+
+  // ── GET CUSTOM CATEGORIES ────────────────────────────────
+  // Returns shopCat values that exist only in State.shop (user-created).
+  // These appear after FOOD_DB categories in the Home tab.
+  function getCustomCategories(shopState) {
+    var dbCats = {};
+    FOOD_DB.forEach(function(f) { dbCats[f.shopCat] = true; });
+    var seen = {};
+    var cats = [];
+    (shopState || []).forEach(function(s) {
+      if (s.custom && !dbCats[s.shopCat] && !seen[s.shopCat]) {
+        seen[s.shopCat] = true;
+        cats.push(s.shopCat);
+      }
+    });
+    return cats;
+  }
+
+  // ── BUILD ITEM ───────────────────────────────────────────
+  // Constructs a new State.shop entry from a name string.
+  // Looks up FOOD_DB first to enrich with tags/benefits if known.
+  // Used by ScreenShop quick-add and future Meals integration.
+  function buildItem(name, shopCat) {
+    var db = lookup(name);
+    return {
+      id:       Utils.uid(),
+      name:     db ? db.name : Utils.cleanText(name),
+      shopCat:  shopCat || (db ? db.shopCat : 'My Items'),
+      needed:   false,
+      inCart:   false,
+      benefits: db ? db.benefits : [],
+      tags:     db ? db.tags     : [],
+      custom:   !db,
+    };
+  }
+
+  // ── PRIVATE: find saved state entry by name ──────────────
+  function _findSaved(name, shopState) {
+    var n = name.toLowerCase();
+    var found = null;
+    (shopState || []).forEach(function(s) {
+      if (s.name.toLowerCase() === n) found = s;
+    });
+    return found;
+  }
+
+  return { search, lookup, getCategories, getItemsForCategory,
+           getCustomCategories, buildItem };
+
+})();
+
+
+/* ─────────────────────────────────────────────────────────────
+   SCREEN SHOP
+   Presentation layer. Consumes FoodEngine and State.
+   Owns all DOM rendering and user interaction for #screen-shop.
+───────────────────────────────────────────────────────────── */
+var ScreenShop = (function() {
+
+  // ── MODULE STATE ─────────────────────────────────────────
+  var _tab = 'home';         // 'home' | 'store'
+  var _collapsed = {};       // { [collapseKey]: bool }
+  var _allCollapsed = true;  // start collapsed — cleaner default for 11 categories
+  var _acVisible = false;    // autocomplete open?
+
+  // ── CATEGORY EMOJI MAP ───────────────────────────────────
+  // Visual anchors for each grocery aisle — instant recognition.
+  var _CAT_EMOJI = {
+    'Produce — Fresh':            '🥦',
+    'Produce — Pantry':           '🧅',
+    'Protein':                    '🥩',
+    'Dairy & Refrigerated':       '🥛',
+    'Frozen':                     '❄️',
+    'Nuts & Seeds':               '🥜',
+    'Pantry — Grains & Legumes':  '🌾',
+    'Pantry — Oils & Condiments': '🫙',
+    'Beverages':                  '🍵',
+    'Fermented Foods':            '🫙',
+    'Sweet Replacements':         '🍫',
+    'My Items':                   '✏️',
+  };
+
+  // ── PUBLIC: RENDER ───────────────────────────────────────
+  function render() {
+    _renderToggle();
+    _updateProgress();
+    _renderUsuals();
+    _renderLastTrip();
+    // Hide quick-add on Store tab — user is in the store, not planning
+    var qaRow = document.getElementById('shop-quickadd-row');
+    var qaAC  = document.getElementById('shop-ac-list');
+    if (qaRow) qaRow.style.display = _tab === 'home' ? '' : 'none';
+    if (qaAC)  qaAC.style.display  = 'none';
+    if (_tab === 'home') {
+      _renderHome();
+    } else {
+      _renderStore();
+    }
+  }
+
+  // ── TOGGLE BAR ───────────────────────────────────────────
+  function _renderToggle() {
+    var btns = document.querySelectorAll('.shop-toggle-btn');
+    btns.forEach(function(b) {
+      b.classList.toggle('active', b.dataset.tab === _tab);
+    });
+    // Collapse-all only meaningful on Home tab
+    var colBtn = document.getElementById('shop-collapse-all-btn');
+    if (colBtn) colBtn.style.display = _tab === 'home' ? '' : 'none';
+  }
+
+  // ── PROGRESS BAR ─────────────────────────────────────────
+  function _updateProgress() {
+    var s     = State.get();
+    var shop  = s.shop || [];
+    var fill  = document.getElementById('shop-progress-fill');
+    var label = document.getElementById('shop-progress-label');
+    if (!fill || !label) return;
+
+    var pct = 0, text = '';
+    if (_tab === 'home') {
+      var needed = shop.filter(function(i) { return i.needed; }).length;
+      var total  = 0;
+      FoodEngine.getCategories().forEach(function(cat) {
+        total += FoodEngine.getItemsForCategory(cat, shop).length;
+      });
+      FoodEngine.getCustomCategories(shop).forEach(function(cat) {
+        total += FoodEngine.getItemsForCategory(cat, shop).length;
+      });
+      pct  = total > 0 ? Math.round((needed / total) * 100) : 0;
+      text = needed > 0 ? needed + ' item' + (needed !== 1 ? 's' : '') + ' marked needed' : 'Tap items to mark needed';
+    } else {
+      var neededItems = shop.filter(function(i) { return i.needed; });
+      var inCart      = neededItems.filter(function(i) { return i.inCart; }).length;
+      var neededCount = neededItems.length;
+      pct  = neededCount > 0 ? Math.round((inCart / neededCount) * 100) : 0;
+      text = neededCount > 0 ? inCart + ' of ' + neededCount + ' in cart' : 'No items marked needed yet';
+    }
+
+    fill.style.width  = pct + '%';
+    label.textContent = text;
+  }
+
+  // ── MY USUALS STRIP ──────────────────────────────────────
+  // Shows top 8 items by usualCount. Only visible after first trip.
+  // Chips are accent-tinted; tapping toggles needed state instantly.
+  function _renderUsuals() {
+    var zone  = document.getElementById('shop-usuals-zone');
+    var strip = document.getElementById('shop-usuals-strip');
+    if (!zone || !strip) return;
+
+    // Only show on Home tab
+    if (_tab !== 'home') { zone.style.display = 'none'; return; }
+
+    var s    = State.get();
+    var shop = s.shop || [];
+
+    // Collect items with usualCount > 0, sorted by frequency descending
+    var usuals = shop.filter(function(i) { return (i.usualCount || 0) > 0; });
+    usuals.sort(function(a, b) { return (b.usualCount || 0) - (a.usualCount || 0); });
+    usuals = usuals.slice(0, 8);
+
+    // Also pull top FOOD_DB items that haven't been interacted with yet
+    // (so new users see suggestions based on DB popularity after first trip)
+    if (usuals.length === 0) { zone.style.display = 'none'; return; }
+
+    zone.style.display = '';
+    // Label chip first — inline, non-interactive, gives the strip context at a glance
+    var html = '<div class="shop-usual-label-chip">'
+      + '<span class="shop-usual-label-chip-icon">✦</span>'
+      + '<span class="shop-usual-label-chip-text">Usuals</span>'
+      + '</div>';
+    usuals.forEach(function(item) {
+      var isNeeded = item.needed;
+      html += '<div class="shop-usual-chip' + (isNeeded ? ' is-needed' : '') + '" '
+        + 'data-usual-name="' + Utils.esc(item.name) + '" '
+        + 'data-usual-cat="'  + Utils.esc(item.shopCat) + '">'
+        + '<span class="shop-usual-chip-name">' + Utils.esc(item.name) + '</span>'
+        + '<span class="shop-usual-chip-check">✓</span>'
+        + '</div>';
+    });
+    strip.innerHTML = html;
+  }
+
+  // ── LAST TRIP ROW ────────────────────────────────────────
+  // Subtle one-line button. Only shows if shopLastTrip has items.
+  function _renderLastTrip() {
+    var zone  = document.getElementById('shop-lasttrip-zone');
+    var label = document.getElementById('shop-lasttrip-label');
+    if (!zone || !label) return;
+
+    if (_tab !== 'home') { zone.style.display = 'none'; return; }
+
+    var s        = State.get();
+    var lastTrip = s.shopLastTrip || [];
+    if (lastTrip.length === 0) { zone.style.display = 'none'; return; }
+
+    zone.style.display = '';
+    label.textContent  = '↩ Repeat last trip (' + lastTrip.length + ' items)';
+  }
+
+  // ── GET ORDERED CATEGORIES ──────────────────────────────
+  // Returns categories in user-defined grocery store order (shopCatOrder),
+  // falling back to FOOD_DB default order if none set.
+  // Custom user categories always appended at the end.
+  function _getOrderedCats(shop) {
+    var s        = State.get();
+    var custom   = FoodEngine.getCustomCategories(shop);
+    var userOrder = s.shopCatOrder || [];
+    if (userOrder.length > 0) {
+      // Use saved order, append any new FOOD_DB cats not yet in user order
+      var allDB = FoodEngine.getCategories();
+      var ordered = userOrder.filter(function(c) { return allDB.indexOf(c) >= 0; });
+      allDB.forEach(function(c) { if (ordered.indexOf(c) < 0) ordered.push(c); });
+      return ordered.concat(custom);
+    }
+    return FoodEngine.getCategories().concat(custom);
+  }
+
+  // ── HOME TAB ─────────────────────────────────────────────
+  function _renderHome() {
+    var body = document.getElementById('shop-list-body');
+    if (!body) return;
+    var s    = State.get();
+    var shop = s.shop || [];
+
+    var allCats = _getOrderedCats(shop);
+    var html = '';
+    allCats.forEach(function(cat) {
+      var items = FoodEngine.getItemsForCategory(cat, shop);
+      if (items.length === 0) return;
+      var isCollapsed = _allCollapsed || !!_collapsed[_slugKey(cat)];
+      html += _buildCategorySection(cat, items, isCollapsed, 'home');
+    });
+
+    if (!html) {
+      html = '<div class="shop-store-empty">'
+           + '<div class="shop-store-empty-icon">🛒</div>'
+           + '<div class="shop-store-empty-title">Your list is empty</div>'
+           + '<div class="shop-store-empty-sub">Use the quick-add field above to add items.</div>'
+           + '</div>';
+    }
+    body.innerHTML = html;
+
+    var colBtn = document.getElementById('shop-collapse-all-btn');
+    if (colBtn) {
+      // Determine label by actual visual state, not just the _allCollapsed flag.
+      // If every rendered category is currently collapsed (individually or via flag),
+      // the button should offer "Expand all". If any are open, offer "Collapse all".
+      var allCatsForLabel = _getOrderedCats(shop);
+      var anyExpanded = allCatsForLabel.some(function(cat) {
+        return !(_allCollapsed || !!_collapsed[_slugKey(cat)]);
+      });
+      colBtn.textContent = anyExpanded ? 'Collapse all' : 'Expand all';
+    }
+  }
+
+  // ── STORE TAB ────────────────────────────────────────────
+  function _renderStore() {
+    var body = document.getElementById('shop-list-body');
+    if (!body) return;
+    var s    = State.get();
+    var shop = s.shop || [];
+
+    var neededByCat = {};
+    var catOrder = _getOrderedCats(shop);
+    catOrder.forEach(function(cat) {
+      var items = FoodEngine.getItemsForCategory(cat, shop).filter(function(i) { return i.needed; });
+      if (items.length > 0) neededByCat[cat] = items;
+    });
+
+    if (Object.keys(neededByCat).length === 0) {
+      body.innerHTML = '<div class="shop-store-empty">'
+        + '<div class="shop-store-empty-icon">🛍️</div>'
+        + '<div class="shop-store-empty-title">Nothing needed yet</div>'
+        + '<div class="shop-store-empty-sub">Go to the Home tab and tap items you need to buy.</div>'
+        + '</div>';
+      return;
+    }
+
+    var html = '';
+    catOrder.forEach(function(cat) {
+      if (!neededByCat[cat]) return;
+      var isCollapsed = !!_collapsed['store_' + _slugKey(cat)];
+      html += _buildCategorySection(cat, neededByCat[cat], isCollapsed, 'store');
+    });
+    body.innerHTML = html;
+  }
+
+  // ── SLUG KEY ────────────────────────────────────────────
+  // Converts a category name to a safe alphanumeric key for use in
+  // data-attributes and _collapsed{} dictionary lookups.
+  // Avoids HTML-encoding mismatches between Utils.esc() output and
+  // dataset values (browsers decode entities in dataset reads).
+  function _slugKey(cat) {
+    return cat.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+  }
+
+  // ── BUILD CATEGORY SECTION ───────────────────────────────
+  function _buildCategorySection(cat, items, isCollapsed, mode) {
+    var colKey  = mode === 'store' ? 'store_' + _slugKey(cat) : _slugKey(cat);
+    var emoji   = _CAT_EMOJI[cat] || '📦';
+    var needed  = items.filter(function(i) { return i.needed; }).length;
+    var countLabel = mode === 'home'
+      ? (needed > 0 ? needed + ' of ' + items.length : items.length + ' items')
+      : (items.length + ' needed');
+
+    var html = '<div class="shop-cat-section" data-cat="' + Utils.esc(cat) + '">'
+      + '<div class="shop-cat-header' + (isCollapsed ? ' collapsed' : '') + '" data-collapse="' + colKey + '">'
+      +   '<div class="shop-cat-title">'
+      +     '<span class="shop-cat-emoji">' + emoji + '</span>'
+      +     Utils.esc(cat)
+      +     '<span class="shop-cat-count">' + Utils.esc(countLabel) + '</span>'
+      +   '</div>'
+      +   '<svg class="shop-cat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'
+      + '</div>'
+      + '<div class="shop-cat-items' + (isCollapsed ? ' collapsed' : '') + '">';
+
+    items.forEach(function(item) { html += _buildItemRow(item, mode); });
+    html += '</div></div>';
+    return html;
+  }
+
+  // ── BUILD ITEM ROW ───────────────────────────────────────
+  function _buildItemRow(item, mode) {
+    var stateClass = mode === 'store'
+      ? (item.inCart  ? ' is-incart' : '')
+      : (item.needed  ? ' is-needed' : '');
+
+    var benefitHtml = '';
+    if (item.benefits && item.benefits.length > 0) {
+      benefitHtml = '<div class="shop-item-benefits">';
+      item.benefits.forEach(function(b) {
+        benefitHtml += '<span class="shop-benefit-tag">' + Utils.esc(b) + '</span>';
+      });
+      benefitHtml += '</div>';
+    }
+
+    var checkSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    var eName = Utils.esc(item.name);
+    var eCat  = Utils.esc(item.shopCat);
+
+    return '<div class="shop-item-row' + stateClass + '" '
+      + 'data-item-name="' + eName + '" data-item-cat="' + eCat + '" data-item-mode="' + mode + '">'
+      + '<div class="shop-item-check">' + checkSvg + '</div>'
+      + '<div class="shop-item-info">'
+      +   '<div class="shop-item-name">' + eName + '</div>'
+      +   benefitHtml
+      + '</div>'
+      + '<button class="shop-item-delete" data-delete-name="' + eName + '" data-delete-mode="' + mode + '" aria-label="Remove ' + eName + '">'
+      +   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+      + '</button>'
+      + '</div>';
+  }
+
+  // ── TOGGLE ITEM STATE ────────────────────────────────────
+  // Increments usualCount when marking needed — powers My Usuals.
+  function _toggleItem(name, shopCat, mode) {
+    var s    = State.get();
+    var shop = (s.shop || []).slice();
+    var idx  = -1;
+    shop.forEach(function(i, n) {
+      if (i.name.toLowerCase() === name.toLowerCase()) idx = n;
+    });
+
+    if (idx < 0) {
+      var newItem = FoodEngine.buildItem(name, shopCat);
+      newItem.usualCount = 0;
+      if (mode === 'home')  { newItem.needed = true; newItem.usualCount = 1; }
+      if (mode === 'store') { newItem.needed = true; newItem.inCart = true; }
+      shop.push(newItem);
+    } else {
+      shop[idx] = Object.assign({}, shop[idx]);
+      if (mode === 'home') {
+        var wasNeeded = shop[idx].needed;
+        shop[idx].needed = !wasNeeded;
+        if (shop[idx].needed) {
+          // Increment usualCount every time item is marked needed
+          shop[idx].usualCount = (shop[idx].usualCount || 0) + 1;
+        } else {
+          shop[idx].inCart = false;
+        }
+      } else {
+        shop[idx].inCart = !shop[idx].inCart;
+      }
+    }
+
+    State.update('shop', shop);
+    Storage.sched();
+    render();
+  }
+
+  // ── USUAL CHIP TAP ───────────────────────────────────────
+  // Same as _toggleItem but from the Usuals strip — always Home mode.
+  function _toggleUsual(name, shopCat) {
+    _toggleItem(name, shopCat, 'home');
+  }
+
+  // ── REPEAT LAST TRIP ────────────────────────────────────
+  // Re-marks all items from shopLastTrip as needed.
+  // Shows toast with count + undo.
+  function _repeatLastTrip() {
+    var s        = State.get();
+    var lastTrip = s.shopLastTrip || [];
+    if (lastTrip.length === 0) return;
+
+    var shop = (s.shop || []).slice();
+    var added = 0;
+
+    lastTrip.forEach(function(tripItem) {
+      var idx = -1;
+      shop.forEach(function(i, n) {
+        if (i.name.toLowerCase() === tripItem.name.toLowerCase()) idx = n;
+      });
+      if (idx < 0) {
+        var newItem = FoodEngine.buildItem(tripItem.name, tripItem.shopCat);
+        newItem.needed     = true;
+        newItem.usualCount = (tripItem.usualCount || 0) + 1;
+        shop.push(newItem);
+        added++;
+      } else if (!shop[idx].needed) {
+        shop[idx] = Object.assign({}, shop[idx]);
+        shop[idx].needed     = true;
+        shop[idx].usualCount = (shop[idx].usualCount || 0) + 1;
+        added++;
+      }
+    });
+
+    State.update('shop', shop);
+    Storage.sched();
+    render();
+    Components.toast(added + ' item' + (added !== 1 ? 's' : '') + ' added from last trip', true);
+  }
+
+  // ── SAVE TRIP SNAPSHOT ───────────────────────────────────
+  // Called by Clear All Needed / Clear Cart — captures current needed
+  // items as the "last trip" before clearing. This is the natural moment:
+  // user is done shopping and clearing their list.
+  function _saveTripSnapshot() {
+    var s    = State.get();
+    var shop = s.shop || [];
+    var snapshot = shop
+      .filter(function(i) { return i.needed; })
+      .map(function(i) { return { name: i.name, shopCat: i.shopCat, usualCount: i.usualCount || 0 }; });
+    if (snapshot.length > 0) {
+      State.update('shopLastTrip', snapshot);
+    }
+  }
+
+  // ── DELETE ITEM ──────────────────────────────────────────
+  function _deleteItem(name) {
+    var s    = State.get();
+    var shop = (s.shop || []).filter(function(i) {
+      return i.name.toLowerCase() !== name.toLowerCase();
+    });
+    State.update('shop', shop);
+    Storage.sched();
+    requestAnimationFrame(function() { render(); });
+  }
+
+  // ── QUICK ADD ────────────────────────────────────────────
+  function _quickAdd(name) {
+    if (!name || !name.trim()) return;
+    var clean = Utils.cleanText(name);
+    var s     = State.get();
+    var exists = false;
+    (s.shop || []).forEach(function(i) {
+      if (i.name.toLowerCase() === clean.toLowerCase()) exists = true;
+    });
+    if (exists) {
+      Components.toast(Utils.esc(clean) + ' is already on your list');
+      return;
+    }
+    var item    = FoodEngine.buildItem(clean, null);
+    item.needed     = true;
+    item.usualCount = 1;
+    var shop = (s.shop || []).concat([item]);
+    State.update('shop', shop);
+    Storage.sched();
+    _hideAC();
+    var inp = document.getElementById('shop-quickadd-input');
+    if (inp) { inp.value = ''; inp.focus(); }  // stay focused for rapid-fire entry
+    render();
+    Components.toast('Added ' + Utils.esc(clean));
+  }
+
+  // ── OPTIONS: CLEAR ALL NEEDED ────────────────────────────
+  function _clearAllNeeded() {
+    _saveTripSnapshot();  // snapshot before clearing
+    var s    = State.get();
+    var shop = (s.shop || []).map(function(i) {
+      return Object.assign({}, i, { needed: false, inCart: false });
+    });
+    State.update('shop', shop);
+    Storage.sched();
+    Components.closeSheet();
+    render();
+    Components.toast('All needed items cleared');
+  }
+
+  // ── OPTIONS: CLEAR CART ──────────────────────────────────
+  function _clearCart() {
+    _saveTripSnapshot();  // snapshot before clearing
+    var s    = State.get();
+    var shop = (s.shop || []).map(function(i) {
+      if (!i.inCart) return i;
+      return Object.assign({}, i, { needed: false, inCart: false });
+    });
+    State.update('shop', shop);
+    Storage.sched();
+    Components.closeSheet();
+    render();
+    Components.toast('Cart cleared');
+  }
+
+  // ── OPTIONS: RESET LIST ──────────────────────────────────
+  function _resetList() {
+    var s    = State.get();
+    // Remove custom items; reset needed/inCart/usualCount on DB items
+    var shop = (s.shop || [])
+      .filter(function(i) { return !i.custom; })
+      .map(function(i) { return Object.assign({}, i, { needed: false, inCart: false, usualCount: 0 }); });
+    State.update('shop', shop);
+    State.update('shopLastTrip', []);
+    Storage.sched();
+    Components.closeSheet();
+    render();
+    Components.toast('List reset');
+  }
+
+  // ── COLLAPSE ALL TOGGLE ──────────────────────────────────
+  function _toggleCollapseAll() {
+    _allCollapsed = !_allCollapsed;
+    _collapsed    = {};  // clear individual overrides
+    render();
+  }
+
+  // ── COLLAPSE INDIVIDUAL ──────────────────────────────────
+  function _toggleCollapse(key) {
+    if (_allCollapsed) {
+      // Collapse-all was active — switch to individual mode.
+      // Populate _collapsed with all known cat slugs set to true,
+      // then set the tapped one to false (expanded).
+      _allCollapsed = false;
+      var s    = State.get();
+      var shop = s.shop || [];
+      _getOrderedCats(shop).forEach(function(cat) {
+        _collapsed[_slugKey(cat)]           = true;
+        _collapsed['store_' + _slugKey(cat)] = true;
+      });
+    }
+    // Toggle the tapped key
+    _collapsed[key] = !_collapsed[key];
+    render();
+  }
+
+  // ── AUTOCOMPLETE ─────────────────────────────────────────
+  function _showAC(query) {
+    var list = document.getElementById('shop-ac-list');
+    if (!list) return;
+    var results = FoodEngine.search(query, 6);
+    if (results.length === 0) { _hideAC(); return; }
+    var html = '';
+    results.forEach(function(f) {
+      html += '<div class="shop-ac-item" data-ac-name="' + Utils.esc(f.name) + '">'
+        + '<div class="shop-ac-name">' + Utils.esc(f.name) + '</div>'
+        + '<div class="shop-ac-cat">'  + Utils.esc(f.shopCat) + '</div>'
+        + '</div>';
+    });
+    list.innerHTML    = html;
+    list.style.display = 'block';
+    _acVisible        = true;
+  }
+
+  function _hideAC() {
+    var list = document.getElementById('shop-ac-list');
+    if (list) list.style.display = 'none';
+    _acVisible = false;
+  }
+
+  // ── GROCERY STORE ORDER — REORDER SHEET ─────────────────
+  // Opens the drag-to-reorder sheet. Renders current category order
+  // with touch-based drag handles. Saves new order to State.shopCatOrder.
+  //
+  // DRAG IMPLEMENTATION: touchstart captures the dragged row index.
+  // touchmove finds the row under the finger via elementFromPoint.
+  // touchend commits the new order and re-renders.
+  // No external library needed — simple index swap pattern.
+  function _openReorderSheet() {
+    var list = document.getElementById('shop-reorder-list');
+    if (!list) return;
+
+    var s        = State.get();
+    var shop     = s.shop || [];
+    var cats     = _getOrderedCats(shop).filter(function(c) {
+      // Only show FOOD_DB categories — custom user cats not reorderable
+      return FoodEngine.getCategories().indexOf(c) >= 0;
+    });
+
+    var html = '';
+    cats.forEach(function(cat, idx) {
+      var emoji = _CAT_EMOJI[cat] || '📦';
+      html += '<div class="shop-reorder-row" data-reorder-idx="' + idx + '" data-reorder-cat="' + Utils.esc(cat) + '">'
+        + '<span class="shop-reorder-emoji">' + emoji + '</span>'
+        + '<span class="shop-reorder-name">' + Utils.esc(cat) + '</span>'
+        + '<div class="shop-reorder-handle"><span></span><span></span><span></span></div>'
+        + '</div>';
+    });
+    list.innerHTML = html;
+
+    // Touch drag state
+    var _dragIdx   = -1;
+    var _orderCopy = cats.slice();
+
+    list.addEventListener('touchstart', function(e) {
+      var row = e.target.closest('.shop-reorder-row');
+      if (!row) return;
+      _dragIdx = parseInt(row.dataset.reorderIdx, 10);
+      row.classList.add('dragging');
+      e.preventDefault();
+    }, { passive: false });
+
+    list.addEventListener('touchmove', function(e) {
+      if (_dragIdx < 0) return;
+      e.preventDefault();
+      var touch   = e.touches[0];
+      var el      = document.elementFromPoint(touch.clientX, touch.clientY);
+      var overRow = el ? el.closest('.shop-reorder-row') : null;
+      // Clear drag-over highlights
+      list.querySelectorAll('.shop-reorder-row').forEach(function(r) { r.classList.remove('drag-over'); });
+      if (overRow && overRow !== list.children[_dragIdx]) {
+        overRow.classList.add('drag-over');
+      }
+    }, { passive: false });
+
+    list.addEventListener('touchend', function(e) {
+      if (_dragIdx < 0) return;
+      var touch   = e.changedTouches[0];
+      var el      = document.elementFromPoint(touch.clientX, touch.clientY);
+      var overRow = el ? el.closest('.shop-reorder-row') : null;
+      list.querySelectorAll('.shop-reorder-row').forEach(function(r) {
+        r.classList.remove('dragging', 'drag-over');
+      });
+
+      if (overRow) {
+        var toIdx = parseInt(overRow.dataset.reorderIdx, 10);
+        if (!isNaN(toIdx) && toIdx !== _dragIdx) {
+          // Splice dragIdx item to toIdx position
+          var moved = _orderCopy.splice(_dragIdx, 1)[0];
+          _orderCopy.splice(toIdx, 0, moved);
+          // Save immediately
+          State.update('shopCatOrder', _orderCopy.slice());
+          Storage.sched();
+          // Re-render sheet with new order
+          _openReorderSheet();
+          render();  // refresh main list with new order
+          return;
+        }
+      }
+      _dragIdx = -1;
+    });
+
+    Components.openSheet('sheet-shop-reorder');
+  }
+
+  // ── BIND EVENTS ──────────────────────────────────────────
+  function bindEvents() {
+
+    // Back
+    var backBtn = document.getElementById('shop-back-btn');
+    if (backBtn) backBtn.addEventListener('click', function() { Router.back(); });
+
+    // Options button → options sheet
+    var optBtn = document.getElementById('shop-options-btn');
+    if (optBtn) optBtn.addEventListener('click', function() {
+      Components.openSheet('sheet-shop-options');
+    });
+    var optClose = document.getElementById('shop-options-close-btn');
+    if (optClose) optClose.addEventListener('click', function() { Components.closeSheet(); });
+
+    var optSheet = document.getElementById('sheet-shop-options');
+    if (optSheet) {
+      optSheet.addEventListener('click', function(e) {
+        if (e.target === optSheet) { Components.closeSheet(); return; }
+      });
+      document.getElementById('shop-opt-store-order').addEventListener('click', function() {
+        Components.closeSheet();
+        // Small delay so options sheet closes before reorder opens
+        setTimeout(function() { _openReorderSheet(); }, 220);
+      });
+      document.getElementById('shop-opt-clear-needs').addEventListener('click', _clearAllNeeded);
+      document.getElementById('shop-opt-clear-cart').addEventListener('click', _clearCart);
+      document.getElementById('shop-opt-reset').addEventListener('click', _resetList);
+    }
+
+    // Reorder sheet close
+    var reorderClose = document.getElementById('shop-reorder-close-btn');
+    if (reorderClose) reorderClose.addEventListener('click', function() { Components.closeSheet(); });
+    var reorderSheet = document.getElementById('sheet-shop-reorder');
+    if (reorderSheet) reorderSheet.addEventListener('click', function(e) {
+      if (e.target === reorderSheet) Components.closeSheet();
+    });
+
+    // Info button → education sheet
+    var infoBtn = document.getElementById('shop-info-btn');
+    if (infoBtn) infoBtn.addEventListener('click', function() {
+      Components.openSheet('sheet-shop-info');
+    });
+    var infoClose = document.getElementById('shop-info-close-btn');
+    if (infoClose) infoClose.addEventListener('click', function() { Components.closeSheet(); });
+
+    var infoSheet = document.getElementById('sheet-shop-info');
+    if (infoSheet) {
+      infoSheet.addEventListener('click', function(e) {
+        if (e.target === infoSheet) { Components.closeSheet(); return; }
+        var toggle = e.target.closest('.bowel-info-toggle');
+        if (!toggle) return;
+        var targetId = toggle.dataset.target;
+        var body = document.getElementById(targetId);
+        if (!body) return;
+        var isOpen = body.style.display !== 'none';
+        body.style.display = isOpen ? 'none' : 'block';
+        toggle.classList.toggle('open', !isOpen);
+      });
+    }
+
+    // Tab toggle
+    var toggleEl = document.getElementById('shop-toggle');
+    if (toggleEl) toggleEl.addEventListener('click', function(e) {
+      var btn = e.target.closest('.shop-toggle-btn');
+      if (!btn) return;
+      _tab = btn.dataset.tab;
+      render();
+    });
+
+    // Collapse all button
+    var colBtn = document.getElementById('shop-collapse-all-btn');
+    if (colBtn) colBtn.addEventListener('click', _toggleCollapseAll);
+
+    // Usuals strip delegation
+    var usualsStrip = document.getElementById('shop-usuals-strip');
+    if (usualsStrip) usualsStrip.addEventListener('click', function(e) {
+      var chip = e.target.closest('.shop-usual-chip');
+      if (chip) _toggleUsual(chip.dataset.usualName, chip.dataset.usualCat);
+    });
+
+    // Last trip button
+    var lastTripBtn = document.getElementById('shop-lasttrip-btn');
+    if (lastTripBtn) lastTripBtn.addEventListener('click', _repeatLastTrip);
+
+    // List body delegation: delete > item row > collapse header
+    var listBody = document.getElementById('shop-list-body');
+    if (listBody) listBody.addEventListener('click', function(e) {
+      var delBtn = e.target.closest('.shop-item-delete');
+      if (delBtn) {
+        e.stopPropagation();
+        if (delBtn.dataset.deleteName) _deleteItem(delBtn.dataset.deleteName);
+        return;
+      }
+      var row = e.target.closest('.shop-item-row');
+      if (row) {
+        _toggleItem(row.dataset.itemName, row.dataset.itemCat, row.dataset.itemMode);
+        return;
+      }
+      var colHeader = e.target.closest('.shop-cat-header');
+      if (colHeader && colHeader.dataset.collapse) {
+        _toggleCollapse(colHeader.dataset.collapse);
+      }
+    });
+
+    // Autocomplete list delegation
+    var acList = document.getElementById('shop-ac-list');
+    if (acList) acList.addEventListener('click', function(e) {
+      var item = e.target.closest('.shop-ac-item');
+      if (item && item.dataset.acName) _quickAdd(item.dataset.acName);
+    });
+
+    // Quick-add input — keyboard stays up after add (rapid-fire mode)
+    var input = document.getElementById('shop-quickadd-input');
+    if (input) {
+      input.addEventListener('input', function() {
+        var val = this.value.trim();
+        if (val.length >= 1) { _showAC(val); } else { _hideAC(); }
+      });
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.keyCode === 13) _quickAdd(this.value);
+      });
+      input.addEventListener('blur', function() {
+        setTimeout(_hideAC, 180);
+      });
+    }
+
+    // Quick-add button
+    var addBtn = document.getElementById('shop-quickadd-btn');
+    if (addBtn) addBtn.addEventListener('click', function() {
+      var inp = document.getElementById('shop-quickadd-input');
+      if (inp) _quickAdd(inp.value);
+    });
+  }
+
+  return { render, bindEvents };
+
+})();
+
+
+/* ══════════════════════════════════════════════════════════════
    SECTION 16 — BOOT — ALWAYS LAST
    future: main.js
 ══════════════════════════════════════════════════════════════ */
@@ -10784,6 +12576,32 @@ var App = (function() {
     PhotoManager.applyAll();
     PhotoManager.bindInput('avatar-file-input');
     PhotoManager.bindInput('settings-photo-input');
+    // Bind embedded inputs in Track/Insights/You avatar labels
+    document.querySelectorAll('.avatar-file-all').forEach(function(input) {
+      input.addEventListener('change', function() {
+        var file = this.files && this.files[0];
+        if (!file) return;
+        // Reuse PhotoManager compress+save+applyAll flow
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var img = new Image();
+          img.onload = function() {
+            var MAX = 200;
+            var scale = Math.min(MAX / img.width, MAX / img.height, 1);
+            var canvas = document.createElement('canvas');
+            canvas.width  = Math.round(img.width  * scale);
+            canvas.height = Math.round(img.height * scale);
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+            var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+            PhotoManager.save(dataUrl);
+            PhotoManager.applyAll();
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        this.value = '';
+      });
+    });
 
     // 2b. Register Router activation hook — must happen before any Router.go()
     Router.onActivate(function(screenId) {
@@ -10798,6 +12616,7 @@ var App = (function() {
       if (screenId === 'bp')            ScreenBP.render();
       if (screenId === 'glucose')        ScreenGlucose.render();
       if (screenId === 'meals')          ScreenMeals.render();
+      if (screenId === 'shop')           ScreenShop.render();
     });
 
     // 3. Bind global events
@@ -10816,6 +12635,7 @@ var App = (function() {
     ScreenBP.bindEvents();
     ScreenGlucose.bindEvents();
     ScreenMeals.bindEvents();
+    ScreenShop.bindEvents();
     ScreenYou.bindEvents();
     ScreenYou.bindProfileEvents();
     InvAC.bindEvents();
@@ -10859,15 +12679,9 @@ var App = (function() {
     document.addEventListener('click', function(e) {
       if (e.target.closest('[data-settings]')) Router.go('settings');
       if (e.target.closest('[data-shop]'))     Router.go('shop');
-      if (e.target.closest('[data-profile]')) {
-        var input = document.getElementById('avatar-file-input');
-        if (input) input.click();
-      }
+      // Profile photo: handled by <label for="avatar-file-input"> — no JS click needed
     });
-    document.getElementById('avatar-btn').addEventListener('click', function() {
-      var input = document.getElementById('avatar-file-input');
-      if (input) input.click();
-    });
+    // avatar-btn is now a <label for="avatar-file-input"> — click handled natively
   }
 
   /* ── FAB ── */
@@ -10902,11 +12716,10 @@ var App = (function() {
       bowel:    'sheet-bowel',
       bp:       'sheet-bp',
       glucose:  'sheet-glucose',
-      shop:     null,
+      shop:     'shop',
     };
     if (action === 'shop') {
-      Router.go('track');
-      Components.toast('Shop coming soon');
+      Router.go('shop');
       return;
     }
     if (sheetMap[action]) {
