@@ -303,7 +303,7 @@ input, textarea { font-family: inherit; }
 }
 .avatar-btn-photo:active { opacity: 0.75; }
 .avatar-btn-photo img {
-  width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+  width: 100%; height: 100%; object-fit: cover; object-position: center 20%; border-radius: 50%;
 }
 /* Onboarding photo step */
 .ob-photo-circle {
@@ -314,7 +314,7 @@ input, textarea { font-family: inherit; }
   transition: border-color 0.15s;
 }
 .ob-photo-circle.has-photo { border-style: solid; border-color: var(--acc); }
-.ob-photo-circle img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.ob-photo-circle img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; border-radius: 50%; }
 .ob-photo-circle svg { color: var(--mt); }
 /* Settings photo row */
 .settings-photo-row {
@@ -328,7 +328,7 @@ input, textarea { font-family: inherit; }
   overflow: hidden; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
 }
-.settings-photo-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.settings-photo-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; border-radius: 50%; }
 .settings-photo-label { font-size: 14px; color: var(--tx); flex: 1; }
 .settings-photo-hint { font-size: 12px; color: var(--mt); margin-top: 2px; }
 
@@ -615,12 +615,11 @@ input, textarea { font-family: inherit; }
   transform: rotate(-90deg);
 }
 .ring-track { fill: none; stroke: var(--bg2); stroke-width: 6; }
-.ring-fill  {
+.ring-segment {
   fill: none;
-  stroke: var(--acc);
-  stroke-width: 6;
-  stroke-linecap: round;
-  transition: stroke-dashoffset 0.6s cubic-bezier(0.4,0,0.2,1);
+  stroke-width: 11;
+  stroke-linecap: butt;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.4,0,0.2,1);
 }
 .ring-center-text {
   position: absolute;
@@ -840,12 +839,13 @@ input, textarea { font-family: inherit; }
 
 /* Today nudge */
 .today-nudge {
-  margin: 14px 20px 0;
-  font-size: 13px;
-  color: var(--mt);
+  margin: 10px 20px 4px;
+  font-size: 15px;
+  color: var(--acc);
   text-align: center;
   line-height: 1.5;
   font-style: italic;
+  font-weight: 500;
 }
 
 /* Timeline overflow indicator */
@@ -1782,6 +1782,64 @@ input, textarea { font-family: inherit; }
    TOAST
 ══════════════════════════════════════════════ */
 
+/* ── Photo Crop Modal ── */
+#photo-crop-modal {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+}
+.crop-modal-bg {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.85);
+  pointer-events: none; /* CRITICAL: must not intercept clicks/drags */
+}
+.crop-modal-inner {
+  position: relative; z-index: 2; /* above bg */
+  width: 100%; max-width: 420px;
+  padding: 24px 20px 28px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.crop-modal-title {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 400;
+  color: #fff; letter-spacing: -0.02em;
+}
+.crop-modal-hint {
+  font-size: 13px; color: rgba(255,255,255,0.6);
+  margin-bottom: 4px;
+}
+.crop-viewport {
+  position: relative;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+  background: #111;
+  box-shadow: 0 0 0 3px var(--acc);
+}
+.crop-viewport:active { cursor: grabbing; }
+#crop-img {
+  position: absolute;
+  max-width: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform-origin: top left;
+}
+.crop-circle-overlay {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.3);
+  pointer-events: none;
+}
+.crop-modal-actions {
+  display: flex; gap: 12px; margin-top: 8px; width: 100%;
+}
+.crop-modal-actions .btn-ghost {
+  flex: 1; background: rgba(255,255,255,0.12);
+  color: #fff; border: none;
+}
+.crop-modal-actions .btn-primary { flex: 2; }
+
 #toast-host {
   position: fixed;
   bottom: calc(var(--nav-h) + 16px + var(--safe-bottom));
@@ -2002,8 +2060,9 @@ input, textarea { font-family: inherit; }
 }
 .ob-back-btn:active { background: var(--bd); }
 .ob-skip-hint {
-  font-size: 13px; color: var(--mt);
+  font-size: 15px; color: var(--acc);
   text-align: center; line-height: 1.5;
+  font-weight: 500;
 }
 .ob-title {
   font-family: var(--font-display);
@@ -2222,6 +2281,19 @@ input, textarea { font-family: inherit; }
   text-align: center; line-height: 1.2;
   max-width: 64px;
 }
+.hyd-quick-star {
+  position: absolute;
+  top: 2px; left: 2px;
+  font-size: 18px; line-height: 1;
+  color: var(--mt);
+  background: none; border: none;
+  padding: 8px;
+  cursor: pointer; z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s;
+}
+.hyd-quick-star.pinned { color: #F5A623; }
+.hyd-quick-card.pinned { border-color: rgba(245,166,35,0.35); }
 
 /* Library button */
 .hyd-library-btn {
@@ -3046,6 +3118,35 @@ input, textarea { font-family: inherit; }
   border-color: var(--acc); background: var(--accp);
 }
 .meal-entry-textarea::placeholder { color: var(--mt); opacity: 0.7; }
+#meal-ac-list {
+  background: var(--sf);
+  border: 1.5px solid var(--bd);
+  border-radius: 10px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.meal-ac-item {
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--tx);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--bd);
+  -webkit-tap-highlight-color: transparent;
+}
+.meal-ac-item:last-child { border-bottom: none; }
+.meal-ac-item:active { background: var(--bg2); }
+.meal-ac-tags {
+  font-size: 11px;
+  color: var(--mt);
+  margin-left: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
 .meal-entry-time {
   width: 100%; box-sizing: border-box;
   background: var(--sf); border: 2px solid transparent;
@@ -3172,6 +3273,16 @@ input, textarea { font-family: inherit; }
   min-height: 96px;
 }
 .dlib-card:active { transform: scale(0.94); background: var(--bg2); }
+.dlib-card.pinned { border: 1.5px solid rgba(245,166,35,0.4); }
+.dlib-card-star {
+  position: absolute; top: 5px; left: 7px;
+  font-size: 13px; color: var(--mt);
+  background: none; border: none; padding: 2px;
+  cursor: pointer; z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s;
+}
+.dlib-card-star.pinned { color: #F5A623; }
 .dlib-card-emoji { font-size: 28px; line-height: 1; }
 .dlib-card-coeff {
   position: absolute; top: 8px; right: 8px;
@@ -3486,12 +3597,9 @@ input, textarea { font-family: inherit; }
       <!-- Hydration card -->
       <div class="card hydration-card mx-20" id="hydration-card">
         <div class="hydration-ring-wrap">
-          <svg viewBox="0 0 88 88">
-            <circle class="ring-track" cx="44" cy="44" r="38"/>
-            <circle class="ring-fill" cx="44" cy="44" r="38"
-              id="hydration-ring"
-              stroke-dasharray="238.76"
-              stroke-dashoffset="238.76"/>
+          <svg viewBox="0 0 88 88" id="hydration-ring-svg">
+            <circle class="ring-track" cx="44" cy="44" r="34"/>
+            <g id="hydration-segments"></g>
           </svg>
           <div class="ring-center-text">
             <span class="ring-pct" id="hydration-pct">0%</span>
@@ -3507,6 +3615,9 @@ input, textarea { font-family: inherit; }
           </div>
         </div>
       </div>
+
+      <!-- Hydration nudge — sits directly below ring for contextual impact -->
+      <div id="today-nudge" class="today-nudge" style="display:none;"></div>
 
       <!-- Timeline -->
       <div class="mt-md">
@@ -3526,27 +3637,12 @@ input, textarea { font-family: inherit; }
       <!-- Last BP / glucose at a glance -->
       <div id="today-metrics-strip" class="today-metrics-strip" style="display:none;"></div>
 
-      <!-- Timeline -->
-      <div class="mt-md">
-        <div class="section-label">Today's Log</div>
-        <div class="timeline-wrap card" id="today-timeline" style="margin:0 20px;">
-          <div class="empty-state">
-            <div class="empty-icon">✦</div>
-            <div class="empty-title">Nothing logged yet</div>
-            <div class="empty-sub">Tap the + button below to start tracking your day.</div>
-          </div>
-        </div>
-      </div>
-
       <!-- Insight strip -->
       <div class="insight-strip" id="today-insight-strip" style="display:none;">
         <div class="insight-strip-label">Pattern noticed</div>
         <div class="insight-strip-text" id="today-insight-text"></div>
         <span class="insight-strip-see-all">See all insights →</span>
       </div>
-
-      <!-- Awareness nudge -->
-      <div id="today-nudge" class="today-nudge" style="display:none;"></div>
 
       <div style="height:24px;"></div>
     </div><!-- /screen-today -->
@@ -4104,8 +4200,7 @@ input, textarea { font-family: inherit; }
           </div>
           <div style="flex:1;"></div>
           <div class="ob-footer" style="display:flex;gap:10px;">
-            <button class="btn-primary" style="background:var(--bg2);color:var(--mt);" data-ob-next>Skip</button>
-            <button class="btn-primary" data-ob-next>Continue</button>
+            <button class="btn-primary" id="ob-supp-skip-btn" data-ob-next>Skip</button>
           </div>
         </div>
 
@@ -4120,8 +4215,7 @@ input, textarea { font-family: inherit; }
           </div>
           <div style="flex:1;"></div>
           <div class="ob-footer" style="display:flex;gap:10px;">
-            <button class="btn-primary" style="background:var(--bg2);color:var(--mt);" data-ob-next>Skip</button>
-            <button class="btn-primary" data-ob-next>Continue</button>
+            <button class="btn-primary" id="ob-med-skip-btn" data-ob-next>Skip</button>
           </div>
         </div>
 
@@ -4231,7 +4325,7 @@ input, textarea { font-family: inherit; }
       </div>
 
       <!-- Quick Add -->
-      <div class="hyd-section-label">QUICK ADD <span class="hyd-tap-hint">tap to add</span></div>
+      <div class="hyd-section-label">FAVORITES <span class="hyd-tap-hint">★ to pin · tap to add</span></div>
       <div class="hyd-quick-strip" id="hyd-quick-strip"></div>
       <button class="hyd-settings-link" id="hydration-settings-btn">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
@@ -4299,6 +4393,10 @@ input, textarea { font-family: inherit; }
         <!-- Symptoms -->
         <div class="bowel-section-label">SYMPTOMS <span class="hyd-tap-hint">select all that apply</span></div>
         <div class="bowel-symptom-wrap" id="bowel-symptom-wrap"></div>
+
+        <!-- Time -->
+        <div class="bowel-section-label" style="margin-top:16px;">TIME <span class="hyd-tap-hint">adjust if logging later</span></div>
+        <input type="time" id="bowel-log-time-input" class="meal-entry-time" style="width:100%;box-sizing:border-box;margin-bottom:4px;" aria-label="Log time">
 
         <button class="bowel-save-btn" id="bowel-screen-save-btn">Log Entry</button>
 
@@ -4632,6 +4730,8 @@ input, textarea { font-family: inherit; }
           spellcheck="true"
           aria-label="Food description"
         ></textarea>
+        <!-- FoodEngine autocomplete suggestions -->
+        <div id="meal-ac-list" style="display:none;"></div>
         <!-- Amount — collapsed by default -->
         <div id="meal-amount-toggle" class="meal-amount-toggle">+ Add amount</div>
         <div id="meal-amount-wrap" style="display:none;">
@@ -5131,6 +5231,23 @@ input, textarea { font-family: inherit; }
   </nav>
 
   <!-- Toast host -->
+  <!-- ── PHOTO CROP MODAL — must be in DOM before App.init() runs ── -->
+  <div id="photo-crop-modal" style="display:none;" aria-modal="true" role="dialog" aria-label="Crop photo">
+    <div class="crop-modal-bg"></div>
+    <div class="crop-modal-inner">
+      <div class="crop-modal-title">Position your photo</div>
+      <div class="crop-modal-hint">Drag to center your face in the circle</div>
+      <div class="crop-viewport" id="crop-viewport">
+        <img id="crop-img" src="" alt="" draggable="false">
+        <div class="crop-circle-overlay"></div>
+      </div>
+      <div class="crop-modal-actions">
+        <button class="btn-ghost" id="crop-cancel-btn">Cancel</button>
+        <button class="btn-primary" id="crop-use-btn">Use Photo</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast-host" aria-live="polite" aria-atomic="true"></div>
 
 </div><!-- /app -->
@@ -5236,6 +5353,8 @@ input, textarea { font-family: inherit; }
         spellcheck="true"
         aria-label="Food description"
       ></textarea>
+      <!-- FoodEngine autocomplete suggestions -->
+      <div id="fab-meal-ac-list" style="display:none;"></div>
       <!-- Amount toggle -->
       <div id="fab-amount-toggle" class="meal-amount-toggle">+ Add amount</div>
       <div id="fab-amount-wrap" style="display:none;">
@@ -5653,7 +5772,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v16-13',
+  version:            'v16-32',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -5679,6 +5798,7 @@ var CONFIG = {
     { id: 'soda',           label: 'Soda',            emoji: '🥤', coeff: 0.60, color: '#E8734A', tags: ['sugar', 'caffeine'] },
     { id: 'beer',           label: 'Beer',            emoji: '🍺', coeff: 0.40, color: '#D4A017', tags: ['alcohol'] },
     { id: 'wine',           label: 'Wine',            emoji: '🍷', coeff: 0.30, color: '#9B3A6E', tags: ['alcohol'] },
+    { id: 'salt_sole',      label: 'Electrolyte Water', emoji: '🫧', coeff: 1.00, color: '#6BB8D4', tags: ['electrolytes', 'hydration'] },
   ],
 };
 
@@ -6238,6 +6358,7 @@ var State = (function() {
       lastBackupTs: null,
       coffeeDefault: 'coffee',  // 'coffee' | 'coffee_milk' | 'coffee_sugar'
     },
+    favoriteDrinks: [],  // up to 4 pinned drink IDs for quick-add strip
   };
 
   var _state = null;
@@ -6548,19 +6669,29 @@ var Router = (function() {
 var Components = (function() {
 
   /* ── Toast ── */
-  function toast(msg, undoFn) {
+  function toast(msg, undoFn, actionFn, actionLabel) {
     var host = document.getElementById('toast-host');
     if (!host) return;
     var el = document.createElement('div');
     el.className = 'toast';
     // [SAFE: msg is always internal string, never user input]
     var inner = '<span>' + Utils.esc(msg) + '</span>';
-    if (undoFn) inner += '<button class="toast-undo">Undo</button>';
+    if (undoFn)   inner += '<button class="toast-undo">Undo</button>';
+    if (actionFn) inner += '<button class="toast-undo">' + Utils.esc(actionLabel || 'Open') + '</button>';
     el.innerHTML = inner;
     if (undoFn) {
       el.querySelector('.toast-undo').addEventListener('click', function() {
         Utils.haptic('undo');
         undoFn();
+        _dismissToast(el);
+      });
+    }
+    if (actionFn) {
+      var btns = el.querySelectorAll('.toast-undo');
+      var actionBtn = btns[btns.length - 1];
+      actionBtn.addEventListener('click', function() {
+        Utils.haptic('light');
+        actionFn();
         _dismissToast(el);
       });
     }
@@ -6748,20 +6879,75 @@ var ScreenToday = (function() {
   function _renderHydration() {
     var s = State.get();
     var todayH = Utils.todayLogs(s.logs.hydration);
-    // Use CONFIG.drinks coefficients — single source of truth
+    var goal = s.goals.hydrationOz || CONFIG.hydrationGoalOz;
+
     var totalOz = todayH.reduce(function(sum, l) { return sum + l.oz; }, 0);
     var effectiveOz = todayH.reduce(function(sum, l) {
       var d = CONFIG.drinks.find(function(d) { return d.id === l.type; });
       var c = d ? d.coeff : 0.9;
       return sum + (l.oz * c);
     }, 0);
-    var goal = s.goals.hydrationOz || CONFIG.hydrationGoalOz;
-    var pct = Utils.clamp(totalOz / goal, 0, 1);
 
-    // Ring
-    var circumference = 238.76;
-    var ring = document.getElementById('hydration-ring');
-    if (ring) ring.style.strokeDashoffset = (circumference * (1 - pct)).toFixed(2);
+    var pct = totalOz / goal;
+    var displayPct = Math.min(pct, 1.25); // 125% cap
+
+    // Segmented arc using SVG <path> arcs — fixes same-color segment merging.
+    // <circle> + dasharray visually merges same-color adjacent segments.
+    // <path> arcs are geometric: each is a true unique arc slice with gaps.
+    //
+    // Center (44,44), r=34. 0 deg = 12 o'clock (top). Clockwise.
+    // Over 100%: segments wrap past 360deg. Cap at 125%.
+    var CX = 44, CY = 44, R = 34;
+    var FULL_DEG = 360;
+    var MAX_DEG  = FULL_DEG * 1.25;
+    var GAP_DEG  = 1.5;
+
+    function _degToXY(angleDeg) {
+      var rad = (angleDeg - 90) * Math.PI / 180;
+      return [(CX + R * Math.cos(rad)).toFixed(3), (CY + R * Math.sin(rad)).toFixed(3)];
+    }
+    function _arcPath(startDeg, endDeg, color) {
+      // Cap arc at just under 360 for a single segment — full circle path needs special handling
+      var sweep = Math.min(endDeg - startDeg, 359.9);
+      var p1 = _degToXY(startDeg);
+      var p2 = _degToXY(startDeg + sweep);
+      var large = sweep > 180 ? 1 : 0;
+      return '<path d="M ' + p1[0] + ' ' + p1[1]
+        + ' A ' + R + ' ' + R + ' 0 ' + large + ' 1 ' + p2[0] + ' ' + p2[1] + '"'
+        + ' fill="none" stroke="' + color + '" stroke-width="11" stroke-linecap="butt"/>';
+    }
+
+    var segEl = document.getElementById('hydration-segments');
+    if (segEl) {
+      if (todayH.length === 0) {
+        segEl.innerHTML = '';
+      } else {
+        var logs = todayH.slice().sort(function(a, b) { return a.ts - b.ts; });
+        var degSoFar = 0;
+        var html = '';
+
+        logs.forEach(function(l) {
+          if (degSoFar >= MAX_DEG) return;
+
+          var drinkDef = CONFIG.drinks.find(function(d) { return d.id === l.type; });
+          var color = drinkDef ? drinkDef.color : '#7EC8E3';
+
+          var segDeg = (l.oz / goal) * FULL_DEG;
+          segDeg = Math.min(segDeg, MAX_DEG - degSoFar);
+          if (segDeg <= 0) return;
+
+          var startDeg = degSoFar;
+          var drawnDeg = segDeg - GAP_DEG;
+
+          if (drawnDeg > 0.5) {
+            html += _arcPath(startDeg, startDeg + drawnDeg, color);
+          }
+
+          degSoFar += segDeg;
+        });
+        segEl.innerHTML = html;
+      }
+    }
 
     var pctEl = document.getElementById('hydration-pct');
     if (pctEl) pctEl.textContent = Math.round(pct * 100) + '%';
@@ -6773,7 +6959,7 @@ var ScreenToday = (function() {
     if (goalEl) goalEl.textContent = 'of ' + goal + ' oz daily goal';
 
     var bar = document.getElementById('hydration-bar');
-    if (bar) bar.style.width = (pct * 100).toFixed(1) + '%';
+    if (bar) bar.style.width = (Math.min(pct, 1) * 100).toFixed(1) + '%';
   }
 
   // Bristol type number → plain English label
@@ -6792,13 +6978,35 @@ var ScreenToday = (function() {
     var items = [];
 
     s.logs.hydration.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
-      // Use CONFIG.drinks label — falls back to capitalised id without underscores
+      // Use CONFIG.drinks label and emoji — falls back to capitalised id without underscores
       var drinkDef = CONFIG.drinks.find(function(d) { return d.id === l.type; });
       var drinkLabel = drinkDef ? drinkDef.label : _capitalize(l.type.replace(/_/g, ' '));
-      items.push({ ts: l.ts, icon: '💧', title: Utils.fmtOz(l.oz) + ' — ' + drinkLabel, sub: '', color: 'ti-hydration' });
+      var drinkEmoji = drinkDef ? drinkDef.emoji : '💧';
+      items.push({ ts: l.ts, icon: drinkEmoji, title: Utils.fmtOz(l.oz) + ' — ' + drinkLabel, sub: '', color: 'ti-hydration' });
     });
-    s.logs.meals.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
-      items.push({ ts: l.ts, icon: '🍽️', title: _capitalize(l.slot || l.type || 'Meal'), sub: l.text ? Utils.esc(l.text) : '', color: 'ti-meal' });
+    // Group meals by slot + mealTs (within 60s window) → single timeline entry
+    var todayMeals = s.logs.meals.filter(function(l) { return l.ts >= today; });
+    var mealGroups = [];
+    todayMeals.forEach(function(l) {
+      // Find existing group: same slot, mealTs within 60 seconds
+      var group = null;
+      for (var i = 0; i < mealGroups.length; i++) {
+        if (mealGroups[i].slot === (l.slot || l.type)
+            && Math.abs(mealGroups[i].mealTs - l.mealTs) <= 60000) {
+          group = mealGroups[i];
+          break;
+        }
+      }
+      if (group) {
+        group.foods.push(l.text);
+      } else {
+        mealGroups.push({ slot: l.slot || l.type, mealTs: l.mealTs, ts: l.ts, foods: [l.text] });
+      }
+    });
+    mealGroups.forEach(function(g) {
+      var slotLabel = _capitalize(g.slot || 'Meal');
+      var foodList  = g.foods.filter(Boolean).join(', ');
+      items.push({ ts: g.ts, icon: '🍽️', title: slotLabel, sub: foodList ? Utils.esc(foodList) : '', color: 'ti-meal' });
     });
     s.logs.bowel.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
       var typeLabel = _BRISTOL_LABELS[l.bristolType] || ('Type ' + l.bristolType);
@@ -7283,7 +7491,9 @@ var ScreenHydration = (function() {
     var html = '';
     ids.forEach(function(id) {
       var d = CONFIG.drinks.find(function(x) { return x.id === id; }) || CONFIG.drinks[0];
-      html += '<div class="hyd-quick-card" data-drink-id="' + Utils.esc(d.id) + '">'
+      var fav = ScreenDrinkLibrary.isFavorite(d.id);
+      html += '<div class="hyd-quick-card' + (fav ? ' pinned' : '') + '" data-drink-id="' + Utils.esc(d.id) + '">'
+            + '<button class="hyd-quick-star' + (fav ? ' pinned' : '') + '" data-pin-id="' + Utils.esc(d.id) + '" aria-label="' + (fav ? 'Unpin' : 'Pin') + '">' + (fav ? '★' : '☆') + '</button>'
             + '<div class="hyd-quick-emoji">' + Utils.esc(d.emoji) + '</div>'
             + '<div class="hyd-quick-coeff">' + Math.round(d.coeff * 100) + '%</div>'
             + '<div class="hyd-quick-name">' + Utils.esc(d.label) + '</div>'
@@ -7510,6 +7720,15 @@ var ScreenHydration = (function() {
     // Pre-render ring/bars with any existing data (also calls _renderQuickStrip)
     render();
     document.getElementById('hyd-quick-strip').addEventListener('click', function(e) {
+      // Star pin/unpin — must check before card handler
+      var star = e.target.closest('.hyd-quick-star[data-pin-id]');
+      if (star) {
+        e.stopPropagation();
+        Utils.haptic('light');
+        ScreenDrinkLibrary.toggleFavorite(star.dataset.pinId);
+        _renderQuickStrip(); // re-render strip to reflect new pin state
+        return;
+      }
       var card = e.target.closest('.hyd-quick-card[data-drink-id]');
       if (!card) return;
       Utils.haptic('light');
@@ -7657,16 +7876,40 @@ var ScreenDrinkLibrary = (function() {
   function _quickAddIds() {
     var defaults = ['water', 'sparkling', 'tea', 'juice'];
     var s = State.get();
+    var pinned = (s.favoriteDrinks || []).slice(0, 4);
+    var seen = pinned.slice(); // pinned drinks come first
+
+    // Fill remaining slots with today's recent drinks
     var start = Utils.dayStart();
     var todayLogs = s.logs.hydration.filter(function(l) { return l.ts >= start; });
-    var seen = [];
     todayLogs.slice().reverse().forEach(function(l) {
       if (seen.indexOf(l.type) < 0 && seen.length < 4) seen.push(l.type);
     });
+
+    // Fill remaining slots with defaults
     defaults.forEach(function(id) {
       if (seen.length < 4 && seen.indexOf(id) < 0) seen.push(id);
     });
     return seen.slice(0, 4);
+  }
+
+  function _toggleFavorite(drinkId) {
+    var s = State.get();
+    var favs = (s.favoriteDrinks || []).slice();
+    var idx = favs.indexOf(drinkId);
+    if (idx >= 0) {
+      favs.splice(idx, 1); // unpin
+    } else {
+      if (favs.length >= 4) favs.shift(); // drop oldest if at 4
+      favs.push(drinkId); // pin
+    }
+    State.update('favoriteDrinks', favs);
+    Storage.sched();
+  }
+
+  function isFavorite(drinkId) {
+    var s = State.get();
+    return (s.favoriteDrinks || []).indexOf(drinkId) >= 0;
   }
 
   function render() { _renderGrid(); }
@@ -7678,8 +7921,10 @@ var ScreenDrinkLibrary = (function() {
     CONFIG.drinks.forEach(function(d) {
       if (d.id === 'coffee_milk' || d.id === 'coffee_sugar') return;
       var isCoffee = (d.id === 'coffee');
-      html += '<div class="dlib-card" data-drink-id="' + Utils.esc(d.id) + '"'
+      var fav = isFavorite(d.id);
+      html += '<div class="dlib-card' + (fav ? ' pinned' : '') + '" data-drink-id="' + Utils.esc(d.id) + '"'
             + (isCoffee ? ' data-coffee="1"' : '') + '>'
+            + '<button class="dlib-card-star' + (fav ? ' pinned' : '') + '" data-pin-id="' + Utils.esc(d.id) + '" aria-label="' + (fav ? 'Unpin' : 'Pin') + '">' + (fav ? '★' : '☆') + '</button>'
             + '<div class="dlib-card-coeff">' + Math.round(d.coeff * 100) + '%</div>'
             + '<div class="dlib-card-emoji">' + Utils.esc(d.emoji) + '</div>'
             + '<div class="dlib-card-name">' + Utils.esc(d.label) + '</div>'
@@ -7716,6 +7961,15 @@ var ScreenDrinkLibrary = (function() {
 
     // Grid tap
     document.getElementById('dlib-grid').addEventListener('click', function(e) {
+      // Star pin/unpin
+      var star = e.target.closest('.dlib-card-star[data-pin-id]');
+      if (star) {
+        e.stopPropagation();
+        Utils.haptic('light');
+        _toggleFavorite(star.dataset.pinId);
+        _renderGrid(); // re-render to show updated star state
+        return;
+      }
       var card = e.target.closest('.dlib-card[data-drink-id]');
       if (!card) return;
       Utils.haptic('light');
@@ -7761,7 +8015,7 @@ var ScreenDrinkLibrary = (function() {
     });
   }
 
-  return { render: render, bindEvents: bindEvents, quickAddIds: _quickAddIds, openCoffeePicker: openCoffeePicker };
+  return { render: render, bindEvents: bindEvents, quickAddIds: _quickAddIds, openCoffeePicker: openCoffeePicker, toggleFavorite: _toggleFavorite, isFavorite: isFavorite };
 
 })();
 
@@ -8525,28 +8779,160 @@ var FAB = (function() {
 ══════════════════════════════════════════════════════════════ */
 var PhotoManager = (function() {
 
-  var STORAGE_KEY = 'asea-photo'; // separate from main state — large payload
+  var STORAGE_KEY = 'asea-photo';
+  var CROP_SIZE = 280; // matches CSS crop-viewport size in px
 
-  // Resize image to max 200x200 via canvas, return base64 JPEG
-  function _compress(file, callback) {
+  // ── CROP STATE ────────────────────────────────────────────
+  var _img = null;
+  var _imgW = 0;
+  var _imgH = 0;
+  var _scale = 1;
+  var _x = 0;   // image left offset relative to viewport top-left
+  var _y = 0;   // image top offset relative to viewport top-left
+  var _lastPointerX = 0;
+  var _lastPointerY = 0;
+  var _dragging = false;
+  var _onDoneCallback = null;
+
+  // ── OPEN CROP MODAL ──────────────────────────────────────
+  function _openCrop(file, onDone) {
+    _onDoneCallback = onDone;
     var reader = new FileReader();
     reader.onload = function(e) {
       var img = new Image();
       img.onload = function() {
-        var MAX = 200;
-        var scale = Math.min(MAX / img.width, MAX / img.height, 1);
-        var w = Math.round(img.width  * scale);
-        var h = Math.round(img.height * scale);
-        var canvas = document.createElement('canvas');
-        canvas.width  = w;
-        canvas.height = h;
-        var ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
-        callback(canvas.toDataURL('image/jpeg', 0.82));
+        _img = img;
+        _imgW = img.naturalWidth;
+        _imgH = img.naturalHeight;
+
+        // Scale so short dimension fills viewport, zoom 10% extra so image always covers
+        _scale = Math.max(CROP_SIZE / _imgW, CROP_SIZE / _imgH) * 1.1;
+
+        // Horizontal center; vertical: start at 15% from top (face-bias)
+        _x = (CROP_SIZE - _imgW * _scale) / 2;
+        _y = -(_imgH * _scale * 0.15);
+        _clamp();
+
+        var el = document.getElementById('crop-img');
+        el.src = img.src;
+        _updateImgEl(el);
+
+        document.getElementById('photo-crop-modal').style.display = 'flex';
       };
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
+  }
+
+  function _updateImgEl(el) {
+    if (!el) el = document.getElementById('crop-img');
+    if (!el) return;
+    el.style.width  = Math.round(_imgW * _scale) + 'px';
+    el.style.height = Math.round(_imgH * _scale) + 'px';
+    el.style.left   = Math.round(_x) + 'px';
+    el.style.top    = Math.round(_y) + 'px';
+  }
+
+  // Prevent image from leaving the viewport
+  function _clamp() {
+    var w = _imgW * _scale;
+    var h = _imgH * _scale;
+    if (_x > 0) _x = 0;
+    if (_y > 0) _y = 0;
+    if (_x + w < CROP_SIZE) _x = CROP_SIZE - w;
+    if (_y + h < CROP_SIZE) _y = CROP_SIZE - h;
+  }
+
+  // ── POINTER HELPERS (unify mouse + touch) ─────────────────
+  function _pointerDown(clientX, clientY) {
+    _dragging = true;
+    _lastPointerX = clientX;
+    _lastPointerY = clientY;
+  }
+  function _pointerMove(clientX, clientY) {
+    if (!_dragging) return;
+    var dx = clientX - _lastPointerX;
+    var dy = clientY - _lastPointerY;
+    _lastPointerX = clientX;
+    _lastPointerY = clientY;
+    _x += dx;
+    _y += dy;
+    _clamp();
+    _updateImgEl();
+  }
+  function _pointerUp() { _dragging = false; }
+
+  // ── CROP & SAVE ───────────────────────────────────────────
+  function _cropAndSave() {
+    if (!_img) { _closeCrop(); return; }
+
+    var OUT = 400;
+    var canvas = document.createElement('canvas');
+    canvas.width  = OUT;
+    canvas.height = OUT;
+    var ctx = canvas.getContext('2d');
+
+    // Circular clip
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(OUT / 2, OUT / 2, OUT / 2, 0, Math.PI * 2);
+    ctx.clip();
+
+    // _x/_y are viewport px. Convert back to natural image source coords.
+    var srcX = -_x / _scale;
+    var srcY = -_y / _scale;
+    var srcW =  CROP_SIZE / _scale;
+    var srcH =  CROP_SIZE / _scale;
+
+    ctx.drawImage(_img, srcX, srcY, srcW, srcH, 0, 0, OUT, OUT);
+    ctx.restore();
+
+    var dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+    _closeCrop();
+    save(dataUrl);
+    // Apply immediately using the fresh dataUrl — don't re-read localStorage
+    _applyDataUrl(dataUrl);
+    if (_onDoneCallback) _onDoneCallback(dataUrl);
+  }
+
+  function _closeCrop() {
+    document.getElementById('photo-crop-modal').style.display = 'none';
+    _dragging = false;
+    _img = null;
+  }
+
+  // ── INIT CROP MODAL EVENTS ────────────────────────────────
+  function initCropModal() {
+    var viewport = document.getElementById('crop-viewport');
+    if (!viewport) return;
+
+    // Mouse events — delta-based drag, no viewport rect needed
+    viewport.addEventListener('mousedown', function(e) {
+      _pointerDown(e.clientX, e.clientY);
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', function(e) {
+      _pointerMove(e.clientX, e.clientY);
+    });
+    document.addEventListener('mouseup', _pointerUp);
+
+    // Touch events
+    viewport.addEventListener('touchstart', function(e) {
+      if (e.touches.length !== 1) return;
+      _pointerDown(e.touches[0].clientX, e.touches[0].clientY);
+      e.preventDefault();
+    }, { passive: false });
+
+    viewport.addEventListener('touchmove', function(e) {
+      if (e.touches.length !== 1) return;
+      _pointerMove(e.touches[0].clientX, e.touches[0].clientY);
+      e.preventDefault();
+    }, { passive: false });
+
+    viewport.addEventListener('touchend', _pointerUp);
+
+    document.getElementById('crop-use-btn').addEventListener('click', _cropAndSave);
+    document.getElementById('crop-cancel-btn').addEventListener('click', _closeCrop);
   }
 
   // Save base64 to localStorage
@@ -8559,16 +8945,12 @@ var PhotoManager = (function() {
     try { return localStorage.getItem(STORAGE_KEY) || null; } catch(e) { return null; }
   }
 
-  // Apply stored photo to all photo elements in the DOM
-  function applyAll() {
-    var dataUrl = load();
-    // Today screen avatar (unique ids)
+  // Apply a dataUrl directly to all photo elements — used after crop (bypasses localStorage re-read)
+  function _applyDataUrl(dataUrl) {
     _applyToEl('avatar-img', 'avatar-svg', dataUrl);
-    // Settings screen photo
     _applyToEl('settings-photo-img', 'settings-photo-svg', dataUrl);
     var hint = document.getElementById('settings-photo-hint');
     if (hint) hint.textContent = dataUrl ? 'Tap to change photo' : 'Tap to add a photo';
-    // Track / Insights / You headers (shared classes)
     var imgs = document.querySelectorAll('.avatar-img-all');
     var svgs = document.querySelectorAll('.avatar-svg-all');
     imgs.forEach(function(img) {
@@ -8578,6 +8960,11 @@ var PhotoManager = (function() {
     svgs.forEach(function(svg) {
       svg.style.display = dataUrl ? 'none' : '';
     });
+  }
+
+  // Apply stored photo to all photo elements in the DOM (on boot)
+  function applyAll() {
+    _applyDataUrl(load());
   }
 
   function _applyToEl(imgId, svgId, dataUrl) {
@@ -8594,24 +8981,31 @@ var PhotoManager = (function() {
     }
   }
 
-  // Wire a file input to process + save + apply
+  // Wire a file input to open crop modal instead of saving directly
   function bindInput(inputId, onDone) {
     var input = document.getElementById(inputId);
     if (!input) return;
     input.addEventListener('change', function() {
       var file = this.files && this.files[0];
       if (!file) return;
-      _compress(file, function(dataUrl) {
-        save(dataUrl);
-        applyAll();
-        if (onDone) onDone(dataUrl);
-      });
-      // Reset so same file can be re-selected
+      _openCrop(file, onDone);
       input.value = '';
     });
   }
 
-  return { load, save, applyAll, bindInput };
+  // Wire all avatar-file-all inputs (Track/Insights/You headers)
+  function bindAll() {
+    document.querySelectorAll('.avatar-file-all').forEach(function(input) {
+      input.addEventListener('change', function() {
+        var file = this.files && this.files[0];
+        if (!file) return;
+        _openCrop(file, null);
+        this.value = '';
+      });
+    });
+  }
+
+  return { load, save, applyAll, bindInput, bindAll, initCropModal };
 
 })();
 
@@ -8715,11 +9109,71 @@ var Onboarding = (function() {
       _goTo(6);
     });
 
+    // Add supplement in onboarding — open You inventory sheet, auto-advance after
+    var obAddSupp = document.getElementById('ob-add-supplement');
+    if (obAddSupp) {
+      obAddSupp.addEventListener('click', function() {
+        // Open the supplement add form inline (reuse You screen approach via a simple prompt-style mini sheet)
+        _openObItemSheet('supp');
+      });
+    }
+
+    // Add medication in onboarding
+    var obAddMed = document.getElementById('ob-add-medication');
+    if (obAddMed) {
+      obAddMed.addEventListener('click', function() {
+        _openObItemSheet('med');
+      });
+    }
+
     // Finish
     var finishBtn = document.getElementById('ob-finish-btn');
     if (finishBtn) {
       finishBtn.addEventListener('click', _finish);
     }
+  }
+
+  // Mini inline add for supp/med during onboarding
+  function _openObItemSheet(type) {
+    var listId = type === 'supp' ? 'ob-supplements-list' : 'ob-medications-list';
+    var list = document.getElementById(listId);
+    if (!list) return;
+
+    // Remove any existing mini-form
+    var existing = list.querySelector('.ob-mini-form');
+    if (existing) { existing.remove(); return; }
+
+    var label = type === 'supp' ? 'Supplement name' : 'Medication name';
+    var form = document.createElement('div');
+    form.className = 'ob-mini-form';
+    form.style.cssText = 'display:flex;gap:8px;margin-top:12px;align-items:center;';
+    form.innerHTML = '<input type="text" class="you-edit-input" placeholder="' + label + '" style="flex:1;font-size:14px;" autocomplete="off">'
+      + '<button class="btn-primary" style="padding:10px 16px;font-size:14px;">Add</button>';
+
+    list.appendChild(form);
+
+    var input = form.querySelector('input');
+    var saveBtn = form.querySelector('button');
+
+    // Don't auto-focus on mobile (CANON rule)
+    saveBtn.addEventListener('click', function() {
+      var name = input.value.trim();
+      if (!name) return;
+      var entry = { id: Utils.uid(), name: name, dose: '', slots: [], addedTs: Date.now(), fx: [] };
+      var stateKey = type === 'supp' ? 'supplements' : 'medications';
+      var items = State.get()[stateKey] || [];
+      items.push(entry);
+      State.update(stateKey, items);
+      Storage.sched();
+      form.remove();
+      // Show confirmation chip
+      var chip = document.createElement('div');
+      chip.style.cssText = 'font-size:13px;color:var(--acc);margin-top:8px;text-align:center;';
+      chip.textContent = '✓ ' + name + ' added';
+      list.appendChild(chip);
+      // Auto-advance to next step after short delay
+      setTimeout(function() { _goTo(_step + 1); }, 700);
+    });
   }
 
   function _finish() {
@@ -9628,6 +10082,12 @@ var ScreenBowel = (function() {
     _renderColorGrid();
     _renderSymptoms();
     _renderBadge();
+    // Initialize time field to now
+    var ti = document.getElementById('bowel-log-time-input');
+    if (ti && !ti._userEdited) {
+      var now = new Date();
+      ti.value = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    }
   }
 
   // ── Reset selections (called after successful save) ───────
@@ -9636,14 +10096,24 @@ var ScreenBowel = (function() {
     _selectedType     = 4;
     _selectedColor    = null;
     _selectedSymptoms = [];
+    var ti = document.getElementById('bowel-log-time-input');
+    if (ti) { ti._userEdited = false; }
   }
 
   // ── Save entry ────────────────────────────────────────────
 
   function _save() {
+    var timeInput = document.getElementById('bowel-log-time-input');
+    var ts = Date.now();
+    if (timeInput && timeInput.value) {
+      var parts = timeInput.value.split(':');
+      var d = new Date();
+      d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+      ts = d.getTime();
+    }
     var entry = {
       id:          Utils.uid(),
-      ts:          Date.now(),
+      ts:          ts,
       bristolType: _selectedType,
       color:       _selectedColor,
       symptoms:    _selectedSymptoms.slice(),
@@ -9672,6 +10142,12 @@ var ScreenBowel = (function() {
     document.getElementById('bowel-back-btn').addEventListener('click', function() {
       Router.back();
     });
+
+    // Mark time field as user-edited when they change it
+    var bowelTimeInput = document.getElementById('bowel-log-time-input');
+    if (bowelTimeInput) {
+      bowelTimeInput.addEventListener('change', function() { this._userEdited = true; });
+    }
 
     // Type selector — event delegation
     document.getElementById('bowel-type-list').addEventListener('click', function(e) {
@@ -10400,6 +10876,58 @@ var ScreenMeals = (function() {
     { tags: ['balanced_meal'],  words: ['salad','grilled','steamed','vegetable','protein','lean','chicken breast','salmon','quinoa'] },
   ];
 
+  // ── FoodEngine autocomplete for meal entry ─────────────────
+  // Tracks tags picked via AC for the current entry session
+  var _acTags = {};  // { foodName: tags[] } — merged at save time
+
+  function _getLastWord(text) {
+    // Get the last comma-separated item being typed
+    var parts = text.split(',');
+    return parts[parts.length - 1].trim();
+  }
+
+  function _renderMealAC(query) {
+    var list = document.getElementById('meal-ac-list');
+    if (!list) return;
+    if (!query || query.length < 2) { list.style.display = 'none'; return; }
+    var results = FoodEngine.search(query, 5);
+    if (results.length === 0) { list.style.display = 'none'; return; }
+    list.innerHTML = _buildACHtml(results);
+    list.style.display = 'block';
+  }
+
+  function _renderFabMealAC(query) {
+    var list = document.getElementById('fab-meal-ac-list');
+    if (!list) return;
+    if (!query || query.length < 2) { list.style.display = 'none'; return; }
+    var results = FoodEngine.search(query, 5);
+    if (results.length === 0) { list.style.display = 'none'; return; }
+    list.innerHTML = _buildACHtml(results);
+    list.style.display = 'block';
+  }
+
+  function _buildACHtml(results) {
+    var html = '';
+    results.forEach(function(item) {
+      var tagPreview = item.tags && item.tags.length ? item.tags.slice(0, 3).join(' · ') : '';
+      html += '<div class="meal-ac-item" data-ac-name="' + Utils.esc(item.name) + '" data-ac-tags="' + Utils.esc(JSON.stringify(item.tags || [])) + '">'
+        + Utils.esc(item.name)
+        + (tagPreview ? '<span class="meal-ac-tags">' + Utils.esc(tagPreview) + '</span>' : '')
+        + '</div>';
+    });
+    return html;
+  }
+
+  function _dismissMealAC() {
+    var list = document.getElementById('meal-ac-list');
+    if (list) list.style.display = 'none';
+  }
+
+  function _dismissFabMealAC() {
+    var list = document.getElementById('fab-meal-ac-list');
+    if (list) list.style.display = 'none';
+  }
+
   function _autoTag(text) {
     var lower = text.toLowerCase();
     var tags  = [];
@@ -10520,19 +11048,28 @@ var ScreenMeals = (function() {
     var savedIds = [];
 
     items.forEach(function(item) {
+      // Merge _autoTag (keyword-based) + FoodEngine tags (if user picked from AC)
+      var tags = _autoTag(item);
+      var acKey = item.toLowerCase().trim();
+      if (_acTags[acKey]) {
+        _acTags[acKey].forEach(function(t) {
+          if (tags.indexOf(t) === -1) tags.push(t);
+        });
+      }
       var entry = {
         id:     Utils.uid(),
-        ts:     Date.now(),
+        ts:     mealTs,   // use mealTs so Today timeline sorts to correct position
         mealTs: mealTs,
         slot:   _pendingSlot,
         type:   _pendingAction,
         text:   item,
         amount: amount || null,
-        tags:   _autoTag(item),
+        tags:   tags,
       };
       State.pushLog('meals', entry);
       savedIds.push(entry.id);
     });
+    _acTags = {}; // clear for next entry session
 
     Storage.sched();
     Components.closeSheet('sheet-meal-entry');
@@ -10574,6 +11111,9 @@ var ScreenMeals = (function() {
         html += '<span class="meals-log-item-icon">' + icon + '</span>';
         html += '<span class="meals-log-item-text">' + Utils.esc(e.text) + amtHtml + '</span>';
         html += '<span class="meals-log-item-time">' + Utils.esc(timeLabel) + '</span>';
+        html += '<button class="icon-btn meals-log-delete" data-meal-id="' + Utils.esc(e.id) + '" aria-label="Delete" style="width:28px;height:28px;flex-shrink:0;">'
+          + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+          + '</button>';
         html += '</div></div>';
       });
       el.innerHTML = html; // [SAFE: Utils.esc()]
@@ -10586,6 +11126,20 @@ var ScreenMeals = (function() {
   function bindEvents() {
     // Back
     document.getElementById('meals-back-btn').addEventListener('click', function() { Router.back(); });
+
+    // Delete meal entry
+    document.getElementById('screen-meals').addEventListener('click', function(e) {
+      var btn = e.target.closest('.meals-log-delete[data-meal-id]');
+      if (!btn) return;
+      var id = btn.dataset.mealId;
+      State.removeLog('meals', id);
+      Storage.sched();
+      render();
+      ScreenToday.render();
+      Components.toast('Entry removed', function() {
+        // No undo for delete — toast is just confirmation
+      });
+    });
 
     // Supp/med management shortcut → You screen
     document.getElementById('meals-settings-btn').addEventListener('click', function() {
@@ -10600,7 +11154,34 @@ var ScreenMeals = (function() {
 
     // Close entry sheet
     document.getElementById('meal-entry-close-btn').addEventListener('click', function() {
+      _acTags = {};
+      _dismissMealAC();
       Components.closeSheet('sheet-meal-entry');
+    });
+
+    // FoodEngine autocomplete — fires on textarea input
+    document.getElementById('meal-entry-text').addEventListener('input', function() {
+      var lastWord = _getLastWord(this.value);
+      _renderMealAC(lastWord);
+    });
+
+    // AC suggestion tap — fills last word, stores FoodEngine tags
+    document.getElementById('meal-ac-list').addEventListener('click', function(e) {
+      var item = e.target.closest('.meal-ac-item[data-ac-name]');
+      if (!item) return;
+      var name = item.dataset.acName;
+      var tags = [];
+      try { tags = JSON.parse(item.dataset.acTags || '[]'); } catch(e) {}
+
+      // Store tags keyed by food name (lowercase) for merge at save
+      _acTags[name.toLowerCase()] = tags;
+
+      // Replace last typed word with the selected food name
+      var ta = document.getElementById('meal-entry-text');
+      var parts = ta.value.split(',');
+      parts[parts.length - 1] = ' ' + name;
+      ta.value = parts.join(',');
+      _dismissMealAC();
     });
 
     // Amount toggle — expand/collapse
@@ -10684,6 +11265,8 @@ var ScreenMeals = (function() {
 
   function bindFabSheet() {
     document.getElementById('fab-meal-close-btn').addEventListener('click', function() {
+      _acTags = {};
+      _dismissFabMealAC();
       Components.closeSheet('sheet-meal');
     });
 
@@ -10694,6 +11277,26 @@ var ScreenMeals = (function() {
       _setFabSlot(pill.dataset.slot);
       var isSnack = pill.dataset.slot === 'snack';
       _renderFabRecentStrip(isSnack ? 'snack' : 'food', isSnack ? null : pill.dataset.slot);
+    });
+
+    // FoodEngine autocomplete on FAB textarea
+    document.getElementById('fab-meal-text').addEventListener('input', function() {
+      var lastWord = _getLastWord(this.value);
+      _renderFabMealAC(lastWord);
+    });
+
+    document.getElementById('fab-meal-ac-list').addEventListener('click', function(e) {
+      var item = e.target.closest('.meal-ac-item[data-ac-name]');
+      if (!item) return;
+      var name = item.dataset.acName;
+      var tags = [];
+      try { tags = JSON.parse(item.dataset.acTags || '[]'); } catch(ex) {}
+      _acTags[name.toLowerCase()] = tags;
+      var ta = document.getElementById('fab-meal-text');
+      var parts = ta.value.split(',');
+      parts[parts.length - 1] = ' ' + name;
+      ta.value = parts.join(',');
+      _dismissFabMealAC();
     });
 
     // Amount toggle
@@ -10727,29 +11330,44 @@ var ScreenMeals = (function() {
       var savedIds = [];
 
       items.forEach(function(item) {
+        var tags = _autoTag(item);
+        var acKey = item.toLowerCase().trim();
+        if (_acTags[acKey]) {
+          _acTags[acKey].forEach(function(t) {
+            if (tags.indexOf(t) === -1) tags.push(t);
+          });
+        }
         var entry = {
           id:     Utils.uid(),
-          ts:     Date.now(),
+          ts:     mealTs,   // use mealTs so Today timeline sorts to correct position
           mealTs: mealTs,
           slot:   isSnack ? _nearestMealSlot() : slot,
           type:   isSnack ? 'snack' : 'food',
           text:   item,
           amount: amount || null,
-          tags:   _autoTag(item),
+          tags:   tags,
         };
         State.pushLog('meals', entry);
         savedIds.push(entry.id);
       });
+      _acTags = {};
+      _dismissFabMealAC();
 
       Storage.sched();
       Components.closeSheet('sheet-meal');
-      render();
+      requestAnimationFrame(function() {
+        render();
+        ScreenToday.render();
+      });
       var label = items.length > 1 ? items.length + ' items logged' :
                   (isSnack ? 'Snack' : 'Meal') + ' logged';
       Components.toast(label, function() {
         savedIds.forEach(function(id) { State.removeLog('meals', id); });
         Storage.sched();
-        render();
+        requestAnimationFrame(function() {
+          render();
+          ScreenToday.render();
+        });
       });
     });
   }
@@ -12574,36 +13192,12 @@ var App = (function() {
     // 2. Apply theme
     Theme.apply(Theme.load());
 
-    // 2a. Apply stored profile photo + wire header/settings photo inputs
+    // 2a. Apply stored profile photo + wire all photo inputs through crop modal
     PhotoManager.applyAll();
+    PhotoManager.initCropModal();
     PhotoManager.bindInput('avatar-file-input');
     PhotoManager.bindInput('settings-photo-input');
-    // Bind embedded inputs in Track/Insights/You avatar labels
-    document.querySelectorAll('.avatar-file-all').forEach(function(input) {
-      input.addEventListener('change', function() {
-        var file = this.files && this.files[0];
-        if (!file) return;
-        // Reuse PhotoManager compress+save+applyAll flow
-        var reader = new FileReader();
-        reader.onload = function(e) {
-          var img = new Image();
-          img.onload = function() {
-            var MAX = 200;
-            var scale = Math.min(MAX / img.width, MAX / img.height, 1);
-            var canvas = document.createElement('canvas');
-            canvas.width  = Math.round(img.width  * scale);
-            canvas.height = Math.round(img.height * scale);
-            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-            var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-            PhotoManager.save(dataUrl);
-            PhotoManager.applyAll();
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-        this.value = '';
-      });
-    });
+    PhotoManager.bindAll(); // wires .avatar-file-all inputs (Track/Insights/You headers)
 
     // 2b. Register Router activation hook — must happen before any Router.go()
     Router.onActivate(function(screenId) {
@@ -12943,7 +13537,12 @@ var ScreenSettings = (function() {
     var lastTs = s.settings && s.settings.lastBackupTs;
     var daysSince = lastTs ? Math.floor((Date.now() - lastTs) / CONFIG.DAY) : 999;
     if (daysSince >= days) {
-      Components.toast('Time to back up your data — go to Settings');
+      Components.toast(
+        'Time to back up your data',
+        null,
+        function() { Router.go('settings'); },
+        'Open'
+      );
     }
   }
 
