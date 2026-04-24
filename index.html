@@ -896,7 +896,7 @@ input, textarea { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 18px;
+  padding: 18px 20px;
   background: var(--sf);
   border-bottom: 1px solid var(--bd);
   cursor: pointer;
@@ -910,31 +910,31 @@ input, textarea { font-family: inherit; }
 .track-row-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 .track-row-icon {
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
   border-radius: var(--r-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 21px;
   flex-shrink: 0;
 }
 .track-row-title {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   color: var(--tx);
 }
 .track-row-sub {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--mt);
-  margin-top: 1px;
+  margin-top: 2px;
 }
 .track-row-arrow {
   color: var(--mt);
-  font-size: 16px;
+  font-size: 20px;
 }
 
 /* Track icon backgrounds */
@@ -2485,23 +2485,34 @@ input, textarea { font-family: inherit; }
   font-size: 12px; color: var(--mt); text-align: center;
   margin-top: 4px; min-height: 16px;
 }
+.log-entry-btn {
+  width: 100%; padding: 16px; border-radius: 14px;
+  background: var(--acc); color: #fff;
+  font-size: 15px; font-weight: 600; border: none; cursor: pointer;
+  transition: opacity 0.15s; margin-top: 16px;
+}
+.log-entry-btn:disabled { opacity: 0.35; cursor: default; }
+.log-entry-btn:not(:disabled):active { opacity: 0.85; }
 
 /* ── Glucose screen ── */
 #screen-glucose .screen-header { position: sticky; top: 0; z-index: 10; }
 .gluc-scroll-body { padding: 0 24px; padding-top: 20px; }
 .gluc-last-reading {
-  font-size: 13px; color: var(--mt); margin-bottom: 24px;
+  font-size: 13px; color: var(--mt); margin-bottom: 32px;
   min-height: 18px; transition: color 0.2s;
 }
 .gluc-last-reading strong { color: var(--tx); transition: color 0.2s; }
 .gluc-last-reading.saved { color: var(--acc); }
 .gluc-last-reading.saved strong { color: var(--acc); }
 .gluc-field-wrap {
-  display: flex; align-items: center; justify-content: center;
-  gap: 12px; margin-bottom: 24px;
+  display: flex; justify-content: center;
+  margin-bottom: 24px;
+}
+.gluc-field-inner {
+  position: relative; display: inline-flex; align-items: center;
 }
 .gluc-input {
-  width: 160px; text-align: center;
+  width: 200px; text-align: center;
   font-family: var(--font-display); font-size: 56px; font-weight: 300;
   color: var(--tx); background: var(--sf);
   border: 2px solid transparent; border-radius: 18px;
@@ -2513,8 +2524,9 @@ input, textarea { font-family: inherit; }
 .gluc-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .gluc-input:focus { border-color: var(--acc); background: var(--accp); }
 .gluc-unit {
-  font-size: 14px; color: var(--mt); font-weight: 500;
-  padding-bottom: 8px; white-space: nowrap;
+  position: absolute; right: 10px; bottom: 14px;
+  font-size: 12px; color: var(--mt); font-weight: 500;
+  pointer-events: none; white-space: nowrap;
 }
 .gluc-section-label {
   font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
@@ -2541,7 +2553,84 @@ input, textarea { font-family: inherit; }
 }
 .gluc-hint.nudge { color: var(--acc); }
 
-/* ── Shop screen ── */
+/* ── Weight screen ── */
+#screen-weight .screen-header { position: sticky; top: 0; z-index: 10; }
+.wt-scroll-body { padding: 0 24px; padding-top: 20px; }
+/* wt-last-reading: below field, muted label */
+.wt-last-reading {
+  font-size: 13px; color: var(--mt);
+  text-align: center; min-height: 18px;
+  margin-top: 6px; margin-bottom: 4px;
+  transition: color 0.2s;
+}
+.wt-last-reading strong { color: var(--tx); font-size: 15px; transition: color 0.2s; }
+.wt-last-reading.saved { color: var(--acc); }
+.wt-last-reading.saved strong { color: var(--acc); }
+.wt-field-block {
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 20px;
+}
+.wt-field-wrap {
+  display: flex; justify-content: center;
+}
+.wt-field-inner {
+  position: relative; display: inline-flex; align-items: center;
+}
+.wt-input {
+  width: 200px; text-align: center;
+  font-family: var(--font-display); font-size: 56px; font-weight: 300;
+  color: var(--tx); background: var(--sf);
+  border: 2px solid transparent; border-radius: 18px;
+  padding: 18px 8px; outline: none;
+  transition: border-color 0.15s, background 0.12s;
+  -moz-appearance: textfield;
+}
+.wt-input::-webkit-inner-spin-button,
+.wt-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.wt-input::placeholder { color: var(--mt); opacity: 0.5; }
+.wt-input:focus { border-color: var(--acc); background: var(--accp); }
+.wt-unit {
+  position: absolute; right: 10px; bottom: 14px;
+  font-size: 12px; color: var(--mt); font-weight: 500;
+  pointer-events: none; white-space: nowrap;
+}
+.wt-use-last {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--acc); font-weight: 500;
+  background: var(--accp); border-radius: 20px;
+  padding: 5px 12px; margin-top: 10px; cursor: pointer;
+  border: none; transition: background 0.15s;
+}
+.wt-use-last:active { background: var(--acc); color: #fff; }
+.wt-section-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--acc); text-transform: uppercase;
+  padding: 0 0 6px;
+}
+.wt-tod-hint {
+  font-size: 12px; color: var(--acc); line-height: 1.5;
+  margin-bottom: 16px;
+}
+.wt-tod-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px; margin-bottom: 20px;
+}
+.wt-tod-pill {
+  padding: 14px 8px; border-radius: 12px; text-align: center;
+  background: var(--sf); border: 1.5px solid transparent;
+  font-size: 14px; font-weight: 500; color: var(--tx); cursor: pointer;
+  transition: border-color 0.15s, background 0.12s;
+}
+.wt-tod-pill.selected {
+  border-color: var(--acc); background: var(--accp); color: var(--acc);
+}
+.wt-tod-pill:active { background: var(--bg2); }
+.wt-save-btn { /* uses .log-entry-btn */ }
+.wt-hint {
+  font-size: 12px; color: var(--mt); text-align: center;
+  margin-top: 8px; min-height: 16px; transition: color 0.2s;
+}
+.wt-hint.nudge { color: var(--acc); }
 #screen-shop .screen-header { position: sticky; top: 0; z-index: 10; padding-bottom: 0; }
 
 .shop-toggle-row {
@@ -3698,6 +3787,16 @@ input, textarea { font-family: inherit; }
           </div>
           <span class="track-row-arrow">›</span>
         </div>
+        <div class="track-row" data-action="weight" role="button" tabindex="0" aria-label="Log weight">
+          <div class="track-row-left">
+            <div class="track-row-icon ti-weight">⚖️</div>
+            <div>
+              <div class="track-row-title">Weight</div>
+              <div class="track-row-sub" id="track-weight-sub">No readings today</div>
+            </div>
+          </div>
+          <span class="track-row-arrow">›</span>
+        </div>
         <div class="track-row" data-action="bp" role="button" tabindex="0" aria-label="Log blood pressure">
           <div class="track-row-left">
             <div class="track-row-icon ti-bp">❤️</div>
@@ -4438,7 +4537,8 @@ input, textarea { font-family: inherit; }
             <input class="bp-input" id="bp-screen-dia" type="number" inputmode="numeric" placeholder="80" autocomplete="off" aria-label="Diastolic">
           </div>
         </div>
-        <div class="bp-hint" id="bp-screen-hint">Enter both values to save</div>
+        <div class="bp-hint" id="bp-screen-hint"></div>
+        <button class="log-entry-btn" id="bp-log-entry-btn" disabled>Log Entry</button>
         <div style="height:120px;"></div>
       </div>
     </div><!-- /screen-bp -->
@@ -4467,8 +4567,10 @@ input, textarea { font-family: inherit; }
       <div class="gluc-scroll-body">
         <div class="gluc-last-reading" id="gluc-screen-last"></div>
         <div class="gluc-field-wrap">
-          <input class="gluc-input" id="gluc-screen-val" type="number" inputmode="decimal" placeholder="108" autocomplete="off" aria-label="Glucose value">
-          <div class="gluc-unit">mg/dL</div>
+          <div class="gluc-field-inner">
+            <input class="gluc-input" id="gluc-screen-val" type="number" inputmode="decimal" placeholder="108" autocomplete="off" aria-label="Glucose value">
+            <div class="gluc-unit">mg/dL</div>
+          </div>
         </div>
         <div class="gluc-section-label">CONTEXT</div>
         <div class="gluc-context-grid" id="gluc-context-grid">
@@ -4477,12 +4579,56 @@ input, textarea { font-family: inherit; }
           <button class="gluc-pill" data-ctx="after_meal">After Meal</button>
           <button class="gluc-pill" data-ctx="bed_time">Bed Time</button>
         </div>
-        <div class="gluc-hint" id="gluc-screen-hint">Select a context to save</div>
+        <div class="gluc-hint" id="gluc-screen-hint"></div>
+        <button class="log-entry-btn" id="gluc-log-entry-btn" disabled>Log Entry</button>
         <div style="height:120px;"></div>
       </div>
     </div><!-- /screen-glucose -->
 
-    <!-- ── MEALS ── -->
+    <!-- ── WEIGHT ── -->
+    <div id="screen-weight" class="screen" role="main" aria-label="Weight">
+      <div class="screen-header">
+        <div class="screen-header-row">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button class="icon-btn" id="wt-screen-back-btn" aria-label="Back">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="screen-title" style="margin:0;">Weight</div>
+          </div>
+          <div class="header-actions">
+            <button class="icon-btn" id="wt-screen-log-btn" aria-label="Today's log" style="position:relative;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+              <span class="hyd-log-badge" id="wt-screen-log-badge" style="display:none;"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="wt-scroll-body">
+        <div class="wt-field-block">
+          <div class="wt-field-wrap">
+            <div class="wt-field-inner">
+              <input class="wt-input" id="wt-screen-val" type="number" inputmode="numeric" placeholder="—" autocomplete="off" aria-label="Weight value">
+              <div class="wt-unit" id="wt-screen-unit">lbs</div>
+            </div>
+          </div>
+          <div class="wt-last-reading" id="wt-screen-last"></div>
+          <button class="wt-use-last" id="wt-use-last-btn" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.28"/></svg>
+            Use last reading
+          </button>
+        </div>
+        <div class="wt-section-label">TIME OF DAY</div>
+        <div class="wt-tod-hint" id="wt-tod-hint">Morning weight is most consistent — taken after waking, before eating.</div>
+        <div class="wt-tod-grid" id="wt-tod-grid">
+          <button class="wt-tod-pill" data-tod="morning">Morning</button>
+          <button class="wt-tod-pill" data-tod="afternoon">Afternoon</button>
+          <button class="wt-tod-pill" data-tod="evening">Evening</button>
+        </div>
+        <button class="log-entry-btn wt-save-btn" id="wt-save-btn">Log Entry</button>
+        <div class="wt-hint" id="wt-screen-hint"></div>
+        <div style="height:120px;"></div>
+      </div>
+    </div><!-- /screen-weight -->
     <div id="screen-meals" class="screen" role="main" aria-label="Meals">
       <div class="screen-header">
         <div class="screen-header-row">
@@ -5525,6 +5671,12 @@ input, textarea { font-family: inherit; }
   </div>
 </div>
 
+<div class="sheet" id="sheet-weight-log" role="dialog" aria-modal="true" aria-label="Weight log">
+  <div class="sheet-inner">
+    <!-- content injected by ScreenWeight._openLogSheet() -->
+  </div>
+</div>
+
 <!-- Glucose info sheet -->
 <div class="sheet" id="sheet-glucose-info" role="dialog" aria-modal="true" aria-label="About glucose">
   <div class="sheet-handle"></div>
@@ -5772,7 +5924,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v16-32',
+  version:            'v17-00',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -6350,6 +6502,7 @@ var State = (function() {
       bowel:     [],  // { id, ts, bristolType, color, symptoms[] }
       bp:        [],  // { id, ts, sys, dia }
       glucose:   [],  // { id, ts, val, context }
+      weight:    [],  // { id, ts, val, unit:'lbs'|'kg', timeOfDay:'morning'|'afternoon'|'evening' }
     },
     theme: 'neutral',
     units: 'imperial',
@@ -6616,7 +6769,7 @@ var Router = (function() {
 
   var _current = null;
   var _previous = null;
-  var _screens = ['today', 'track', 'insights', 'you', 'onboarding', 'settings', 'hydration', 'drink-library', 'bowel', 'bp', 'glucose', 'meals', 'shop'];
+  var _screens = ['today', 'track', 'insights', 'you', 'onboarding', 'settings', 'hydration', 'drink-library', 'bowel', 'bp', 'glucose', 'weight', 'meals', 'shop'];
   var _onActivate = null; // registered by App after init
 
   function onActivate(fn) { _onActivate = fn; }
@@ -7031,6 +7184,11 @@ var ScreenToday = (function() {
     s.logs.glucose.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
       items.push({ ts: l.ts, icon: '📊', title: l.val + ' mg/dL', sub: _capitalize(l.context.replace('_', ' ')), color: 'ti-glucose' });
     });
+    (s.logs.weight || []).filter(function(l) { return l.ts >= today; }).forEach(function(l) {
+      var wtUnit = s.units === 'metric' ? ' kg' : ' lbs';
+      var todLabel = { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' };
+      items.push({ ts: l.ts, icon: '⚖️', title: l.val + wtUnit, sub: (todLabel[l.timeOfDay] || '') + ' weight', color: 'ti-weight' });
+    });
 
     items.sort(function(a, b) { return a.ts - b.ts; });
 
@@ -7108,10 +7266,12 @@ var ScreenToday = (function() {
 
     var bpLogs  = (s.logs.bp      || []).slice().sort(function(a,b){ return b.ts - a.ts; });
     var glLogs  = (s.logs.glucose || []).slice().sort(function(a,b){ return b.ts - a.ts; });
+    var wtLogs  = (s.logs.weight  || []).slice().sort(function(a,b){ return b.ts - a.ts; });
     var lastBP  = bpLogs[0]  || null;
     var lastGL  = glLogs[0]  || null;
+    var lastWT  = wtLogs[0]  || null;
 
-    if (!lastBP && !lastGL) { el.style.display = 'none'; return; }
+    if (!lastBP && !lastGL && !lastWT) { el.style.display = 'none'; return; }
 
     var html = '';
     if (lastBP) {
@@ -7122,11 +7282,19 @@ var ScreenToday = (function() {
         '</div>';
     }
     if (lastGL) {
-      var unit = (s.units === 'metric') ? ' mmol' : ' mg/dL';
+      var glUnit = (s.units === 'metric') ? ' mmol' : ' mg/dL';
       html += '<div class="today-metric-pill">' +
         '<div class="today-metric-pill-label">Last Glucose</div>' +
-        '<div class="today-metric-pill-value">' + Utils.esc(String(lastGL.val)) + '<span style="font-size:11px;color:var(--mt);">' + unit + '</span></div>' +
+        '<div class="today-metric-pill-value">' + Utils.esc(String(lastGL.val)) + '<span style="font-size:11px;color:var(--mt);">' + glUnit + '</span></div>' +
         '<div class="today-metric-pill-age">' + _timeAgo(lastGL.ts) + '</div>' +
+        '</div>';
+    }
+    if (lastWT) {
+      var wtUnit = (s.units === 'metric') ? ' kg' : ' lbs';
+      html += '<div class="today-metric-pill">' +
+        '<div class="today-metric-pill-label">Last Weight</div>' +
+        '<div class="today-metric-pill-value">' + Utils.esc(String(lastWT.val)) + '<span style="font-size:11px;color:var(--mt);">' + wtUnit + '</span></div>' +
+        '<div class="today-metric-pill-age">' + _timeAgo(lastWT.ts) + '</div>' +
         '</div>';
     }
 
@@ -7267,6 +7435,7 @@ var ScreenTrack = (function() {
     var bToday = s.logs.bowel.filter(function(l) { return l.ts >= today; });
     var bpToday = s.logs.bp.filter(function(l) { return l.ts >= today; });
     var gToday = s.logs.glucose.filter(function(l) { return l.ts >= today; });
+    var wToday = (s.logs.weight || []).filter(function(l) { return l.ts >= today; });
 
     var hEl = document.getElementById('track-hydration-sub');
     if (hEl) hEl.textContent = hToday.length ? hToday.length + ' log' + (hToday.length > 1 ? 's' : '') + ' today' : 'No logs today';
@@ -7301,6 +7470,16 @@ var ScreenTrack = (function() {
         var lastG = gToday[gToday.length - 1];
         gEl.textContent = gToday.length + ' today · last: ' + lastG.val + ' mg/dL';
       } else { gEl.textContent = 'No readings today'; }
+    }
+
+    var wEl = document.getElementById('track-weight-sub');
+    if (wEl) {
+      if (wToday.length) {
+        var lastW = wToday[wToday.length - 1];
+        var wtUnit = s.units === 'metric' ? ' kg' : ' lbs';
+        var todLabel = { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' };
+        wEl.textContent = (todLabel[lastW.timeOfDay] || '') + ' · ' + lastW.val + wtUnit;
+      } else { wEl.textContent = 'No readings today'; }
     }
   }
 
@@ -10439,6 +10618,15 @@ var ScreenBP = (function() {
     }
   }
 
+  // Enable/disable Log Entry button based on field state
+  function _updateBPBtn() {
+    var btn = document.getElementById('bp-log-entry-btn');
+    if (!btn) return;
+    var sys = Utils.parseNum(document.getElementById('bp-screen-sys').value, 50, 250);
+    var dia = Utils.parseNum(document.getElementById('bp-screen-dia').value, 30, 150);
+    btn.disabled = !(sys && dia);
+  }
+
   // Build log sheet content and open it
   function _openLogSheet() {
     var s = State.get();
@@ -10524,10 +10712,12 @@ var ScreenBP = (function() {
     State.pushLog('bp', entry);
     Storage.sched();
 
-    // Clear fields and reset hint
+    // Clear fields and reset button
     sysEl.value = '';
     diaEl.value = '';
-    if (hint) hint.textContent = 'Enter both values to save';
+    if (hint) hint.textContent = '';
+    var logBtn = document.getElementById('bp-log-entry-btn');
+    if (logBtn) logBtn.disabled = true;
 
     render();
     ScreenTrack.render();
@@ -10589,29 +10779,39 @@ var ScreenBP = (function() {
       _openLogSheet();
     });
 
-    // SYS: auto-advance to DIA after 3 digits
+    // SYS: auto-advance to DIA after 3 digits; update button state
     document.getElementById('bp-screen-sys').addEventListener('input', function() {
       if (this.value.length >= 3) {
         document.getElementById('bp-screen-dia').focus();
       }
+      _updateBPBtn();
     });
 
-    // DIA: auto-save on blur if both valid
-    document.getElementById('bp-screen-dia').addEventListener('blur', function() {
-      _trySave();
+    // DIA: update button state on input
+    document.getElementById('bp-screen-dia').addEventListener('input', function() {
+      _updateBPBtn();
     });
 
-    // DIA: also save on Enter key
+    // Enter on DIA: blur (dismiss keyboard)
     document.getElementById('bp-screen-dia').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') { this.blur(); }
     });
 
-    // SYS: save on Enter key (in case user skips DIA manually)
+    // Enter on SYS: move to DIA
     document.getElementById('bp-screen-sys').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         document.getElementById('bp-screen-dia').focus();
       }
     });
+
+    // Log Entry button
+    var bpLogBtn = document.getElementById('bp-log-entry-btn');
+    if (bpLogBtn) {
+      bpLogBtn.disabled = true;
+      bpLogBtn.addEventListener('click', function() {
+        requestAnimationFrame(function() { _trySave(); });
+      });
+    }
   }
 
   return { render: render, bindEvents: bindEvents };
@@ -10661,6 +10861,14 @@ var ScreenGlucose = (function() {
         badge.style.display = 'none';
       }
     }
+  }
+
+  // Enable/disable Log Entry button
+  function _updateGlucBtn() {
+    var btn = document.getElementById('gluc-log-entry-btn');
+    if (!btn) return;
+    var val = Utils.parseNum(document.getElementById('gluc-screen-val').value, 10, 600);
+    btn.disabled = !(val && _ctx);
   }
 
   function _openLogSheet() {
@@ -10756,7 +10964,9 @@ var ScreenGlucose = (function() {
     document.querySelectorAll('#gluc-context-grid .gluc-pill').forEach(function(p) {
       p.classList.remove('selected');
     });
-    if (hint) { hint.textContent = 'Select a context to save'; hint.classList.remove('nudge'); }
+    if (hint) { hint.textContent = ''; hint.classList.remove('nudge'); }
+    var glucBtn = document.getElementById('gluc-log-entry-btn');
+    if (glucBtn) glucBtn.disabled = true;
 
     render();
     ScreenTrack.render();
@@ -10816,7 +11026,7 @@ var ScreenGlucose = (function() {
       _openLogSheet();
     });
 
-    // Context pills — single select, updates _ctx
+    // Context pills — single select only, Log Entry button handles save
     document.getElementById('gluc-context-grid').addEventListener('click', function(e) {
       var pill = e.target.closest('.gluc-pill[data-ctx]');
       if (!pill) return;
@@ -10825,28 +11035,28 @@ var ScreenGlucose = (function() {
       });
       pill.classList.add('selected');
       _ctx = pill.dataset.ctx;
-      // Clear nudge once context is picked
       var hint = document.getElementById('gluc-screen-hint');
-      if (hint) { hint.textContent = 'Select a context to save'; hint.classList.remove('nudge'); }
-      // If value already entered, save now (handles blur-before-pick sequence)
-      var val = Utils.parseNum(document.getElementById('gluc-screen-val').value, 10, 600);
-      if (val) { _trySave(); }
+      if (hint) hint.classList.remove('nudge');
+      _updateGlucBtn();
     });
 
-    // Value field: try save on change (fires when value committed + field loses focus)
-    document.getElementById('gluc-screen-val').addEventListener('change', function() {
-      _trySave();
+    // Value field: update button state on input
+    document.getElementById('gluc-screen-val').addEventListener('input', function() {
+      _updateGlucBtn();
     });
 
-    // Also try on blur as fallback for keyboards that don't fire change
-    document.getElementById('gluc-screen-val').addEventListener('blur', function() {
-      _trySave();
-    });
-
-    // Enter on value field: move to context nudge or save if ctx already set
     document.getElementById('gluc-screen-val').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') { this.blur(); }
     });
+
+    // Log Entry button
+    var glucLogBtn = document.getElementById('gluc-log-entry-btn');
+    if (glucLogBtn) {
+      glucLogBtn.disabled = true;
+      glucLogBtn.addEventListener('click', function() {
+        requestAnimationFrame(function() { _trySave(); });
+      });
+    }
   }
 
   return { render: render, bindEvents: bindEvents };
@@ -10854,8 +11064,294 @@ var ScreenGlucose = (function() {
 })();
 
 /* ══════════════════════════════════════════════════════════════
-   SECTION 15e — SCREEN: MEALS
-   future: screens/meals.js
+   SECTION 15e — SCREEN: WEIGHT
+   future: screens/weight.js
+══════════════════════════════════════════════════════════════ */
+var ScreenWeight = (function() {
+
+  var _tod = null; // selected time-of-day pill value
+
+  var _TOD_HINTS = {
+    morning:   'Morning weight is most consistent — taken after waking, before eating.',
+    afternoon: 'Afternoon weight is typically 1–3 lbs higher than morning due to food and fluid intake.',
+    evening:   'Evening weight is usually the highest of the day — meals and fluids accumulate throughout the day.'
+  };
+
+  function _unit(s) {
+    return (s.units === 'metric') ? 'kg' : 'lbs';
+  }
+
+  function _updateSaveBtn() {
+    var btn = document.getElementById('wt-save-btn');
+    if (!btn) return;
+    var valEl = document.getElementById('wt-screen-val');
+    var hasVal = valEl && valEl.value && parseInt(valEl.value, 10) > 0;
+    btn.disabled = !(hasVal && _tod);
+  }
+
+  function _lastReading(s) {
+    var logs = s.logs.weight || [];
+    return logs.length ? logs[logs.length - 1] : null;
+  }
+
+  function render() {
+    var s = State.get();
+    var today = Utils.dayStart();
+    var todayLogs = (s.logs.weight || []).filter(function(l) { return l.ts >= today; });
+    var last = _lastReading(s);
+    var unit = _unit(s);
+
+    // Pre-select Morning if nothing selected yet
+    if (!_tod) {
+      _tod = 'morning';
+      document.querySelectorAll('#wt-tod-grid .wt-tod-pill').forEach(function(p) {
+        p.classList.toggle('selected', p.dataset.tod === 'morning');
+      });
+      var hintEl = document.getElementById('wt-tod-hint');
+      if (hintEl) hintEl.textContent = _TOD_HINTS['morning'];
+    }
+    _updateSaveBtn();
+
+    // Last reading label (below field)
+    var lastEl = document.getElementById('wt-screen-last');
+    if (lastEl) {
+      if (last) {
+        var tod = { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' };
+        lastEl.innerHTML = 'Last: <strong>' + last.val + ' ' + unit + '</strong>'
+          + ' <span style="color:var(--mt);font-size:12px;">· ' + (tod[last.timeOfDay] || last.timeOfDay) + '</span>';
+      } else {
+        lastEl.textContent = '';
+      }
+    }
+
+    // Placeholder = last value as ghost text
+    var valEl = document.getElementById('wt-screen-val');
+    if (valEl && !valEl.value) {
+      valEl.placeholder = last ? String(last.val) : '—';
+    }
+
+    // Unit label
+    var unitEl = document.getElementById('wt-screen-unit');
+    if (unitEl) unitEl.textContent = unit;
+
+    // "Use last" button — show only if there's a prior reading and field is empty
+    var useLastBtn = document.getElementById('wt-use-last-btn');
+    if (useLastBtn) {
+      useLastBtn.style.display = (last && valEl && !valEl.value) ? 'inline-flex' : 'none';
+      useLastBtn.dataset.lastVal = last ? last.val : '';
+    }
+
+    // Badge
+    var badge = document.getElementById('wt-screen-log-badge');
+    if (badge) {
+      if (todayLogs.length) {
+        badge.textContent = todayLogs.length;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
+
+  function _openLogSheet() {
+    var s = State.get();
+    var today = Utils.dayStart();
+    var unit = _unit(s);
+    var logs = (s.logs.weight || []).filter(function(l) { return l.ts >= today; })
+                                    .slice().reverse();
+    var tod = { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' };
+
+    var html = '<div class="sheet-handle"></div>'
+      + '<div class="sheet-title-row">'
+      + '<div class="sheet-title">Today\'s Readings</div>'
+      + '<button class="icon-btn" id="wt-log-close-btn" aria-label="Close">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+      + '</button>'
+      + '</div>'
+      + '<div id="wt-log-list" style="padding:0 20px;">';
+
+    if (!logs.length) {
+      html += '<p style="color:var(--mt);font-size:14px;text-align:center;padding:24px 0;">No readings logged today.</p>';
+    } else {
+      logs.forEach(function(l) {
+        html += '<div class="hyd-log-row" data-id="' + Utils.esc(l.id) + '">'
+          + '<div class="hyd-log-info">'
+          + '<div class="hyd-log-main">' + Utils.esc(String(l.val)) + ' <span style="font-size:13px;color:var(--mt);">' + unit + '</span></div>'
+          + '<div class="hyd-log-sub">' + Utils.fmtTime(l.ts) + ' · ' + Utils.esc(tod[l.timeOfDay] || l.timeOfDay) + '</div>'
+          + '</div>'
+          + '<button class="hyd-log-del" data-id="' + Utils.esc(l.id) + '" aria-label="Delete">'
+          + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>'
+          + '</button>'
+          + '</div>';
+      });
+    }
+    html += '<div style="height:40px;"></div></div>';
+
+    var sheet = document.getElementById('sheet-weight-log');
+    sheet.querySelector('.sheet-inner').innerHTML = html;
+
+    document.getElementById('wt-log-close-btn').addEventListener('click', function() {
+      Components.closeSheet();
+    });
+
+    sheet.querySelector('.sheet-inner').addEventListener('click', function(e) {
+      var btn = e.target.closest('.hyd-log-del[data-id]');
+      if (!btn) return;
+      var id = btn.dataset.id;
+      var row = sheet.querySelector('.hyd-log-row[data-id="' + id + '"]');
+      requestAnimationFrame(function() {
+        State.removeLog('weight', id);
+        Storage.sched();
+        render();
+        ScreenTrack.render();
+        ScreenToday.render();
+        if (row) row.remove();
+        var badge = document.getElementById('wt-screen-log-badge');
+        var remaining = sheet.querySelectorAll('.hyd-log-row').length;
+        if (badge) {
+          if (remaining) { badge.textContent = remaining; badge.style.display = 'flex'; }
+          else { badge.style.display = 'none'; }
+        }
+        Components.toast('Reading deleted');
+      });
+    });
+
+    Components.openSheet('sheet-weight-log');
+  }
+
+  function _trySave() {
+    var valEl = document.getElementById('wt-screen-val');
+    var hint  = document.getElementById('wt-screen-hint');
+    var s     = State.get();
+    var unit  = _unit(s);
+
+    // Parse: integers only, reasonable range for lbs and kg
+    var raw = parseInt(valEl.value, 10);
+    var minVal = unit === 'kg' ? 20  : 44;
+    var maxVal = unit === 'kg' ? 300 : 660;
+    var val = (!isNaN(raw) && raw >= minVal && raw <= maxVal) ? raw : null;
+
+    if (!val && !_tod) {
+      if (hint) { hint.textContent = 'Enter a weight and select a time of day'; hint.classList.add('nudge'); }
+      return;
+    }
+    if (!val) {
+      if (hint) { hint.textContent = 'Enter a weight value to save'; hint.classList.add('nudge'); }
+      return;
+    }
+    if (!_tod) {
+      if (hint) { hint.textContent = 'Select a time of day to save'; hint.classList.add('nudge'); }
+      return;
+    }
+
+    var entry = { id: Utils.uid(), ts: Date.now(), val: val, unit: unit, timeOfDay: _tod };
+    State.pushLog('weight', entry);
+    Storage.sched();
+
+    // Reset
+    valEl.value = '';
+    _tod = null;
+    document.querySelectorAll('#wt-tod-grid .wt-tod-pill').forEach(function(p) {
+      p.classList.remove('selected');
+    });
+    var hint = document.getElementById('wt-screen-hint');
+    if (hint) { hint.textContent = ''; hint.classList.remove('nudge'); }
+    var saveBtn = document.getElementById('wt-save-btn');
+    if (saveBtn) saveBtn.disabled = true;
+
+    render();
+    ScreenTrack.render();
+    ScreenToday.render();
+
+    // Flash last reading
+    var lastEl = document.getElementById('wt-screen-last');
+    if (lastEl) {
+      lastEl.classList.add('saved');
+      setTimeout(function() { lastEl.classList.remove('saved'); }, 800);
+    }
+
+    Components.toast('Weight logged', function() {
+      State.removeLog('weight', entry.id);
+      Storage.sched();
+      render();
+      ScreenTrack.render();
+      ScreenToday.render();
+    });
+  }
+
+  function bindEvents() {
+    // Back
+    var backBtn = document.getElementById('wt-screen-back-btn');
+    if (backBtn) backBtn.addEventListener('click', function() { Router.back(); });
+
+    // Log sheet
+    var logBtn = document.getElementById('wt-screen-log-btn');
+    if (logBtn) logBtn.addEventListener('click', _openLogSheet);
+
+    // Use last reading chip
+    var useLastBtn = document.getElementById('wt-use-last-btn');
+    if (useLastBtn) useLastBtn.addEventListener('click', function() {
+      var lastVal = this.dataset.lastVal;
+      if (!lastVal) return;
+      var valEl = document.getElementById('wt-screen-val');
+      if (valEl) {
+        valEl.value = lastVal;
+        useLastBtn.style.display = 'none';
+        _updateSaveBtn();
+      }
+    });
+
+    // Input change — hide "use last" once user types
+    var valEl = document.getElementById('wt-screen-val');
+    if (valEl) {
+      valEl.addEventListener('input', function() {
+        var useBtn = document.getElementById('wt-use-last-btn');
+        if (useBtn) useBtn.style.display = this.value ? 'none' : (useBtn.dataset.lastVal ? 'inline-flex' : 'none');
+        if (!this.value) {
+          var s2 = State.get();
+          var logs2 = s2.logs.weight || [];
+          var last2 = logs2.length ? logs2[logs2.length - 1] : null;
+          this.placeholder = last2 ? String(last2.val) : '—';
+        }
+        var hint = document.getElementById('wt-screen-hint');
+        if (hint) hint.classList.remove('nudge');
+        _updateSaveBtn();
+      });
+      valEl.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { this.blur(); }
+      });
+    }
+
+    // Time-of-day pills — tap selects only, Save button handles save
+    var todGrid = document.getElementById('wt-tod-grid');
+    if (todGrid) todGrid.addEventListener('click', function(e) {
+      var pill = e.target.closest('.wt-tod-pill[data-tod]');
+      if (!pill) return;
+      _tod = pill.dataset.tod;
+      document.querySelectorAll('#wt-tod-grid .wt-tod-pill').forEach(function(p) {
+        p.classList.toggle('selected', p === pill);
+      });
+      var hintEl = document.getElementById('wt-tod-hint');
+      if (hintEl) hintEl.textContent = _TOD_HINTS[_tod] || '';
+      _updateSaveBtn();
+    });
+
+    // Save button
+    var saveBtn = document.getElementById('wt-save-btn');
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.addEventListener('click', function() {
+        requestAnimationFrame(function() { _trySave(); });
+      });
+    }
+  }
+
+  return { render: render, bindEvents: bindEvents };
+
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   SECTION 15f — SCREEN: MEALS
 ══════════════════════════════════════════════════════════════ */
 var ScreenMeals = (function() {
 
@@ -13211,6 +13707,7 @@ var App = (function() {
       if (screenId === 'bowel')         ScreenBowel.render();
       if (screenId === 'bp')            ScreenBP.render();
       if (screenId === 'glucose')        ScreenGlucose.render();
+      if (screenId === 'weight')         ScreenWeight.render();
       if (screenId === 'meals')          ScreenMeals.render();
       if (screenId === 'shop')           ScreenShop.render();
     });
@@ -13230,6 +13727,7 @@ var App = (function() {
     ScreenBowel.bindEvents();
     ScreenBP.bindEvents();
     ScreenGlucose.bindEvents();
+    ScreenWeight.bindEvents();
     ScreenMeals.bindEvents();
     ScreenShop.bindEvents();
     ScreenYou.bindEvents();
@@ -13441,6 +13939,7 @@ var App = (function() {
       if (action === 'bowel')     { Router.go('bowel');     return; }
       if (action === 'bp')        { Router.go('bp');        return; }
       if (action === 'glucose')   { Router.go('glucose');   return; }
+      if (action === 'weight')    { Router.go('weight');    return; }
       _handleAction(action);
     });
   }
