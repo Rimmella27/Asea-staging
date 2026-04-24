@@ -64,6 +64,7 @@
   --fab:  #2E5030;
   --fab2: #3E6840;
   --header-tint: rgba(94,127,79,0.07);
+  --header-tint-solid: rgba(94,127,79,0.13);
   --bg-rgb: 234,231,223;
 
   /* Typography */
@@ -103,6 +104,7 @@
   --fab:  #0D2B4E;
   --fab2: #0a2240;
   --header-tint: rgba(26,74,122,0.06);
+  --header-tint-solid: rgba(26,74,122,0.11);
   --bg-rgb: 237,240,244;
 }
 
@@ -126,6 +128,7 @@
   --fab:  #2a4a6a;
   --fab2: #3a5a7a;
   --header-tint: rgba(90,143,184,0.08);
+  --header-tint-solid: rgba(90,143,184,0.14);
   --bg-rgb: 34,34,32;
 }
 
@@ -218,22 +221,22 @@ input, textarea { font-family: inherit; }
 /* ── screen header ── */
 .screen-header {
   padding: 18px 20px 12px;
-  background: transparent;
+  background: rgba(var(--bg-rgb), 0.82);
   position: sticky;
   top: 0;
   z-index: 10;
   transition: padding 0.25s ease, border-color 0.25s ease, background 0.25s ease;
   border-bottom: 1px solid transparent;
-  /* Blur effect — content scrolls under with frosted glass look */
+  /* Frosted glass — content scrolls under */
   backdrop-filter: blur(16px) saturate(1.4);
   -webkit-backdrop-filter: blur(16px) saturate(1.4);
-  /* Fallback for browsers without backdrop-filter */
-  background: rgba(var(--bg-rgb), 0.82);
+  /* Themed tint — gives header structure and color identity */
+  background: linear-gradient(to bottom, var(--header-tint-solid), rgba(var(--bg-rgb), 0.82));
 }
 .screen-header.scrolled {
   padding: 10px 20px 8px;
   border-bottom-color: var(--bd);
-  background: rgba(var(--bg-rgb), 0.92);
+  background: linear-gradient(to bottom, var(--header-tint-solid), rgba(var(--bg-rgb), 0.94));
 }
 .screen-header-row {
   display: flex;
@@ -597,10 +600,10 @@ input, textarea { font-family: inherit; }
 /* Hydration ring */
 .hydration-card {
   margin: 0 20px;
-  padding: 20px;
+  padding: 14px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .hydration-ring-wrap {
@@ -1305,7 +1308,7 @@ input, textarea { font-family: inherit; }
 .you-row:first-child { border-radius: var(--r-lg) var(--r-lg) 0 0; }
 .you-row:last-child  { border-radius: 0 0 var(--r-lg) var(--r-lg); border-bottom: none; }
 .you-row:only-child  { border-radius: var(--r-lg); border-bottom: none; }
-.you-row-label { font-size: 14px; color: var(--mt); }
+.you-row-label { font-size: 14px; color: var(--mt); flex-shrink: 0; }
 .you-row-value { font-size: 14px; font-weight: 600; color: var(--tx); }  /* bolder values */
 
 /* Baseline rows — read-only, visually distinct from editable */
@@ -1354,11 +1357,10 @@ input, textarea { font-family: inherit; }
   color: var(--mt);
   font-weight: 400;
   font-style: italic;
-  max-width: 160px;
   text-align: right;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
+  min-width: 0;
 }
 .you-row-value--goals.has-content {
   font-style: normal;
@@ -1465,7 +1467,7 @@ input, textarea { font-family: inherit; }
 }
 .you-goals-input:focus { border-color: var(--acc); }
 .you-row--editable:active { background: var(--accp); }
-.you-row-right { display: flex; align-items: center; gap: 8px; }
+.you-row-right { display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 1; }
 /* Edit indicator — small tinted pill instead of bare chevron */
 .you-row-edit-hint {
   font-size: 10px;
@@ -1988,7 +1990,9 @@ input, textarea { font-family: inherit; }
   cursor: pointer;
   transition: all 0.14s;
   -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
+.pill-option:focus { outline: none; }
 .pill-option.selected {
   background: var(--acc);
   border-color: var(--acc);
@@ -3265,11 +3269,11 @@ input, textarea { font-family: inherit; }
   padding: 14px 0 8px;
 }
 /* Bristol type selector */
-.bowel-type-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+.bowel-type-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; }
 .bowel-type-row {
   display: flex; align-items: center; gap: 12px;
-  background: var(--sf); border-radius: 14px;
-  padding: 13px 16px; cursor: pointer;
+  background: var(--sf); border-radius: 12px;
+  padding: 9px 14px; cursor: pointer;
   border: 2px solid transparent;
   transition: border-color 0.15s, background 0.12s;
 }
@@ -3278,28 +3282,28 @@ input, textarea { font-family: inherit; }
 }
 .bowel-type-row:active { background: var(--bg2); }
 .bowel-type-num {
-  font-family: var(--font-display); font-size: 20px; font-weight: 400;
-  color: var(--acc); min-width: 20px; text-align: center;
+  font-family: var(--font-display); font-size: 17px; font-weight: 400;
+  color: var(--acc); min-width: 18px; text-align: center;
 }
-.bowel-type-label { font-size: 15px; color: var(--tx); font-weight: 500; }
-.bowel-type-sub { font-size: 12px; color: var(--mt); margin-top: 1px; }
+.bowel-type-label { font-size: 14px; color: var(--tx); font-weight: 500; }
+.bowel-type-sub { font-size: 11px; color: var(--mt); margin-top: 1px; }
 /* Color picker */
 .bowel-color-grid {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 8px; margin-bottom: 4px;
+  gap: 6px; margin-bottom: 4px;
 }
 .bowel-color-btn {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--sf); border-radius: 12px;
-  padding: 10px 12px; cursor: pointer;
+  display: flex; align-items: center; gap: 7px;
+  background: var(--sf); border-radius: 10px;
+  padding: 7px 10px; cursor: pointer;
   border: 2px solid transparent;
   transition: border-color 0.15s, background 0.12s;
-  font-size: 13px; color: var(--tx);
+  font-size: 12px; color: var(--tx);
 }
 .bowel-color-btn.selected { border-color: var(--acc); background: var(--accp); }
 .bowel-color-btn:active { background: var(--bg2); }
 .bowel-color-dot {
-  width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+  width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
 }
 /* Symptom pills */
 .bowel-symptom-wrap {
@@ -3392,6 +3396,28 @@ input, textarea { font-family: inherit; }
   transition: background 0.12s, color 0.12s;
 }
 .dlib-create-btn:active { background: var(--bg2); color: var(--tx); }
+/* Custom drink emoji picker */
+.custom-drink-emoji-row {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px;
+}
+.custom-emoji-btn {
+  font-size: 22px; padding: 6px 8px; border-radius: 10px;
+  border: 2px solid transparent; background: var(--sf);
+  cursor: pointer; line-height: 1;
+  transition: border-color 0.12s, background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.custom-emoji-btn.selected { border-color: var(--acc); background: var(--accp); }
+/* Delete button on custom drink cards */
+.dlib-card-delete {
+  position: absolute; bottom: 5px; right: 6px;
+  font-size: 14px; color: var(--mt); line-height: 1;
+  background: none; border: none; padding: 2px 4px;
+  cursor: pointer; z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.12s;
+}
+.dlib-card-delete:active { color: #c0392b; }
 
 /* Coffee customization sheet */
 .coffee-option-list { padding: 4px 0 8px; }
@@ -3980,7 +4006,6 @@ input, textarea { font-family: inherit; }
             <span class="you-row-label">Health Goals &amp; Concerns</span>
             <div class="you-row-right">
               <span class="you-row-value you-row-value--goals" id="you-health-goals">Tap to add</span>
-              <span class="you-row-edit-hint">Edit</span>
             </div>
           </div>
           <div class="you-edit-form" id="you-edit-healthGoals">
@@ -4235,7 +4260,7 @@ input, textarea { font-family: inherit; }
         <div class="ob-step active" id="ob-step-1">
           <div class="ob-icon">✦</div>
           <div class="ob-title">Welcome<br>to Asëa</div>
-          <div class="ob-sub">Asëa helps you notice patterns in your day.<br><br>No tracking pressure. No perfection. Just awareness.</div>
+          <div class="ob-sub">Asëa helps you identify Health patterns in your day.<br><br>No tracking pressure. No perfection. Just awareness.</div>
           <div style="flex:1;"></div>
           <div class="ob-disclaimer">
             Asëa tracks patterns, not diagnoses. It doesn't give medical advice.<br><br>
@@ -4453,6 +4478,10 @@ input, textarea { font-family: inherit; }
         <p class="dlib-subtitle">Tap any drink to log it.</p>
         <div class="dlib-section-label">BUILT-IN</div>
         <div class="dlib-grid" id="dlib-grid"></div>
+        <div id="dlib-custom-section" style="display:none;">
+          <div class="dlib-section-label">CUSTOM</div>
+          <div class="dlib-grid" id="dlib-custom-grid"></div>
+        </div>
         <button class="dlib-create-btn" id="dlib-create-btn">+ Create Custom Drink</button>
         <div style="height:120px;"></div>
       </div>
@@ -4481,7 +4510,7 @@ input, textarea { font-family: inherit; }
       </div>
       <div class="bowel-scroll-body" id="bowel-scroll-body">
 
-        <!-- Bristol type -->
+        <!-- Bristol type -->\
         <div class="bowel-section-label">TYPE</div>
         <div class="bowel-type-list" id="bowel-type-list"></div>
 
@@ -5465,6 +5494,29 @@ input, textarea { font-family: inherit; }
   </div>
 </div>
 
+<!-- Custom drink sheet -->
+<div class="sheet" id="sheet-custom-drink" role="dialog" aria-modal="true" aria-label="Custom drink">
+  <div class="sheet-inner">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title-row">
+      <div class="sheet-title">Create Custom Drink</div>
+      <button class="icon-btn" id="custom-drink-close-btn" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <p style="font-size:13px;color:var(--mt);margin:4px 0 16px;padding:0 20px;">Name your drink and pick an icon. It will appear in your Drink Library and can be starred for quick access.</p>
+    <div class="form-group" style="margin-top:4px;">
+      <label class="form-label">Drink name</label>
+      <input id="custom-drink-name" class="form-input" type="text" placeholder="e.g. Kombucha, Bone Broth…" maxlength="40" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Icon</label>
+      <div class="custom-drink-emoji-row" id="custom-drink-emoji-row"></div>
+    </div>
+    <button class="btn-primary" id="custom-drink-save-btn" style="width:100%;margin-top:8px;" disabled>Add to Library</button>
+  </div>
+</div>
+
 <!-- Meal sheet -->
 <div class="sheet" id="sheet-meal" role="dialog" aria-modal="true" aria-label="Log meal">
   <div class="sheet-inner">
@@ -5521,12 +5573,23 @@ input, textarea { font-family: inherit; }
   <div class="sheet-body">
     <div class="form-group">
       <label class="form-label">Type</label>
-      <div class="pill-row" id="bowel-type-pills" style="flex-direction:column;gap:8px;">
+      <div class="pill-row" id="bowel-type-pills" style="flex-direction:column;gap:6px;">
         <button class="pill-option" data-type="1" style="text-align:left;border-radius:10px;">1–2 · Hard</button>
         <button class="pill-option" data-type="3" style="text-align:left;border-radius:10px;">3 · Firm</button>
         <button class="pill-option selected" data-type="4" style="text-align:left;border-radius:10px;">4 · Normal ✓</button>
         <button class="pill-option" data-type="5" style="text-align:left;border-radius:10px;">5 · Loose</button>
         <button class="pill-option" data-type="6" style="text-align:left;border-radius:10px;">6–7 · Watery</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Color <span style="font-weight:400;color:var(--mt);">· optional</span></label>
+      <div class="bowel-sheet-color-strip" id="bowel-sheet-color-strip">
+        <button class="bowel-sheet-color-dot selected" data-sheet-color="brown"      style="background:#8B5E3C;" aria-label="Brown"></button>
+        <button class="bowel-sheet-color-dot" data-sheet-color="green"      style="background:#5A8A4F;" aria-label="Green"></button>
+        <button class="bowel-sheet-color-dot" data-sheet-color="yellow"     style="background:#D4A017;" aria-label="Yellow"></button>
+        <button class="bowel-sheet-color-dot" data-sheet-color="black"      style="background:#2C2C2C;" aria-label="Black/Tarry"></button>
+        <button class="bowel-sheet-color-dot" data-sheet-color="bright_red" style="background:#C0392B;" aria-label="Bright Red"></button>
+        <button class="bowel-sheet-color-dot" data-sheet-color="pale"       style="background:#C8B89A;" aria-label="Pale/Clay"></button>
       </div>
     </div>
     <div class="form-group">
@@ -5538,17 +5601,6 @@ input, textarea { font-family: inherit; }
         <button class="pill-option" data-sym="cramping">Cramping</button>
         <button class="pill-option" data-sym="nausea">Nausea</button>
         <button class="pill-option" data-sym="pain">Pain</button>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Color <span style="font-weight:400;color:var(--mt);">· optional</span></label>
-      <div class="bowel-sheet-color-strip" id="bowel-sheet-color-strip">
-        <button class="bowel-sheet-color-dot" data-sheet-color="brown"      style="background:#8B5E3C;" aria-label="Brown"></button>
-        <button class="bowel-sheet-color-dot" data-sheet-color="green"      style="background:#5A8A4F;" aria-label="Green"></button>
-        <button class="bowel-sheet-color-dot" data-sheet-color="yellow"     style="background:#D4A017;" aria-label="Yellow"></button>
-        <button class="bowel-sheet-color-dot" data-sheet-color="black"      style="background:#2C2C2C;" aria-label="Black/Tarry"></button>
-        <button class="bowel-sheet-color-dot" data-sheet-color="bright_red" style="background:#C0392B;" aria-label="Bright Red"></button>
-        <button class="bowel-sheet-color-dot" data-sheet-color="pale"       style="background:#C8B89A;" aria-label="Pale/Clay"></button>
       </div>
     </div>
     <button class="btn-primary" id="bowel-save-btn">Save</button>
@@ -5951,6 +6003,9 @@ var CONFIG = {
     { id: 'beer',           label: 'Beer',            emoji: '🍺', coeff: 0.40, color: '#D4A017', tags: ['alcohol'] },
     { id: 'wine',           label: 'Wine',            emoji: '🍷', coeff: 0.30, color: '#9B3A6E', tags: ['alcohol'] },
     { id: 'salt_sole',      label: 'Electrolyte Water', emoji: '🫧', coeff: 1.00, color: '#6BB8D4', tags: ['electrolytes', 'hydration'] },
+    { id: 'milk',           label: 'Milk',              emoji: '🥛', coeff: 0.90, color: '#E8E4DC', tags: ['dairy'] },
+    { id: 'almond_milk',    label: 'Almond Milk',       emoji: '🥛', coeff: 0.90, color: '#F0E6C8', tags: ['dairy_free'] },
+    { id: 'oat_milk',       label: 'Oat Milk',          emoji: '🥛', coeff: 0.90, color: '#E8D9B8', tags: ['dairy_free'] },
   ],
 };
 
@@ -6512,6 +6567,7 @@ var State = (function() {
       coffeeDefault: 'coffee',  // 'coffee' | 'coffee_milk' | 'coffee_sugar'
     },
     favoriteDrinks: [],  // up to 4 pinned drink IDs for quick-add strip
+    customDrinks: [],    // [{ id, name, emoji, coeff:0.90 }] — user-created library entries
   };
 
   var _state = null;
@@ -6558,6 +6614,8 @@ var State = (function() {
       // Migrate supp/med arrays from plain strings to objects (v12 → v13)
       _state.supplements = _migrateInventory(_state.supplements);
       _state.medications = _migrateInventory(_state.medications);
+      // Ensure customDrinks array exists (v18 addition)
+      if (!Array.isArray(_state.customDrinks)) _state.customDrinks = [];
     } else {
       _state = _clone(_defaults);
     }
@@ -7153,13 +7211,14 @@ var ScreenToday = (function() {
       if (group) {
         group.foods.push(l.text);
       } else {
-        mealGroups.push({ slot: l.slot || l.type, mealTs: l.mealTs, ts: l.ts, foods: [l.text] });
+        mealGroups.push({ slot: l.slot || l.type, type: l.type, mealTs: l.mealTs, ts: l.ts, foods: [l.text] });
       }
     });
     mealGroups.forEach(function(g) {
-      var slotLabel = _capitalize(g.slot || 'Meal');
+      var slotLabel = g.type === 'snack' ? 'Snack' : _capitalize(g.slot || 'Meal');
+      var slotIcon  = g.type === 'snack' ? '🥕' : '🍽️';
       var foodList  = g.foods.filter(Boolean).join(', ');
-      items.push({ ts: g.ts, icon: '🍽️', title: slotLabel, sub: foodList ? Utils.esc(foodList) : '', color: 'ti-meal' });
+      items.push({ ts: g.ts, icon: slotIcon, title: slotLabel, sub: foodList ? Utils.esc(foodList) : '', color: 'ti-meal' });
     });
     s.logs.bowel.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
       var typeLabel = _BRISTOL_LABELS[l.bristolType] || ('Type ' + l.bristolType);
@@ -7668,10 +7727,14 @@ var ScreenHydration = (function() {
     // Use last-4 logged drink types today, falling back to defaults
     var ids = ScreenDrinkLibrary.quickAddIds();
     var html = '';
+    var _s2 = State.get();
     ids.forEach(function(id) {
-      var d = CONFIG.drinks.find(function(x) { return x.id === id; }) || CONFIG.drinks[0];
+      var custom = (_s2.customDrinks || []).find(function(d) { return d.id === id; });
+      var d = custom ? { id: custom.id, label: custom.name, emoji: custom.emoji, coeff: 0.90 }
+                     : (CONFIG.drinks.find(function(x) { return x.id === id; }) || CONFIG.drinks[0]);
       var fav = ScreenDrinkLibrary.isFavorite(d.id);
-      html += '<div class="hyd-quick-card' + (fav ? ' pinned' : '') + '" data-drink-id="' + Utils.esc(d.id) + '">'
+      html += '<div class="hyd-quick-card' + (fav ? ' pinned' : '') + '" data-drink-id="' + Utils.esc(d.id) + '"'
+            + (custom ? ' data-custom="1"' : '') + '>'
             + '<button class="hyd-quick-star' + (fav ? ' pinned' : '') + '" data-pin-id="' + Utils.esc(d.id) + '" aria-label="' + (fav ? 'Unpin' : 'Pin') + '">' + (fav ? '★' : '☆') + '</button>'
             + '<div class="hyd-quick-emoji">' + Utils.esc(d.emoji) + '</div>'
             + '<div class="hyd-quick-coeff">' + Math.round(d.coeff * 100) + '%</div>'
@@ -7710,9 +7773,10 @@ var ScreenHydration = (function() {
 
   // ── Oz picker ─────────────────────────────────────────────
 
-  function _openOzPicker(drinkId) {
+  function _openOzPicker(drinkId, customData) {
     _pendingDrinkId = drinkId;
-    var d = _drink(drinkId);
+    // customData: { name, emoji } for user-created library drinks
+    var d = customData ? { emoji: customData.emoji, label: customData.name, coeff: 0.90 } : _drink(drinkId);
     var emojiEl = document.getElementById('oz-picker-emoji');
     var titleEl = document.getElementById('oz-picker-title');
     if (emojiEl) emojiEl.textContent = d.emoji;
@@ -7736,12 +7800,17 @@ var ScreenHydration = (function() {
     Storage.sched();
     render();
     ScreenTrack.render();
-    var d = _drink(drinkId);
-    Components.toast(oz + 'oz ' + d.label + ' logged', function() {
+    ScreenToday.render();
+    // Label: check customDrinks first, then CONFIG.drinks
+    var s = State.get();
+    var customDef = (s.customDrinks || []).find(function(d) { return d.id === drinkId; });
+    var label = customDef ? customDef.name : _drink(drinkId).label;
+    Components.toast(oz + 'oz ' + label + ' logged', function() {
       State.removeLog('hydration', entry.id);
       Storage.sched();
       render();
       ScreenTrack.render();
+      ScreenToday.render();
     });
   }
 
@@ -7845,8 +7914,7 @@ var ScreenHydration = (function() {
   function _applyActivitySuggestion(level) {
     var s = State.get();
     var w = s.profile.weight;
-    if (!w) return;
-    var base = Math.round(w / 2);
+    var base = w ? Math.round(w / 2) : (CONFIG.hydrationGoalOz || 64);
     var adjustments = { sedentary: 0, moderate: 12, active: 24 };
     var suggested = base + (adjustments[level] || 0);
     // Round to nearest 8
@@ -7856,6 +7924,7 @@ var ScreenHydration = (function() {
     Storage.sched();
     _refreshSettingsGoal(suggested);
     render();
+    if (typeof ScreenYou !== 'undefined') ScreenYou.render();
   }
 
   function _buildCoeffList() {
@@ -7911,7 +7980,13 @@ var ScreenHydration = (function() {
       var card = e.target.closest('.hyd-quick-card[data-drink-id]');
       if (!card) return;
       Utils.haptic('light');
-      _openOzPicker(card.dataset.drinkId);
+      if (card.dataset.custom) {
+        var _qs = State.get();
+        var _cd = (_qs.customDrinks || []).find(function(d) { return d.id === card.dataset.drinkId; });
+        _openOzPicker(card.dataset.drinkId, _cd || null);
+      } else {
+        _openOzPicker(card.dataset.drinkId);
+      }
     });
 
     // Oz picker grid — tap size to log
@@ -8032,7 +8107,7 @@ var ScreenHydration = (function() {
     });
   }
 
-  return { render, bindEvents, openOzPickerFor: _openOzPicker };
+  return { render, bindEvents, openOzPickerFor: _openOzPicker, openSettingsSheet: _openSettingsSheet };
 
 })();
 
@@ -8056,6 +8131,7 @@ var ScreenDrinkLibrary = (function() {
     var defaults = ['water', 'sparkling', 'tea', 'juice'];
     var s = State.get();
     var pinned = (s.favoriteDrinks || []).slice(0, 4);
+    // Custom drinks are valid pool members too
     var seen = pinned.slice(); // pinned drinks come first
 
     // Fill remaining slots with today's recent drinks
@@ -8093,23 +8169,40 @@ var ScreenDrinkLibrary = (function() {
 
   function render() { _renderGrid(); }
 
+  function _buildCard(id, label, emoji, coeff, isCoffee, isCustom) {
+    var fav = isFavorite(id);
+    return '<div class="dlib-card' + (fav ? ' pinned' : '') + '" data-drink-id="' + Utils.esc(id) + '"'
+         + (isCoffee ? ' data-coffee="1"' : '')
+         + (isCustom ? ' data-custom="1"' : '') + '>'
+         + '<button class="dlib-card-star' + (fav ? ' pinned' : '') + '" data-pin-id="' + Utils.esc(id) + '" aria-label="' + (fav ? 'Unpin' : 'Pin') + '">' + (fav ? '★' : '☆') + '</button>'
+         + '<div class="dlib-card-coeff">' + Math.round(coeff * 100) + '%</div>'
+         + '<div class="dlib-card-emoji">' + Utils.esc(emoji) + '</div>'
+         + '<div class="dlib-card-name">' + Utils.esc(label) + '</div>'
+         + (isCustom ? '<button class="dlib-card-delete" data-delete-id="' + Utils.esc(id) + '" aria-label="Delete">×</button>' : '')
+         + '</div>';
+  }
+
   function _renderGrid() {
     var el = document.getElementById('dlib-grid');
     if (!el) return;
     var html = '';
     CONFIG.drinks.forEach(function(d) {
       if (d.id === 'coffee_milk' || d.id === 'coffee_sugar') return;
-      var isCoffee = (d.id === 'coffee');
-      var fav = isFavorite(d.id);
-      html += '<div class="dlib-card' + (fav ? ' pinned' : '') + '" data-drink-id="' + Utils.esc(d.id) + '"'
-            + (isCoffee ? ' data-coffee="1"' : '') + '>'
-            + '<button class="dlib-card-star' + (fav ? ' pinned' : '') + '" data-pin-id="' + Utils.esc(d.id) + '" aria-label="' + (fav ? 'Unpin' : 'Pin') + '">' + (fav ? '★' : '☆') + '</button>'
-            + '<div class="dlib-card-coeff">' + Math.round(d.coeff * 100) + '%</div>'
-            + '<div class="dlib-card-emoji">' + Utils.esc(d.emoji) + '</div>'
-            + '<div class="dlib-card-name">' + Utils.esc(d.label) + '</div>'
-            + '</div>';
+      html += _buildCard(d.id, d.label, d.emoji, d.coeff, d.id === 'coffee', false);
     });
     el.innerHTML = html; // [SAFE: config strings + U.esc()]
+
+    // Custom drinks section
+    var s = State.get();
+    var customs = s.customDrinks || [];
+    var customSection = document.getElementById('dlib-custom-section');
+    var customGrid = document.getElementById('dlib-custom-grid');
+    if (customSection) customSection.style.display = customs.length ? '' : 'none';
+    if (customGrid && customs.length) {
+      var cHtml = '';
+      customs.forEach(function(d) { cHtml += _buildCard(d.id, d.name, d.emoji, 0.90, false, true); });
+      customGrid.innerHTML = cHtml; // [SAFE: U.esc() applied]
+    }
   }
 
   // Called by library grid tap and FabDrinkSheet — source controls post-pick routing
@@ -8138,29 +8231,65 @@ var ScreenDrinkLibrary = (function() {
       Router.back();
     });
 
-    // Grid tap
-    document.getElementById('dlib-grid').addEventListener('click', function(e) {
+    // Shared card interaction handler — used for both built-in and custom grids
+    function _handleGridClick(e) {
+      // Delete button (custom drinks only)
+      var del = e.target.closest('.dlib-card-delete[data-delete-id]');
+      if (del) {
+        e.stopPropagation();
+        Utils.haptic('light');
+        var s = State.get();
+        var filtered = (s.customDrinks || []).filter(function(d) { return d.id !== del.dataset.deleteId; });
+        State.update('customDrinks', filtered);
+        // Also remove from favorites if pinned
+        var favs = (s.favoriteDrinks || []).filter(function(id) { return id !== del.dataset.deleteId; });
+        State.update('favoriteDrinks', favs);
+        Storage.sched();
+        _renderGrid();
+        return;
+      }
       // Star pin/unpin
       var star = e.target.closest('.dlib-card-star[data-pin-id]');
       if (star) {
         e.stopPropagation();
         Utils.haptic('light');
         _toggleFavorite(star.dataset.pinId);
-        _renderGrid(); // re-render to show updated star state
+        _renderGrid();
         return;
       }
+      // Card tap — log drink
       var card = e.target.closest('.dlib-card[data-drink-id]');
       if (!card) return;
       Utils.haptic('light');
       if (card.dataset.coffee) {
         openCoffeePicker('library');
       } else {
-        Router.go('hydration');
-        requestAnimationFrame(function() {
-          ScreenHydration.openOzPickerFor(card.dataset.drinkId);
-        });
+        var drinkId = card.dataset.drinkId;
+        // Custom drinks: open oz picker via hydration screen with custom label support
+        if (card.dataset.custom) {
+          var s2 = State.get();
+          var cd = (s2.customDrinks || []).find(function(d) { return d.id === drinkId; });
+          if (cd) {
+            Router.go('hydration');
+            requestAnimationFrame(function() {
+              ScreenHydration.openOzPickerFor(drinkId, cd);
+            });
+          }
+        } else {
+          Router.go('hydration');
+          requestAnimationFrame(function() {
+            ScreenHydration.openOzPickerFor(drinkId);
+          });
+        }
       }
-    });
+    }
+
+    // Grid tap
+    document.getElementById('dlib-grid').addEventListener('click', _handleGridClick);
+
+    // Custom grid tap (delegated)
+    var customGridEl = document.getElementById('dlib-custom-grid');
+    if (customGridEl) customGridEl.addEventListener('click', _handleGridClick);
 
     // Coffee picker — option tap (handles both library and FAB source)
     document.getElementById('coffee-option-list').addEventListener('click', function(e) {
@@ -8189,9 +8318,80 @@ var ScreenDrinkLibrary = (function() {
       Components.closeSheet();
     });
 
-    document.getElementById('dlib-create-btn').addEventListener('click', function() {
-      Components.toast('Custom drinks coming soon');
+    var customCloseBtn = document.getElementById('custom-drink-close-btn');
+    if (customCloseBtn) customCloseBtn.addEventListener('click', function() {
+      Components.closeSheet();
     });
+
+    document.getElementById('dlib-create-btn').addEventListener('click', function() {
+      _openCustomDrinkSheet();
+    });
+  }
+
+  // Emoji options for custom drinks
+  var _CUSTOM_EMOJIS = ['🥤','🧉','🫖','🍵','🧃','🥛','🫗','🍶','🧋','🌿'];
+
+  function _openCustomDrinkSheet() {
+    var nameEl  = document.getElementById('custom-drink-name');
+    var saveEl  = document.getElementById('custom-drink-save-btn');
+    var ozGrid  = document.getElementById('custom-drink-oz-grid');
+    var emojiRow = document.getElementById('custom-drink-emoji-row');
+
+    var _cd = { emoji: '🥤' }; // default emoji
+
+    if (nameEl) nameEl.value = '';
+    if (saveEl) { saveEl.disabled = true; saveEl.textContent = 'Add to Library'; }
+
+    // Emoji picker row
+    if (emojiRow) {
+      var eHtml = '';
+      _CUSTOM_EMOJIS.forEach(function(em, i) {
+        eHtml += '<button class="custom-emoji-btn' + (i === 0 ? ' selected' : '') + '" data-emoji="' + em + '">' + em + '</button>';
+      });
+      emojiRow.innerHTML = eHtml;
+      emojiRow.onclick = function(e) {
+        var btn = e.target.closest('.custom-emoji-btn[data-emoji]');
+        if (!btn) return;
+        emojiRow.querySelectorAll('.custom-emoji-btn').forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        _cd.emoji = btn.dataset.emoji;
+      };
+    }
+
+    // Oz grid — optional for library entry (not required)
+    if (ozGrid) {
+      ozGrid.style.display = 'none'; // hide oz grid — not needed for library add
+    }
+
+    function _checkReady() {
+      var name = nameEl ? nameEl.value.trim() : '';
+      if (saveEl) saveEl.disabled = !name;
+    }
+    if (nameEl) nameEl.oninput = _checkReady;
+
+    if (saveEl) {
+      saveEl.onclick = function() {
+        var name = nameEl ? nameEl.value.trim() : '';
+        if (!name) return;
+        var s = State.get();
+        var customs = (s.customDrinks || []).slice();
+        // Check for duplicate name
+        var exists = customs.some(function(d) { return d.name.toLowerCase() === name.toLowerCase(); });
+        if (exists) {
+          Components.toast(name + ' is already in your library');
+          return;
+        }
+        var entry = { id: 'custom_' + Utils.uid(), name: name, emoji: _cd.emoji, coeff: 0.90 };
+        customs.push(entry);
+        State.update('customDrinks', customs);
+        Storage.sched();
+        Components.closeSheet();
+        _renderGrid();
+        Components.toast(name + ' added to library');
+      };
+    }
+
+    Components.openSheet('sheet-custom-drink');
   }
 
   return { render: render, bindEvents: bindEvents, quickAddIds: _quickAddIds, openCoffeePicker: openCoffeePicker, toggleFavorite: _toggleFavorite, isFavorite: isFavorite };
@@ -8835,6 +9035,12 @@ var ScreenYou = (function() {
         // Open edit on row tap
         var row = e.target.closest('.you-row--editable');
         if (row && !e.target.closest('.you-edit-form')) {
+          // Hydration goal: open the hydration settings sheet directly
+          if (row.dataset.field === 'hydrationGoal') {
+            Utils.haptic('light');
+            ScreenHydration.openSettingsSheet();
+            return;
+          }
           _openEdit(row.dataset.field);
           return;
         }
@@ -10149,7 +10355,7 @@ var ScreenBowel = (function() {
   ];
 
   var _selectedType     = 4;    // default: Normal
-  var _selectedColor    = null; // optional
+  var _selectedColor    = 'brown'; // default brown — most common
   var _selectedSymptoms = [];
 
   function _todayLogs() {
@@ -10273,7 +10479,7 @@ var ScreenBowel = (function() {
 
   function _resetSelections() {
     _selectedType     = 4;
-    _selectedColor    = null;
+    _selectedColor    = 'brown'; // reset to default
     _selectedSymptoms = [];
     var ti = document.getElementById('bowel-log-time-input');
     if (ti) { ti._userEdited = false; }
@@ -10450,6 +10656,14 @@ var FabDrinkSheet = (function() {
 
   var _pendingDrinkId = null;
 
+  // Resolve a drink by ID — checks customDrinks first, then CONFIG.drinks
+  function _resolveDrink(id) {
+    var s = State.get();
+    var custom = (s.customDrinks || []).find(function(d) { return d.id === id; });
+    if (custom) return { id: custom.id, label: custom.name, emoji: custom.emoji, coeff: 0.90 };
+    return CONFIG.drinks.find(function(x) { return x.id === id; }) || CONFIG.drinks[0];
+  }
+
   // Read coffeeDefault from state
   function _coffeeDefault() {
     var s = State.get();
@@ -10474,8 +10688,9 @@ var FabDrinkSheet = (function() {
     });
     var html = '';
     ids.forEach(function(id) {
-      var d = CONFIG.drinks.find(function(x) { return x.id === id; }) || CONFIG.drinks[0];
-      html += '<div class="fab-drink-card" data-drink-id="' + Utils.esc(d.id) + '">'
+      var d = _resolveDrink(id);
+      html += '<div class="fab-drink-card" data-drink-id="' + Utils.esc(d.id) + '"'
+            + (d.id.indexOf('custom_') === 0 ? ' data-custom="1"' : '') + '>'
             + '<div class="fab-drink-card-coeff">' + Math.round(d.coeff * 100) + '%</div>'
             + '<div class="fab-drink-card-emoji">' + Utils.esc(d.emoji) + '</div>'
             + '<div class="fab-drink-card-name">' + Utils.esc(d.label) + '</div>'
@@ -10493,7 +10708,7 @@ var FabDrinkSheet = (function() {
   // Called by coffee picker after variant selected, and by card tap for non-coffee drinks
   function pickOzFor(drinkId) {
     _pendingDrinkId = drinkId;
-    var d = CONFIG.drinks.find(function(x) { return x.id === drinkId; }) || CONFIG.drinks[0];
+    var d = _resolveDrink(drinkId);
     document.getElementById('fab-oz-emoji').textContent = d.emoji;
     document.getElementById('fab-oz-title').textContent = d.label;
     var grid = document.getElementById('fab-oz-grid');
@@ -11914,7 +12129,7 @@ var ScreenMeals = (function() {
       listEl.innerHTML = '';
       emptyEl.innerHTML =
         '<div class="suppmed-empty-msg">No ' + typeWord + ' in your inventory yet.</div>' +
-        '<button class="btn-primary" id="suppmed-goto-settings" style="margin-top:8px;">Go to Settings</button>';
+        '<button class="btn-primary" id="suppmed-goto-settings" style="margin-top:8px;">Go to You tab</button>';
       emptyEl.style.display = 'block';
       timeEl.style.display  = 'none';
       saveEl.style.display  = 'none';
@@ -11922,8 +12137,8 @@ var ScreenMeals = (function() {
       var btn = document.getElementById('suppmed-goto-settings');
       if (btn) btn.addEventListener('click', function() {
         Components.closeSheet('sheet-suppmed-entry');
-        Router.go('settings');
-        Components.toast('Add ' + typeWord + ' in Settings → You');
+        Router.go('you');
+        Components.toast('Add ' + typeWord + ' in the You tab');
       });
       return;
     }
@@ -13851,9 +14066,9 @@ var App = (function() {
       var entry = { id: Utils.uid(), ts: Date.now(), bristolType: parseInt(bristolType, 10), color: color, symptoms: symptoms };
       State.pushLog('bowel', entry);
       Storage.sched();
-      // Reset color selection for next open
+      // Reset color selection to brown for next open
       document.querySelectorAll('#bowel-sheet-color-strip .bowel-sheet-color-dot').forEach(function(d) {
-        d.classList.remove('selected');
+        d.classList.toggle('selected', d.dataset.sheetColor === 'brown');
       });
       Components.closeSheet();
       ScreenToday.render();
