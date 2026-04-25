@@ -1841,6 +1841,23 @@ input, textarea { font-family: inherit; }
 }
 .crop-modal-actions .btn-primary { flex: 2; }
 
+/* Photo source sheet buttons */
+.photo-source-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--tx);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.photo-source-btn:active { background: var(--accp); }
+
 #toast-host {
   position: fixed;
   bottom: calc(var(--nav-h) + 16px + var(--safe-bottom));
@@ -3695,14 +3712,13 @@ input, textarea { font-family: inherit; }
               <button class="icon-btn" id="settings-btn" aria-label="Settings">
                 <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
               </button>
-              <label class="avatar-btn-photo" id="avatar-btn" aria-label="Profile photo — tap to add or change photo" style="cursor:pointer;overflow:hidden;position:relative;">
-                <input type="file" id="avatar-file-input" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" aria-label="Choose profile photo or take a new one">
+              <button class="avatar-btn-photo" id="avatar-btn" aria-label="Profile photo — tap to add or change photo" style="cursor:pointer;overflow:hidden;position:relative;background:none;border:none;padding:0;">
                 <img id="avatar-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">
                 <svg id="avatar-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
                   <circle cx="12" cy="8" r="3.5"/>
                   <path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/>
                 </svg>
-              </label>
+              </button>
             </div>
           </div>
         </div>
@@ -3775,7 +3791,7 @@ input, textarea { font-family: inherit; }
               <button class="icon-btn" data-settings aria-label="Settings">
                 <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
               </button>
-              <label class="avatar-btn-photo" data-profile aria-label="Profile photo — tap to add or change photo" style="cursor:pointer;overflow:hidden;position:relative;"><input type="file" class="avatar-file-all" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" aria-label="Choose profile photo or take a new one"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></label>
+              <button class="avatar-btn-photo" data-profile aria-label="Profile photo — tap to add or change photo" style="cursor:pointer;overflow:hidden;position:relative;background:none;border:none;padding:0;"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></button>
             </div>
           </div>
         </div>
@@ -3863,7 +3879,7 @@ input, textarea { font-family: inherit; }
               <button class="icon-btn" data-settings aria-label="Settings">
                 <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
               </button>
-              <label class="avatar-btn-photo" data-profile aria-label="Profile photo — tap to add or change photo" style="cursor:pointer;overflow:hidden;position:relative;"><input type="file" class="avatar-file-all" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" aria-label="Choose profile photo or take a new one"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></label>
+              <button class="avatar-btn-photo" data-profile aria-label="Profile photo — tap to add or change photo" style="cursor:pointer;overflow:hidden;position:relative;background:none;border:none;padding:0;"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></button>
             </div>
           </div>
         </div>
@@ -3893,7 +3909,7 @@ input, textarea { font-family: inherit; }
               <button class="icon-btn" data-settings aria-label="Settings">
                 <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a6.97 6.97 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 9.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.36 1.05.67 1.62.94l.36 2.54c.06.24.28.41.48.41h3.84c.2 0 .42-.17.47-.41l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
               </button>
-              <label class="avatar-btn-photo" data-profile aria-label="Profile photo — tap to add or change photo" style="cursor:pointer;overflow:hidden;position:relative;"><input type="file" class="avatar-file-all" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" aria-label="Choose profile photo or take a new one"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></label>
+              <button class="avatar-btn-photo" data-profile aria-label="Profile photo — tap to add or change photo" style="cursor:pointer;overflow:hidden;position:relative;background:none;border:none;padding:0;"><img class="avatar-img-all" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"><svg class="avatar-svg-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg></button>
             </div>
           </div>
         </div>
@@ -3998,6 +4014,22 @@ input, textarea { font-family: inherit; }
             <div class="you-edit-actions">
               <button class="inv-cancel-btn" data-field-cancel="hydrationGoal">Cancel</button>
               <button class="inv-save-btn"   data-field-save="hydrationGoal">Save</button>
+            </div>
+          </div>
+          <div class="you-row you-row--editable" data-field="wakeTime">
+            <span class="you-row-label">Usual Wake Time</span>
+            <div class="you-row-right">
+              <span class="you-row-value" id="you-wake-time">—</span>
+              <span class="you-row-edit-hint">Edit</span>
+            </div>
+          </div>
+          <div class="you-edit-form" id="you-edit-wakeTime">
+            <div class="you-edit-row">
+              <input class="you-edit-input" id="you-input-wakeTime" type="time" placeholder="06:30">
+            </div>
+            <div class="you-edit-actions">
+              <button class="inv-cancel-btn" data-field-cancel="wakeTime">Cancel</button>
+              <button class="inv-save-btn"   data-field-save="wakeTime">Save</button>
             </div>
           </div>
           <!-- Health Goals & Concerns -->
@@ -4305,6 +4337,10 @@ input, textarea { font-family: inherit; }
                 <button class="pill-option" data-val="male">Male</button>
                 <button class="pill-option" data-val="female">Female</button>
               </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Usual Wake Time</label>
+              <input class="form-input" id="ob-wake-time" type="time" autocomplete="off">
             </div>
           </div>
           <div class="ob-footer">
@@ -5427,6 +5463,35 @@ input, textarea { font-family: inherit; }
     </div>
   </div>
 
+  <!-- Photo source sheet — shared by all photo entry points -->
+  <div class="sheet" id="sheet-photo-source" aria-modal="true" role="dialog">
+    <div class="sheet-inner">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title-row">
+        <div class="sheet-title">Profile Photo</div>
+        <button class="icon-btn" id="photo-source-close-btn" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div style="padding:8px 20px 32px;display:flex;flex-direction:column;gap:12px;">
+        <!-- Camera input — capture="user" targets front camera -->
+        <label class="photo-source-btn" style="position:relative;overflow:hidden;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;flex-shrink:0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Take Photo
+          <input type="file" id="photo-input-camera" accept="image/*" capture="user"
+            style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" aria-label="Take a photo with camera">
+        </label>
+        <!-- Gallery input -->
+        <label class="photo-source-btn" style="position:relative;overflow:hidden;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;flex-shrink:0;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Choose from Library
+          <input type="file" id="photo-input-gallery" accept="image/*"
+            style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" aria-label="Choose photo from library">
+        </label>
+      </div>
+    </div>
+  </div>
+
   <div id="toast-host" aria-live="polite" aria-atomic="true"></div>
 
 </div><!-- /app -->
@@ -5980,7 +6045,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v17-00',
+  version:            'v19-00',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -6525,8 +6590,22 @@ var FOOD_DB = [
     tags:['low_glycemic'],
     benefits:['Craving Control','Blood Sugar'] },
   { name:'Whey protein isolate', cat:'sweet', shopCat:'Sweet Replacements',
-    tags:['balanced_meal'],
+    tags:['balanced_meal','whey'],
     benefits:['Blood Sugar','Satiety','A1c'] },
+
+  // ── THERAPEUTIC FOODS (FMD) ──────────────────────────────
+  { name:'Liver powder',     cat:'therapeutic', shopCat:'Therapeutic Foods',
+    tags:['nutrient_dense','balanced_meal'],
+    benefits:['Energy','Iron','Vitamin A','B Vitamins','Liver Support'] },
+  { name:'Potato starch',    cat:'therapeutic', shopCat:'Therapeutic Foods',
+    tags:['resistant_starch','high_fiber'],
+    benefits:['Gut Health','Blood Sugar','Inflammation'] },
+  { name:'Gelatin',          cat:'therapeutic', shopCat:'Therapeutic Foods',
+    tags:['gut_support','balanced_meal'],
+    benefits:['Gut Health','Joints','Sleep','Skin'] },
+  { name:'Bone broth',       cat:'therapeutic', shopCat:'Therapeutic Foods',
+    tags:['gut_support','balanced_meal'],
+    benefits:['Gut Health','Joints','Inflammation','Electrolytes'] },
 
 ];
 
@@ -6544,6 +6623,7 @@ var State = (function() {
       height: null,
       age: null,
       sex: null,
+      wakeTime: null,   // stored as "HH:MM" 24h string, e.g. "06:30"
       healthGoals: '',  // free text: goals & concerns for doctor reports
     },
     goals: {
@@ -8631,6 +8711,20 @@ var ScreenYou = (function() {
     _setText('you-age',     p.age     ? p.age + ' yrs'   : '—');
     _setText('you-sex',     p.sex     ? _capitalize(p.sex) : '—');
     _setText('you-hydration-goal', (s.goals.hydrationOz || CONFIG.hydrationGoalOz) + ' oz');
+    // Wake time — display as 12h format for readability
+    (function() {
+      var wt = p.wakeTime || '';
+      var display = '—';
+      if (wt) {
+        var parts = wt.split(':');
+        var h = parseInt(parts[0], 10);
+        var m = parts[1];
+        var ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        display = h + ':' + m + ' ' + ampm;
+      }
+      _setText('you-wake-time', display);
+    })();
 
     // Health goals — truncate for display, style differently if populated
     var goalsEl = document.getElementById('you-health-goals');
@@ -8947,6 +9041,9 @@ var ScreenYou = (function() {
     } else if (field === 'hydrationGoal') {
       var inp = document.getElementById('you-input-hydrationGoal');
       if (inp) inp.value = s.goals.hydrationOz || CONFIG.hydrationGoalOz || 64;
+    } else if (field === 'wakeTime') {
+      var inp = document.getElementById('you-input-wakeTime');
+      if (inp) inp.value = s.profile.wakeTime || '';
     } else if (field === 'healthGoals') {
       var ta = document.getElementById('you-input-healthGoals');
       var cc = document.getElementById('you-goals-chars');
@@ -8998,6 +9095,11 @@ var ScreenYou = (function() {
       var val = Utils.parseNum(document.getElementById('you-input-hydrationGoal').value, 32, 200);
       if (!val) return;
       State.update('goals.hydrationOz', val);
+    } else if (field === 'wakeTime') {
+      var inp = document.getElementById('you-input-wakeTime');
+      var val = inp ? inp.value.trim() : '';
+      if (!val) return;
+      State.update('profile.wakeTime', val);
     } else if (field === 'healthGoals') {
       var ta = document.getElementById('you-input-healthGoals');
       var text = Utils.cleanText(ta ? ta.value : '');
@@ -9398,6 +9500,27 @@ var PhotoManager = (function() {
     });
   }
 
+  // ── PHOTO SOURCE SHEET ────────────────────────────────────
+  // Opens the "Take Photo / Choose from Library" sheet.
+  // onDone is passed through to the crop modal callback.
+  function openSourceSheet(onDone) {
+    Components.openSheet('sheet-photo-source');
+    // Wire both inputs — replace handlers each open so onDone is fresh
+    ['photo-input-camera', 'photo-input-gallery'].forEach(function(id) {
+      var inp = document.getElementById(id);
+      if (!inp) return;
+      var fresh = inp.cloneNode(true);
+      inp.parentNode.replaceChild(fresh, inp);
+      fresh.addEventListener('change', function() {
+        var file = this.files && this.files[0];
+        if (!file) return;
+        Components.closeSheet();
+        _openCrop(file, onDone);
+        fresh.value = '';
+      });
+    });
+  }
+
   // Wire all avatar-file-all inputs (Track/Insights/You headers)
   function bindAll() {
     document.querySelectorAll('.avatar-file-all').forEach(function(input) {
@@ -9410,7 +9533,7 @@ var PhotoManager = (function() {
     });
   }
 
-  return { load, save, applyAll, bindInput, bindAll, initCropModal };
+  return { load, save, applyAll, bindInput, bindAll, initCropModal, openSourceSheet };
 
 })();
 
@@ -9488,31 +9611,26 @@ var Onboarding = (function() {
       });
     }
 
-    // Photo circle tap in onboarding → trigger file picker
+    // Photo circle tap in onboarding → open source sheet
     var obPhotoCircle = document.getElementById('ob-photo-circle');
     if (obPhotoCircle) {
       obPhotoCircle.addEventListener('click', function() {
-        var input = document.getElementById('ob-photo-input');
-        if (input) input.click();
+        PhotoManager.openSourceSheet(function() {
+          // After crop: show photo in onboarding circle and advance
+          var dataUrl = PhotoManager.load();
+          var img = document.getElementById('ob-photo-img');
+          var svg = document.getElementById('ob-photo-svg');
+          var circle = document.getElementById('ob-photo-circle');
+          if (img && dataUrl) {
+            img.src = dataUrl;
+            img.style.display = 'block';
+            if (svg) svg.style.display = 'none';
+            if (circle) circle.classList.add('has-photo');
+          }
+          _goTo(6);
+        });
       });
     }
-
-    // Auto-advance to step 6 (tutorial) after photo picked in onboarding
-    PhotoManager.bindInput('ob-photo-input', function() {
-      // Show photo in onboarding circle
-      var dataUrl = PhotoManager.load();
-      var img = document.getElementById('ob-photo-img');
-      var svg = document.getElementById('ob-photo-svg');
-      var circle = document.getElementById('ob-photo-circle');
-      if (img && dataUrl) {
-        img.src = dataUrl;
-        img.style.display = 'block';
-        if (svg) svg.style.display = 'none';
-        if (circle) circle.classList.add('has-photo');
-      }
-      // Advance to "You're all set"
-      _goTo(6);
-    });
 
     // Add supplement in onboarding — open You inventory sheet, auto-advance after
     var obAddSupp = document.getElementById('ob-add-supplement');
@@ -9587,11 +9705,14 @@ var Onboarding = (function() {
     var inches = Utils.parseNum(document.getElementById('ob-height-in').value, 0, 11);
     var heightStr = (ft !== null) ? ft + '\'' + (inches !== null ? ' ' + inches + '"' : '') : null;
     var age = Utils.parseNum(document.getElementById('ob-age').value, 1, 120);
+    var wakeTimeEl = document.getElementById('ob-wake-time');
+    var wakeTime = wakeTimeEl ? wakeTimeEl.value.trim() : '';
 
     State.update('profile.weight', weight);
     State.update('profile.height', heightStr);
     State.update('profile.age',    age);
     State.update('profile.sex',    _selectedSex);
+    if (wakeTime) State.update('profile.wakeTime', wakeTime);
     State.update('onboardingComplete', true);
 
     // Calculate smart hydration goal: weight(lbs) / 2 = oz/day (min 64)
@@ -9709,6 +9830,8 @@ var InsightEngine = (function() {
     juice:        ['sugar'],
     beer:         ['alcohol'],
     wine:         ['alcohol'],
+    salt_sole:    ['electrolytes'],
+    milk:         ['dairy'],
   };
 
   // ── Pattern rules ───────────────────────────────────────────
@@ -9974,6 +10097,46 @@ var InsightEngine = (function() {
       // _checkTrend, not _hasOutput (which only reads bowel symptoms).
       // Source: Slavin JL, Nutrition 2013; WHO fiber recommendations;
       // IFM gut microbiome research.
+    },
+
+    {
+      id: 'FQ3', priority: 2,
+      inputTag: 'dairy', outputType: 'bowel', outputKey: 'bloating',
+      windowH: 24, threshold: 3, icon: '🥛',
+      text: 'Dairy has been logged around several days with digestive symptoms. Some people notice a connection — worth watching.',
+      // Rationale: Lactose intolerance affects ~65% of adults globally.
+      // Dairy proteins (casein, whey) can also trigger gut inflammation
+      // and altered motility independent of lactose. Correlation rule —
+      // fires when dairy-tagged meals co-occur with bowel bloating/urgency
+      // symptoms within 24h window across 3+ occurrences.
+      // Source: IFM elimination protocol; Suarez et al., NEJM 1995;
+      // Savaiano DA, Nutrients 2014.
+    },
+
+    {
+      id: 'FQ4', priority: 2,
+      inputTag: 'whey', outputType: 'bowel', outputKey: 'bloating',
+      windowH: 24, threshold: 3, icon: '💪',
+      text: 'Whey protein has been logged on several days with digestive symptoms. Whey is dairy-derived — some people find it easier to digest than whole dairy, others don\'t.',
+      // Rationale: Whey is a dairy byproduct. Even whey isolate (lower
+      // lactose) contains dairy proteins that can trigger gut symptoms in
+      // sensitive individuals. Separate rule from FQ3 because many users
+      // log whey shakes without logging other dairy.
+      // Source: Lomer et al., Aliment Pharmacol Ther 2008;
+      // IFM functional nutrition protocols.
+    },
+
+    {
+      id: 'FQ5', priority: 1,
+      inputTag: 'electrolytes', outputType: 'trend', outputKey: 'stable',
+      windowH: null, threshold: 5, icon: '🫧',
+      text: 'You\'ve been consistent with electrolyte water. Mineral balance supports hydration at a cellular level — good habit.',
+      // Rationale: Himalayan/sea salt in sole water provides ionized
+      // minerals (sodium, potassium, magnesium, trace minerals) that
+      // support intracellular hydration, nerve conduction, and pH
+      // balance beyond plain water. Positive reinforcement rule.
+      // Source: FMD booklet (sole protocol); Seifter JL, NEJM 2014
+      // (electrolyte physiology).
     },
 
   ];
@@ -10308,6 +10471,19 @@ var InsightEngine = (function() {
         return b.ts >= cutoff && b.bristolType >= 3 && b.bristolType <= 4;
       }).length;
       return (hfMeals >= 3 && goodBowelFQ2 >= 3) ? Math.min(hfMeals, goodBowelFQ2) : 0;
+    }
+
+    // FQ5: consistent electrolyte water (salt_sole) logging — positive reinforcement
+    // Counts distinct days with at least one salt_sole log in the window.
+    if (rule.id === 'FQ5') {
+      var elecDays = {};
+      (s.logs.hydration || []).forEach(function(log) {
+        if (log.ts < cutoff) return;
+        if (log.type !== 'salt_sole') return;
+        var dayKey = new Date(log.ts).toDateString();
+        elecDays[dayKey] = true;
+      });
+      return Object.keys(elecDays).length;
     }
 
     return 0;
@@ -13946,9 +14122,32 @@ var App = (function() {
     // 2a. Apply stored profile photo + wire all photo inputs through crop modal
     PhotoManager.applyAll();
     PhotoManager.initCropModal();
-    PhotoManager.bindInput('avatar-file-input');
-    PhotoManager.bindInput('settings-photo-input');
-    PhotoManager.bindAll(); // wires .avatar-file-all inputs (Track/Insights/You headers)
+
+    // All photo tap points now open the source sheet (Take Photo / Choose Library)
+    // avatar-file-input and settings-photo-input are replaced by the sheet flow.
+    // .avatar-file-all inputs (Track/Insights/You headers) also open the sheet.
+    PhotoManager.bindAll(); // still wires .avatar-file-all for bindAll compat
+
+    // Close button for photo source sheet
+    var photoSourceClose = document.getElementById('photo-source-close-btn');
+    if (photoSourceClose) photoSourceClose.addEventListener('click', function() {
+      Components.closeSheet();
+    });
+
+    // Avatar btn in Today header → open source sheet
+    var avatarBtn = document.getElementById('avatar-btn');
+    if (avatarBtn) avatarBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      PhotoManager.openSourceSheet();
+    });
+
+    // .avatar-file-all labels (Track/Insights/You headers) → open source sheet
+    document.querySelectorAll('.avatar-btn-photo[data-profile]').forEach(function(label) {
+      label.addEventListener('click', function(e) {
+        e.preventDefault();
+        PhotoManager.openSourceSheet();
+      });
+    });
 
     // 2b. Register Router activation hook — must happen before any Router.go()
     Router.onActivate(function(screenId) {
@@ -14401,8 +14600,7 @@ var ScreenSettings = (function() {
     var photoRow = document.getElementById('settings-photo-row');
     if (photoRow) {
       photoRow.addEventListener('click', function() {
-        var input = document.getElementById('settings-photo-input');
-        if (input) input.click();
+        PhotoManager.openSourceSheet();
       });
     }
 
