@@ -615,12 +615,11 @@ input, textarea { font-family: inherit; }
 .hydration-ring-wrap svg {
   width: 88px;
   height: 88px;
-  transform: rotate(-90deg);
 }
 .ring-track { fill: none; stroke: var(--bg2); stroke-width: 6; }
 .ring-segment {
   fill: none;
-  stroke-width: 11;
+  stroke-width: 6;
   stroke-linecap: butt;
   transition: stroke-dashoffset 0.5s cubic-bezier(0.4,0,0.2,1);
 }
@@ -2168,7 +2167,7 @@ input, textarea { font-family: inherit; }
   height: 220px;
   margin: 16px auto 8px;
 }
-#hyd-ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+#hyd-ring-svg { width: 100%; height: 100%; }
 .hyd-ring-bg  { fill: none; stroke: var(--bg2); stroke-width: 18; }
 .hyd-ring-segment { fill: none; stroke-width: 18; stroke-linecap: butt; transition: stroke-dashoffset 0.6s cubic-bezier(0.4,0,0.2,1); }
 .hyd-ring-center {
@@ -4567,6 +4566,11 @@ input, textarea { font-family: inherit; }
           </div>
         </div>
         <div class="bp-hint" id="bp-screen-hint"></div>
+        <div class="wt-tod-grid" id="bp-tod-grid">
+          <button class="wt-tod-pill" data-tod="morning">Morning</button>
+          <button class="wt-tod-pill" data-tod="afternoon">Afternoon</button>
+          <button class="wt-tod-pill" data-tod="evening">Evening</button>
+        </div>
         <button class="log-entry-btn" id="bp-log-entry-btn" disabled>Log Entry</button>
         <div style="height:120px;"></div>
       </div>
@@ -7111,7 +7115,7 @@ var ScreenToday = (function() {
     var CX = 44, CY = 44, R = 34;
     var FULL_DEG = 360;
     var MAX_DEG  = FULL_DEG * 1.25;
-    var GAP_DEG  = 1.5;
+    var GAP_DEG  = 1.0;
 
     function _degToXY(angleDeg) {
       var rad = (angleDeg - 90) * Math.PI / 180;
@@ -7125,7 +7129,7 @@ var ScreenToday = (function() {
       var large = sweep > 180 ? 1 : 0;
       return '<path d="M ' + p1[0] + ' ' + p1[1]
         + ' A ' + R + ' ' + R + ' 0 ' + large + ' 1 ' + p2[0] + ' ' + p2[1] + '"'
-        + ' fill="none" stroke="' + color + '" stroke-width="11" stroke-linecap="butt"/>';
+        + ' fill="none" stroke="' + color + '" stroke-width="6" stroke-linecap="butt"/>';
     }
 
     var segEl = document.getElementById('hydration-segments');
@@ -7140,8 +7144,11 @@ var ScreenToday = (function() {
         logs.forEach(function(l) {
           if (degSoFar >= MAX_DEG) return;
 
-          var drinkDef = CONFIG.drinks.find(function(d) { return d.id === l.type; });
-          var color = drinkDef ? drinkDef.color : '#7EC8E3';
+          // Resolve color: custom drinks first, then CONFIG.drinks
+          var _st2 = State.get();
+          var customDef = (_st2.customDrinks || []).find(function(d) { return d.id === l.type; });
+          var drinkDef = customDef || CONFIG.drinks.find(function(d) { return d.id === l.type; });
+          var color = customDef ? '#8a8a84' : (drinkDef ? drinkDef.color : '#8a8a84');
 
           var segDeg = (l.oz / goal) * FULL_DEG;
           segDeg = Math.min(segDeg, MAX_DEG - degSoFar);
@@ -7150,7 +7157,7 @@ var ScreenToday = (function() {
           var startDeg = degSoFar;
           var drawnDeg = segDeg - GAP_DEG;
 
-          if (drawnDeg > 0.5) {
+          if (drawnDeg > 0.3) {
             html += _arcPath(startDeg, startDeg + drawnDeg, color);
           }
 
@@ -7189,8 +7196,9 @@ var ScreenToday = (function() {
     var items = [];
 
     s.logs.hydration.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
-      // Use CONFIG.drinks label and emoji — falls back to capitalised id without underscores
-      var drinkDef = CONFIG.drinks.find(function(d) { return d.id === l.type; });
+      // Resolve custom drinks first, then CONFIG, then fallback
+      var customDef = (s.customDrinks || []).find(function(d) { return d.id === l.type; });
+      var drinkDef = customDef ? { label: customDef.name, emoji: customDef.emoji } : CONFIG.drinks.find(function(d) { return d.id === l.type; });
       var drinkLabel = drinkDef ? drinkDef.label : _capitalize(l.type.replace(/_/g, ' '));
       var drinkEmoji = drinkDef ? drinkDef.emoji : '💧';
       items.push({ ts: l.ts, icon: drinkEmoji, title: Utils.fmtOz(l.oz) + ' — ' + drinkLabel, sub: '', color: 'ti-hydration' });
@@ -7238,7 +7246,9 @@ var ScreenToday = (function() {
       items.push({ ts: l.ts, icon: '🌿', title: 'BM — ' + typeLabel, sub: sub, color: 'ti-bowel' });
     });
     s.logs.bp.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
-      items.push({ ts: l.ts, icon: '❤️', title: l.sys + '/' + l.dia + ' mmHg', sub: 'Blood pressure', color: 'ti-bp' });
+      var todLabel = { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' };
+      var bpSub = 'Blood pressure' + (l.timeOfDay ? ' · ' + (todLabel[l.timeOfDay] || l.timeOfDay) : '');
+      items.push({ ts: l.ts, icon: '❤️', title: l.sys + '/' + l.dia + ' mmHg', sub: bpSub, color: 'ti-bp' });
     });
     s.logs.glucose.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
       items.push({ ts: l.ts, icon: '📊', title: l.val + ' mg/dL', sub: _capitalize(l.context.replace('_', ' ')), color: 'ti-glucose' });
@@ -7558,6 +7568,10 @@ var ScreenHydration = (function() {
 
   // Get drink definition by id — falls back to water if unknown
   function _drink(id) {
+    // Check custom drinks first
+    var s = State.get();
+    var custom = (s.customDrinks || []).find(function(d) { return d.id === id; });
+    if (custom) return { id: custom.id, label: custom.name, emoji: custom.emoji, coeff: custom.coeff || 0.90, color: custom.color || '#8a8a84' };
     var found = CONFIG.drinks.find(function(d) { return d.id === id; });
     if (found) return found;
     // Legacy FAB sheet types that don't map 1:1 to CONFIG ids
@@ -7614,7 +7628,6 @@ var ScreenHydration = (function() {
 
   function _renderRing(logs, goal) {
     var R = 88;
-    var CIRC = 2 * Math.PI * R;
     var totalOz  = _totalOz(logs);
     var overGoal = totalOz > goal;
 
@@ -7631,34 +7644,41 @@ var ScreenHydration = (function() {
     var segG = document.getElementById('hyd-ring-segments');
     if (!segG) return;
 
-    // Build per-drink-type totals in log order
-    var typeMap = {};
-    logs.forEach(function(l) {
-      typeMap[l.type] = (typeMap[l.type] || 0) + l.oz;
-    });
+    // Sequential per-log arcs — sorted by timestamp, each entry its own arc slice.
+    // No grouping by type: water at 8am + coffee + water again = 3 separate arcs.
+    var FULL_DEG = 360;
+    var MAX_DEG  = FULL_DEG * 1.25; // cap at 125%
+    var GAP_DEG  = 1.0;             // hairline gap between segments
 
-    // Cap rendering at goal — ring stays full when over
-    var renderTotal = Math.min(totalOz, goal);
-    var filled   = 0;
-    var html     = '';
-    var typesUsed = Object.keys(typeMap);
+    function _hydDegToXY(angleDeg) {
+      var rad = (angleDeg - 90) * Math.PI / 180;
+      return [(110 + R * Math.cos(rad)).toFixed(3), (110 + R * Math.sin(rad)).toFixed(3)];
+    }
+    function _hydArcPath(startDeg, endDeg, color) {
+      var sweep = Math.min(endDeg - startDeg, 359.9);
+      var p1 = _hydDegToXY(startDeg);
+      var p2 = _hydDegToXY(startDeg + sweep);
+      var large = sweep > 180 ? 1 : 0;
+      return '<path d="M ' + p1[0] + ' ' + p1[1]
+        + ' A ' + R + ' ' + R + ' 0 ' + large + ' 1 ' + p2[0] + ' ' + p2[1] + '"'
+        + ' fill="none" stroke="' + Utils.esc(color) + '" stroke-width="18" stroke-linecap="butt"/>';
+    }
 
-    typesUsed.forEach(function(tid) {
-      var oz    = typeMap[tid];
-      // Cap this segment's contribution proportionally
-      var share = goal > 0 ? Math.min(oz, renderTotal - filled) / goal : 0;
-      if (share <= 0) return;
-      var dash   = share * CIRC;
-      var offset = CIRC - (filled / goal) * CIRC;
-      var d      = _drink(tid);
-      var gap    = typesUsed.length > 1 ? 2 : 0;
-      html += '<circle class="hyd-ring-segment"'
-            + ' cx="110" cy="110" r="' + R + '"'
-            + ' stroke="' + Utils.esc(d.color) + '"'
-            + ' stroke-dasharray="' + (dash - gap) + ' ' + (CIRC - dash + gap) + '"'
-            + ' stroke-dashoffset="' + offset + '"'
-            + '></circle>';
-      filled += Math.min(oz, renderTotal - (filled));
+    var sortedLogs = logs.slice().sort(function(a, b) { return a.ts - b.ts; });
+    var degSoFar = 0;
+    var html = '';
+
+    sortedLogs.forEach(function(l) {
+      if (degSoFar >= MAX_DEG) return;
+      var d = _drink(l.type);
+      var segDeg = (l.oz / goal) * FULL_DEG;
+      segDeg = Math.min(segDeg, MAX_DEG - degSoFar);
+      if (segDeg <= 0) return;
+      var drawnDeg = segDeg - GAP_DEG;
+      if (drawnDeg > 0.5) {
+        html += _hydArcPath(degSoFar, degSoFar + drawnDeg, d.color);
+      }
+      degSoFar += segDeg;
     });
 
     segG.innerHTML = html; // [SAFE: all values are numbers/config strings]
@@ -7843,7 +7863,7 @@ var ScreenHydration = (function() {
             + '</div>'
             + '<div class="hyd-log-oz">' + l.oz + 'oz</div>'
             + '<button class="hyd-log-delete" data-log-id="' + Utils.esc(l.id) + '" aria-label="Delete">'
-            + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+            + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>'
             + '</button>'
             + '</div>';
     });
@@ -10803,6 +10823,8 @@ var FabDrinkSheet = (function() {
 ══════════════════════════════════════════════════════════════ */
 var ScreenBP = (function() {
 
+  var _bp_tod = null; // selected time-of-day: 'morning'|'afternoon'|'evening'
+
   // Render "Last: SYS/DIA" and badge
   function render() {
     var s = State.get();
@@ -10865,7 +10887,7 @@ var ScreenBP = (function() {
         html += '<div class="hyd-log-row" data-id="' + Utils.esc(l.id) + '">'
           + '<div class="hyd-log-info">'
           + '<div class="hyd-log-main">' + Utils.esc(String(l.sys)) + '/' + Utils.esc(String(l.dia)) + ' <span style="font-size:13px;color:var(--mt);">mmHg</span></div>'
-          + '<div class="hyd-log-sub">' + Utils.fmtTime(l.ts) + '</div>'
+          + '<div class="hyd-log-sub">' + Utils.fmtTime(l.ts) + (l.timeOfDay ? ' · ' + ({morning:'Morning',afternoon:'Afternoon',evening:'Evening'}[l.timeOfDay] || l.timeOfDay) : '') + '</div>'
           + '</div>'
           + '<button class="hyd-log-del" data-id="' + Utils.esc(l.id) + '" aria-label="Delete">'
           + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>'
@@ -10923,7 +10945,7 @@ var ScreenBP = (function() {
       return;
     }
 
-    var entry = { id: Utils.uid(), ts: Date.now(), sys: sys, dia: dia };
+    var entry = { id: Utils.uid(), ts: Date.now(), sys: sys, dia: dia, timeOfDay: _bp_tod || null };
     State.pushLog('bp', entry);
     Storage.sched();
 
@@ -10933,6 +10955,11 @@ var ScreenBP = (function() {
     if (hint) hint.textContent = '';
     var logBtn = document.getElementById('bp-log-entry-btn');
     if (logBtn) logBtn.disabled = true;
+    // Reset time-of-day selection
+    _bp_tod = null;
+    document.querySelectorAll('#bp-tod-grid .wt-tod-pill').forEach(function(p) {
+      p.classList.remove('selected');
+    });
 
     render();
     ScreenTrack.render();
@@ -11018,6 +11045,19 @@ var ScreenBP = (function() {
         document.getElementById('bp-screen-dia').focus();
       }
     });
+
+    // Time-of-day pill selection
+    var bpTodGrid = document.getElementById('bp-tod-grid');
+    if (bpTodGrid) {
+      bpTodGrid.addEventListener('click', function(e) {
+        var pill = e.target.closest('.wt-tod-pill[data-tod]');
+        if (!pill) return;
+        _bp_tod = pill.dataset.tod;
+        document.querySelectorAll('#bp-tod-grid .wt-tod-pill').forEach(function(p) {
+          p.classList.toggle('selected', p === pill);
+        });
+      });
+    }
 
     // Log Entry button
     var bpLogBtn = document.getElementById('bp-log-entry-btn');
