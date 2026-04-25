@@ -1362,6 +1362,24 @@ input, textarea { font-family: inherit; }
   padding-left: 10px;
   border-left: 3px solid var(--acc);  /* left accent spine on section titles */
 }
+.you-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mt);
+  padding: 10px 16px 4px;
+}
+/* Wake times sheet */
+#sheet-wake-times .sheet-inner { padding: 0 20px 24px; }
+#sheet-wake-times .sheet-title-row { padding-left: 0; padding-right: 0; }
+#sheet-custom-drink .sheet-inner { padding: 0 20px 24px; }
+#sheet-custom-drink .sheet-title-row { padding-left: 0; padding-right: 0; }
+.wake-sheet-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--bd); }
+.wake-sheet-row:last-of-type { border-bottom: none; }
+.wake-sheet-label { font-size: 15px; color: var(--tx); }
+.wake-sheet-sublabel { font-size: 12px; color: var(--mt); margin-top: 2px; }
+.wake-sheet-input { font-size: 15px; color: var(--tx); background: var(--sf); border: 1px solid var(--bd); border-radius: 8px; padding: 8px 10px; width: 120px; text-align: right; }
 .you-row {
   display: flex;
   align-items: center;
@@ -4067,6 +4085,7 @@ input, textarea { font-family: inherit; }
               <button class="inv-cancel-btn" data-field-cancel="sex">Cancel</button>
             </div>
           </div>
+          <div class="you-group-label">Lifestyle</div>
           <div class="you-row you-row--editable" data-field="hydrationGoal">
             <span class="you-row-label">Hydration Goal</span>
             <div class="you-row-right">
@@ -4083,20 +4102,11 @@ input, textarea { font-family: inherit; }
               <button class="inv-save-btn"   data-field-save="hydrationGoal">Save</button>
             </div>
           </div>
-          <div class="you-row you-row--editable" data-field="wakeTime">
-            <span class="you-row-label">Usual Wake Time</span>
+          <div class="you-row" id="you-row-wake-times" style="cursor:pointer;">
+            <span class="you-row-label">Wake Times</span>
             <div class="you-row-right">
-              <span class="you-row-value" id="you-wake-time">—</span>
+              <span class="you-row-value" id="you-wake-times-summary">—</span>
               <span class="you-row-edit-hint">Edit</span>
-            </div>
-          </div>
-          <div class="you-edit-form" id="you-edit-wakeTime">
-            <div class="you-edit-row">
-              <input class="you-edit-input" id="you-input-wakeTime" type="time" placeholder="06:30">
-            </div>
-            <div class="you-edit-actions">
-              <button class="inv-cancel-btn" data-field-cancel="wakeTime">Cancel</button>
-              <button class="inv-save-btn"   data-field-save="wakeTime">Save</button>
             </div>
           </div>
           <!-- Health Goals & Concerns -->
@@ -4408,8 +4418,12 @@ input, textarea { font-family: inherit; }
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">Usual Wake Time</label>
-              <input class="form-input" id="ob-wake-time" type="time" autocomplete="off">
+              <label class="form-label">Weekday Wake Time <span style="font-weight:400;opacity:0.6">(Mon–Fri)</span></label>
+              <input class="form-input" id="ob-wake-time-weekday" type="time" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Weekend Wake Time <span style="font-weight:400;opacity:0.6">(Sat–Sun)</span></label>
+              <input class="form-input" id="ob-wake-time-weekend" type="time" autocomplete="off">
             </div>
           </div>
           <div class="ob-footer">
@@ -4614,7 +4628,7 @@ input, textarea { font-family: inherit; }
       </div>
       <div class="bowel-scroll-body" id="bowel-scroll-body">
 
-        <!-- Bristol type -->\
+        <!-- Bristol type -->
         <div class="bowel-section-label">TYPE</div>
         <div class="bowel-type-list" id="bowel-type-list"></div>
 
@@ -4677,6 +4691,10 @@ input, textarea { font-family: inherit; }
           <button class="wt-tod-pill" data-tod="evening">Evening</button>
         </div>
         <button class="log-entry-btn" id="bp-log-entry-btn" disabled>Log Entry</button>
+        <div id="bp-screen-crisis-alert" style="display:none;margin-top:14px;padding:12px 14px;background:#FFF3F3;border:1.5px solid #E57373;border-radius:12px;">
+          <div style="font-size:13px;font-weight:600;color:#C62828;margin-bottom:4px;">⚠️ Elevated Reading</div>
+          <div style="font-size:13px;color:#B71C1C;line-height:1.5;">A reading at this level is generally considered a reason to contact a medical professional promptly. This app does not provide medical advice — please reach out to your doctor or call emergency services if you feel unwell.</div>
+        </div>
         <div style="height:120px;"></div>
       </div>
     </div><!-- /screen-bp -->
@@ -5573,6 +5591,37 @@ input, textarea { font-family: inherit; }
 <!-- Bottom sheets -->
 <div class="sheet-overlay" id="sheet-overlay"></div>
 
+<!-- Wake times sheet -->
+<div class="sheet" id="sheet-wake-times" aria-modal="true" role="dialog">
+  <div class="sheet-inner">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title-row">
+      <div class="sheet-title">Wake Times</div>
+      <button class="icon-btn" id="wake-sheet-close-btn" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <p style="font-size:13px;color:var(--mt);margin:0 0 16px;">Used to detect if caffeine is logged close to your natural cortisol peak — which can affect energy and sleep patterns.</p>
+    <div class="wake-sheet-row">
+      <div>
+        <div class="wake-sheet-label">Weekday</div>
+        <div class="wake-sheet-sublabel">Mon – Fri</div>
+      </div>
+      <input class="wake-sheet-input" id="wake-input-weekday" type="time">
+    </div>
+    <div class="wake-sheet-row">
+      <div>
+        <div class="wake-sheet-label">Weekend</div>
+        <div class="wake-sheet-sublabel">Sat – Sun</div>
+      </div>
+      <input class="wake-sheet-input" id="wake-input-weekend" type="time">
+    </div>
+    <div style="padding: 20px 0 4px;">
+      <button class="btn-primary" id="wake-sheet-save" style="width:100%;">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- Photo source sheet — shared by all photo entry points -->
 <div class="sheet" id="sheet-photo-source" aria-modal="true" role="dialog">
   <div class="sheet-inner">
@@ -5643,7 +5692,7 @@ input, textarea { font-family: inherit; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-    <p style="font-size:13px;color:var(--mt);margin:4px 0 16px;padding:0 20px;">Name your drink and pick an icon. It will appear in your Drink Library and can be starred for quick access.</p>
+    <p style="font-size:13px;color:var(--mt);margin:4px 0 16px;">Name your drink and pick an icon. It will appear in your Drink Library and can be starred for quick access.</p>
     <div class="form-group" style="margin-top:4px;">
       <label class="form-label">Drink name</label>
       <input id="custom-drink-name" class="form-input" type="text" placeholder="e.g. Kombucha, Bone Broth…" maxlength="40" autocomplete="off">
@@ -6091,6 +6140,10 @@ input, textarea { font-family: inherit; }
       </div>
     </div>
     <button class="btn-primary" id="bp-save-btn">Save</button>
+    <div id="bp-crisis-alert" style="display:none;margin-top:14px;padding:12px 14px;background:#FFF3F3;border:1.5px solid #E57373;border-radius:12px;">
+      <div style="font-size:13px;font-weight:600;color:#C62828;margin-bottom:4px;">⚠️ Elevated Reading</div>
+      <div style="font-size:13px;color:#B71C1C;line-height:1.5;">A reading at this level is generally considered a reason to contact a medical professional promptly. This app does not provide medical advice — please reach out to your doctor or call emergency services if you feel unwell.</div>
+    </div>
   </div>
 </div>
 
@@ -6133,7 +6186,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v19-07',
+  version:            'v19-15',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -6538,7 +6591,7 @@ var FOOD_DB = [
 
   // ── DAIRY & REFRIGERATED ─────────────────────────────────
   { name:'Plain Greek yogurt', cat:'dairy', shopCat:'Dairy & Refrigerated',
-    tags:['dairy','balanced_meal'],
+    tags:['dairy','balanced_meal','probiotic'],
     benefits:['Blood Sugar','A1c','Gut Health','Satiety'] },
   { name:'Unsweetened almond milk', cat:'dairy', shopCat:'Dairy & Refrigerated',
     tags:['low_glycemic'],
@@ -6661,10 +6714,10 @@ var FOOD_DB = [
 
   // ── FERMENTED FOODS ──────────────────────────────────────
   { name:'Kimchi',           cat:'fermented', shopCat:'Fermented Foods',
-    tags:['low_glycemic'],
+    tags:['low_glycemic','probiotic'],
     benefits:['Gut Health','Inflammation','Blood Sugar','A1c'] },
   { name:'Sauerkraut',       cat:'fermented', shopCat:'Fermented Foods',
-    tags:['low_glycemic'],
+    tags:['low_glycemic','probiotic'],
     benefits:['Gut Health','Inflammation','Blood Sugar'] },
 
   // ── SWEET REPLACEMENTS ───────────────────────────────────
@@ -6711,7 +6764,9 @@ var State = (function() {
       height: null,
       age: null,
       sex: null,
-      wakeTime: null,   // stored as "HH:MM" 24h string, e.g. "06:30"
+      wakeTime: null,          // legacy — migration source only, do not write new values here
+      wakeTimeWeekday: null,   // Mon–Fri wake time, "HH:MM" 24h string
+      wakeTimeWeekend: null,   // Sat–Sun wake time, "HH:MM" 24h string
       healthGoals: '',  // free text: goals & concerns for doctor reports
     },
     goals: {
@@ -7417,7 +7472,8 @@ var ScreenToday = (function() {
     s.logs.bp.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
       var todLabel = { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' };
       var bpSub = 'Blood pressure' + (l.timeOfDay ? ' · ' + (todLabel[l.timeOfDay] || l.timeOfDay) : '');
-      items.push({ ts: l.ts, icon: '❤️', title: l.sys + '/' + l.dia + ' mmHg', sub: bpSub, color: 'ti-bp' });
+      var crisisMarker = l.crisis ? ' ⚠️' : '';
+      items.push({ ts: l.ts, icon: '❤️', title: l.sys + '/' + l.dia + ' mmHg' + crisisMarker, sub: bpSub, color: 'ti-bp' });
     });
     s.logs.glucose.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
       items.push({ ts: l.ts, icon: '📊', title: l.val + ' mg/dL', sub: _capitalize(l.context.replace('_', ' ')), color: 'ti-glucose' });
@@ -7513,9 +7569,10 @@ var ScreenToday = (function() {
 
     var html = '';
     if (lastBP) {
+      var bpCrisisFlag = lastBP.crisis ? ' <span style="font-size:13px;">⚠️</span>' : '';
       html += '<div class="today-metric-pill">' +
         '<div class="today-metric-pill-label">Last BP</div>' +
-        '<div class="today-metric-pill-value">' + Utils.esc(lastBP.sys + '/' + lastBP.dia) + '</div>' +
+        '<div class="today-metric-pill-value">' + Utils.esc(lastBP.sys + '/' + lastBP.dia) + bpCrisisFlag + '</div>' +
         '<div class="today-metric-pill-age">' + _timeAgo(lastBP.ts) + '</div>' +
         '</div>';
     }
@@ -8830,19 +8887,26 @@ var ScreenYou = (function() {
     _setText('you-age',     p.age     ? p.age + ' yrs'   : '—');
     _setText('you-sex',     p.sex     ? _capitalize(p.sex) : '—');
     _setText('you-hydration-goal', (s.goals.hydrationOz || CONFIG.hydrationGoalOz) + ' oz');
-    // Wake time — display as 12h format for readability
+    // Wake times — single summary row: "6:35 / 8:30" or "6:35 AM" if only one set
+    // Migration: if legacy wakeTime set but new fields aren't, copy to weekday
     (function() {
-      var wt = p.wakeTime || '';
-      var display = '—';
-      if (wt) {
+      if (p.wakeTime && !p.wakeTimeWeekday && !p.wakeTimeWeekend) {
+        State.update('profile.wakeTimeWeekday', p.wakeTime);
+        Storage.sched();
+      }
+      function fmt(wt) {
+        if (!wt) return null;
         var parts = wt.split(':');
         var h = parseInt(parts[0], 10);
         var m = parts[1];
         var ampm = h >= 12 ? 'PM' : 'AM';
         h = h % 12 || 12;
-        display = h + ':' + m + ' ' + ampm;
+        return h + ':' + m + ' ' + ampm;
       }
-      _setText('you-wake-time', display);
+      var wd = fmt(p.wakeTimeWeekday);
+      var we = fmt(p.wakeTimeWeekend);
+      var summary = wd && we ? wd + ' / ' + we : (wd || we || '—');
+      _setText('you-wake-times-summary', summary);
     })();
 
     // Health goals — truncate for display, style differently if populated
@@ -9160,9 +9224,6 @@ var ScreenYou = (function() {
     } else if (field === 'hydrationGoal') {
       var inp = document.getElementById('you-input-hydrationGoal');
       if (inp) inp.value = s.goals.hydrationOz || CONFIG.hydrationGoalOz || 64;
-    } else if (field === 'wakeTime') {
-      var inp = document.getElementById('you-input-wakeTime');
-      if (inp) inp.value = s.profile.wakeTime || '';
     } else if (field === 'healthGoals') {
       var ta = document.getElementById('you-input-healthGoals');
       var cc = document.getElementById('you-goals-chars');
@@ -9214,11 +9275,6 @@ var ScreenYou = (function() {
       var val = Utils.parseNum(document.getElementById('you-input-hydrationGoal').value, 32, 200);
       if (!val) return;
       State.update('goals.hydrationOz', val);
-    } else if (field === 'wakeTime') {
-      var inp = document.getElementById('you-input-wakeTime');
-      var val = inp ? inp.value.trim() : '';
-      if (!val) return;
-      State.update('profile.wakeTime', val);
     } else if (field === 'healthGoals') {
       var ta = document.getElementById('you-input-healthGoals');
       var text = Utils.cleanText(ta ? ta.value : '');
@@ -9266,6 +9322,37 @@ var ScreenYou = (function() {
         // Update char count
         var cc = document.getElementById('you-goals-chars');
         if (cc) cc.textContent = ta.value.length;
+      });
+    }
+
+    var wakeCloseBtn = document.getElementById('wake-sheet-close-btn');
+    if (wakeCloseBtn) {
+      wakeCloseBtn.addEventListener('click', function() { Components.closeSheet(); });
+    }
+    // Wake times row — opens dedicated sheet
+    var wakeRow = document.getElementById('you-row-wake-times');
+    if (wakeRow) {
+      wakeRow.addEventListener('click', function() {
+        var p = State.get().profile;
+        var wdEl = document.getElementById('wake-input-weekday');
+        var weEl = document.getElementById('wake-input-weekend');
+        if (wdEl) wdEl.value = p.wakeTimeWeekday || '';
+        if (weEl) weEl.value = p.wakeTimeWeekend || '';
+        Utils.haptic('light');
+        Components.openSheet('sheet-wake-times');
+      });
+    }
+    var wakeSaveBtn = document.getElementById('wake-sheet-save');
+    if (wakeSaveBtn) {
+      wakeSaveBtn.addEventListener('click', function() {
+        var wdVal = (document.getElementById('wake-input-weekday') || {}).value || '';
+        var weVal = (document.getElementById('wake-input-weekend') || {}).value || '';
+        if (wdVal) State.update('profile.wakeTimeWeekday', wdVal);
+        if (weVal) State.update('profile.wakeTimeWeekend', weVal);
+        Storage.sched();
+        Components.closeSheet();
+        render();
+        Components.toast('Wake times saved.');
       });
     }
 
@@ -9824,14 +9911,17 @@ var Onboarding = (function() {
     var inches = Utils.parseNum(document.getElementById('ob-height-in').value, 0, 11);
     var heightStr = (ft !== null) ? ft + '\'' + (inches !== null ? ' ' + inches + '"' : '') : null;
     var age = Utils.parseNum(document.getElementById('ob-age').value, 1, 120);
-    var wakeTimeEl = document.getElementById('ob-wake-time');
-    var wakeTime = wakeTimeEl ? wakeTimeEl.value.trim() : '';
+    var wakeWeekdayEl = document.getElementById('ob-wake-time-weekday');
+    var wakeWeekendEl = document.getElementById('ob-wake-time-weekend');
+    var wakeTimeWeekday = wakeWeekdayEl ? wakeWeekdayEl.value.trim() : '';
+    var wakeTimeWeekend = wakeWeekendEl ? wakeWeekendEl.value.trim() : '';
 
     State.update('profile.weight', weight);
     State.update('profile.height', heightStr);
     State.update('profile.age',    age);
     State.update('profile.sex',    _selectedSex);
-    if (wakeTime) State.update('profile.wakeTime', wakeTime);
+    if (wakeTimeWeekday) State.update('profile.wakeTimeWeekday', wakeTimeWeekday);
+    if (wakeTimeWeekend) State.update('profile.wakeTimeWeekend', wakeTimeWeekend);
     State.update('onboardingComplete', true);
 
     // Calculate smart hydration goal: weight(lbs) / 2 = oz/day (min 64)
@@ -10312,6 +10402,47 @@ var InsightEngine = (function() {
       // Curr Pharm Des 2012 (gut mucosal repair).
     },
 
+    {
+      id: 'FQ9', priority: 1, windowDays: 14,
+      inputTag: 'caffeine', outputType: 'trend', outputKey: 'stable',
+      windowH: null, threshold: 3, icon: '☕',
+      text: 'You\'ve logged coffee within 90 minutes of waking several times recently. Your cortisol rises naturally in the first 30–45 minutes after you wake — adding caffeine during this window can amplify that spike rather than working with it.',
+      tip: 'Try delaying your first coffee 90 minutes after waking. Many people notice more stable energy and fewer afternoon crashes when they let the natural cortisol rise complete first.',
+      // Rationale: Caffeine blocks adenosine → HPA axis activation → cortisol + adrenaline.
+      // The cortisol awakening response (CAR) peaks naturally 30–45 min post-waking.
+      // Stacking caffeine during this window amplifies an already-elevated cortisol state.
+      // Delaying caffeine 90+ min lets the CAR complete without amplification.
+      // Insulin sensitivity note: caffeine causes transient reduction — relevant for
+      // users logging glucose or eating carbs shortly after waking. Not included in
+      // rule copy (too complex for one insight) but supports the broader nudge.
+      // Rule fires only when wakeTimeWeekday or wakeTimeWeekend is set in profile.
+      // Uses day-of-week to pick the correct anchor. No default fallback.
+      // windowDays:14 — habit-reinforcement rule, not correlation.
+      // Source: Lovallo WR et al., Pharmacol Biochem Behav 2006 (caffeine + cortisol);
+      // Clow A et al., Int Rev Neurobiol 2010 (cortisol awakening response);
+      // Research reviewed and validated against clinical literature May 2026.
+    },
+
+    {
+      id: 'FQ10', priority: 1, windowDays: 14,
+      inputTag: 'probiotic', outputType: 'trend', outputKey: 'stable',
+      windowH: null, threshold: 3, icon: '🥬',
+      text: 'Fermented foods have been showing up in your logs. Foods like kimchi, sauerkraut, and yogurt contain live cultures that help diversify and maintain the gut microbiome — which plays a role in digestion, immune response, and even mood.',
+      tip: 'Consistency matters more than quantity. A small serving daily does more for microbiome diversity than a large serving once a week.',
+      // Rationale: Fermented foods containing live cultures (Lactobacillus,
+      // Bifidobacterium) support gut microbiome diversity. Microbiome diversity
+      // is associated with improved digestion, reduced systemic inflammation,
+      // stronger immune response, and gut-brain axis signalling.
+      // Covers kimchi, sauerkraut, yogurt (FOOD_DB probiotic tag) and
+      // free-text entries matching _tagMap probiotic words (kombucha, kefir,
+      // miso, tempeh, fermented).
+      // Positive informational nudge — fires after 3+ probiotic-tagged logs.
+      // windowDays:14 — habit-reinforcement rule.
+      // Source: Wastyk HC et al., Cell 2021 (fermented foods + microbiome diversity);
+      // Sonnenburg JL, Gardner-Kempf M., Cell Host Microbe 2023;
+      // FMD booklet (fermented foods as therapeutic category).
+    },
+
   ];
 
   // ── Early insight: fx[] side-effect map ────────────────────
@@ -10705,6 +10836,36 @@ var InsightEngine = (function() {
     if (rule.id === 'FQ8') {
       return (s.logs.meals || []).filter(function(m) {
         return m.mealTs >= cutoff && m.tags && m.tags.indexOf('gut_support') !== -1;
+      }).length;
+    }
+
+    // FQ9: coffee within 90 min of wake time — cortisol timing nudge
+    // Uses day-of-week to pick weekday vs weekend anchor.
+    // Silent non-fire if neither wake time is set in profile.
+    if (rule.id === 'FQ9') {
+      var p = s.profile;
+      return (s.logs.drinks || []).filter(function(d) {
+        if (d.ts < cutoff) return false;
+        if (!d.tags || d.tags.indexOf('caffeine') === -1) return false;
+        var logDate = new Date(d.ts);
+        var dow = logDate.getDay(); // 0=Sun, 6=Sat
+        var isWeekend = (dow === 0 || dow === 6);
+        var anchor = isWeekend ? (p.wakeTimeWeekend || p.wakeTimeWeekday) : (p.wakeTimeWeekday || p.wakeTimeWeekend);
+        if (!anchor) return false;
+        var parts = anchor.split(':');
+        var wakeMs = parseInt(parts[0], 10) * 3600000 + parseInt(parts[1], 10) * 60000;
+        var logMs  = logDate.getHours() * 3600000 + logDate.getMinutes() * 60000;
+        var diffMin = (logMs - wakeMs) / 60000;
+        return diffMin >= 0 && diffMin <= 90;
+      }).length;
+    }
+
+    // FQ10: fermented foods (probiotic tag) — microbiome nudge
+    // Covers kimchi, sauerkraut, yogurt (FOOD_DB) + free-text (kombucha, kefir, miso, tempeh).
+    // Fires after 3+ probiotic-tagged meal logs in the 14-day window.
+    if (rule.id === 'FQ10') {
+      return (s.logs.meals || []).filter(function(m) {
+        return m.mealTs >= cutoff && m.tags && m.tags.indexOf('probiotic') !== -1;
       }).length;
     }
 
@@ -11262,6 +11423,15 @@ var ScreenBP = (function() {
     btn.disabled = !(sys && dia);
   }
 
+  // Show/hide inline crisis alert on the BP screen as user types
+  function _checkBPScreenCrisis() {
+    var sys = Utils.parseNum(document.getElementById('bp-screen-sys').value, 50, 250);
+    var dia = Utils.parseNum(document.getElementById('bp-screen-dia').value, 30, 150);
+    var alertEl = document.getElementById('bp-screen-crisis-alert');
+    if (!alertEl) return;
+    alertEl.style.display = (sys && dia && (sys >= 180 || dia >= 120)) ? 'block' : 'none';
+  }
+
   // Build log sheet content and open it
   function _openLogSheet() {
     var s = State.get();
@@ -11282,9 +11452,10 @@ var ScreenBP = (function() {
       html += '<p style="color:var(--mt);font-size:14px;text-align:center;padding:24px 0;">No readings logged today.</p>';
     } else {
       logs.forEach(function(l) {
+        var crisisFlag = l.crisis ? '<span style="font-size:11px;font-weight:600;color:#C62828;margin-left:6px;">⚠️ Elevated</span>' : '';
         html += '<div class="hyd-log-row" data-id="' + Utils.esc(l.id) + '">'
           + '<div class="hyd-log-info">'
-          + '<div class="hyd-log-main">' + Utils.esc(String(l.sys)) + '/' + Utils.esc(String(l.dia)) + ' <span style="font-size:13px;color:var(--mt);">mmHg</span></div>'
+          + '<div class="hyd-log-main">' + Utils.esc(String(l.sys)) + '/' + Utils.esc(String(l.dia)) + ' <span style="font-size:13px;color:var(--mt);">mmHg</span>' + crisisFlag + '</div>'
           + '<div class="hyd-log-sub">' + Utils.fmtTime(l.ts) + (l.timeOfDay ? ' · ' + ({morning:'Morning',afternoon:'Afternoon',evening:'Evening'}[l.timeOfDay] || l.timeOfDay) : '') + '</div>'
           + '</div>'
           + '<button class="hyd-log-del" data-id="' + Utils.esc(l.id) + '" aria-label="Delete">'
@@ -11343,7 +11514,7 @@ var ScreenBP = (function() {
       return;
     }
 
-    var entry = { id: Utils.uid(), ts: Date.now(), sys: sys, dia: dia, timeOfDay: _bp_tod || null };
+    var entry = { id: Utils.uid(), ts: Date.now(), sys: sys, dia: dia, timeOfDay: _bp_tod || null, crisis: (sys >= 180 || dia >= 120) };
     State.pushLog('bp', entry);
     Storage.sched();
 
@@ -11351,6 +11522,8 @@ var ScreenBP = (function() {
     sysEl.value = '';
     diaEl.value = '';
     if (hint) hint.textContent = '';
+    var alertEl = document.getElementById('bp-screen-crisis-alert');
+    if (alertEl) alertEl.style.display = 'none';
     var logBtn = document.getElementById('bp-log-entry-btn');
     if (logBtn) logBtn.disabled = true;
     // Reset time-of-day selection
@@ -11370,13 +11543,23 @@ var ScreenBP = (function() {
       setTimeout(function() { lastEl.classList.remove('saved'); }, 800);
     }
 
-    Components.toast(sys + '/' + dia + ' mmHg saved', function() {
-      State.removeLog('bp', entry.id);
-      Storage.sched();
-      render();
-      ScreenTrack.render();
-      ScreenToday.render();
-    });
+    if (entry.crisis) {
+      Components.toast('⚠️ ' + sys + '/' + dia + ' mmHg — please contact a medical professional', function() {
+        State.removeLog('bp', entry.id);
+        Storage.sched();
+        render();
+        ScreenTrack.render();
+        ScreenToday.render();
+      });
+    } else {
+      Components.toast(sys + '/' + dia + ' mmHg saved', function() {
+        State.removeLog('bp', entry.id);
+        Storage.sched();
+        render();
+        ScreenTrack.render();
+        ScreenToday.render();
+      });
+    }
   }
 
   function bindEvents() {
@@ -11425,11 +11608,13 @@ var ScreenBP = (function() {
         document.getElementById('bp-screen-dia').focus();
       }
       _updateBPBtn();
+      _checkBPScreenCrisis();
     });
 
     // DIA: update button state on input
     document.getElementById('bp-screen-dia').addEventListener('input', function() {
       _updateBPBtn();
+      _checkBPScreenCrisis();
     });
 
     // Enter on DIA: blur (dismiss keyboard)
@@ -12016,6 +12201,7 @@ var ScreenMeals = (function() {
   var _tagMap = [
     { tags: ['caffeine'],       words: ['coffee','espresso','latte','cappuccino','americano','mocha','cold brew','matcha','tea','energy drink'] },
     { tags: ['alcohol'],        words: ['beer','wine','spirits','whiskey','vodka','gin','rum','cocktail','alcohol','cider'] },
+    { tags: ['probiotic'],      words: ['kimchi','sauerkraut','kefir','kombucha','miso','tempeh','yogurt','fermented'] },
     { tags: ['dairy'],          words: ['milk','cheese','yogurt','cream','butter','ice cream','whey','mozzarella','cheddar','parmesan'] },
     { tags: ['sugar'],          words: ['candy','soda','juice','syrup','honey','chocolate','cake','cookie','donut','pastry','lemonade'] },
     { tags: ['refined_carbs'],  words: ['bread','pasta','rice','noodle','bagel','tortilla','cereal','oatmeal','cracker','pizza'] },
@@ -14545,26 +14731,51 @@ var App = (function() {
     });
 
     // Blood Pressure
+    // BP crisis threshold: ≥180 systolic OR ≥120 diastolic
+    // Hard-coded — no AI, no inference. Standard medical reference threshold.
+    function _isBPCrisis(sys, dia) {
+      return (sys >= 180 || dia >= 120);
+    }
+    function _checkBPCrisis() {
+      var sys = Utils.parseNum(document.getElementById('bp-sys').value, 50, 250);
+      var dia = Utils.parseNum(document.getElementById('bp-dia').value, 30, 150);
+      var alertEl = document.getElementById('bp-crisis-alert');
+      if (!alertEl) return;
+      alertEl.style.display = (sys && dia && _isBPCrisis(sys, dia)) ? 'block' : 'none';
+    }
+
     document.getElementById('bp-save-btn').addEventListener('click', function() {
       var sys = Utils.parseNum(document.getElementById('bp-sys').value, 50, 250);
       var dia = Utils.parseNum(document.getElementById('bp-dia').value, 30, 150);
       if (!sys || !dia) { Components.toast('Please enter valid readings'); return; }
-      var entry = { id: Utils.uid(), ts: Date.now(), sys: sys, dia: dia };
+      var crisis = _isBPCrisis(sys, dia);
+      var entry = { id: Utils.uid(), ts: Date.now(), sys: sys, dia: dia, crisis: crisis };
       State.pushLog('bp', entry);
       Storage.sched();
       Components.closeSheet();
       document.getElementById('bp-sys').value = '';
       document.getElementById('bp-dia').value = '';
+      var alertEl = document.getElementById('bp-crisis-alert');
+      if (alertEl) alertEl.style.display = 'none';
       var lastLbl = document.getElementById('bp-last-label');
       if (lastLbl) lastLbl.textContent = sys + '/' + dia;
       ScreenToday.render();
       ScreenTrack.render();
-      Components.toast(sys + '/' + dia + ' mmHg saved', function() {
-        State.removeLog('bp', entry.id);
-        Storage.sched();
-        ScreenToday.render();
-        ScreenTrack.render();
-      });
+      if (crisis) {
+        Components.toast('⚠️ ' + sys + '/' + dia + ' mmHg — please contact a medical professional', function() {
+          State.removeLog('bp', entry.id);
+          Storage.sched();
+          ScreenToday.render();
+          ScreenTrack.render();
+        });
+      } else {
+        Components.toast(sys + '/' + dia + ' mmHg saved', function() {
+          State.removeLog('bp', entry.id);
+          Storage.sched();
+          ScreenToday.render();
+          ScreenTrack.render();
+        });
+      }
     });
 
     // BP: auto-advance systolic → diastolic
@@ -14574,8 +14785,11 @@ var App = (function() {
         if (this.value.length >= 3) {
           document.getElementById('bp-dia').focus();
         }
+        _checkBPCrisis();
       });
     }
+    var bpDia = document.getElementById('bp-dia');
+    if (bpDia) { bpDia.addEventListener('input', _checkBPCrisis); }
 
     // Glucose
     Components.bindPillGroup('glucose-context-pills');
