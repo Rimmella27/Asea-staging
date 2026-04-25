@@ -1075,6 +1075,15 @@ input, textarea { font-family: inherit; }
   margin: 0 0 8px 0;
 }
 
+/* Tip line — actionable follow-on, accent color */
+.insight-tip {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--acc);
+  line-height: 1.5;
+  margin: 0 0 10px 0;
+}
+
 /* Frequency count — colored to match category */
 .insight-freq               { font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--acc); }
 .insight-freq--digestion    { color: #8B6347; }
@@ -1083,6 +1092,35 @@ input, textarea { font-family: inherit; }
 .insight-freq--energy       { color: #5a7e1e; }
 .insight-freq--positive     { color: #4A9B7F; }
 .insight-freq--early        { color: var(--acc); }
+
+/* Older patterns collapsed section */
+.insights-older-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 4px 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.insights-older-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tx);
+  flex: 1;
+}
+.insights-older-meta {
+  font-size: 12px;
+  color: var(--mt);
+}
+.insights-older-chevron {
+  font-size: 18px;
+  color: var(--mt);
+  transition: transform 0.2s ease;
+  line-height: 1;
+}
+.insights-older-body {
+  padding-bottom: 4px;
+}
 
 .insight-hook {
   font-size: 12px;
@@ -1203,6 +1241,35 @@ input, textarea { font-family: inherit; }
   color: var(--acc);
   margin-bottom: 6px;
 }
+/* Older patterns collapsed section */
+.insights-older-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 4px 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.insights-older-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tx);
+  flex: 1;
+}
+.insights-older-meta {
+  font-size: 12px;
+  color: var(--mt);
+}
+.insights-older-chevron {
+  font-size: 18px;
+  color: var(--mt);
+  transition: transform 0.2s ease;
+  line-height: 1;
+}
+.insights-older-body {
+  padding-bottom: 4px;
+}
+
 .insight-hook {
   font-size: 12px;
   color: var(--mt);
@@ -4183,6 +4250,7 @@ input, textarea { font-family: inherit; }
           <div class="you-row" id="backup-export-btn" role="button" tabindex="0" style="cursor:pointer;">
             <div>
               <div class="you-row-label" style="color:var(--tx);font-weight:500;">Export &amp; Back Up Data</div>
+              <div style="font-size:11px;color:var(--acc);font-weight:500;">Saves to your device’s Downloads folder automatically</div>
               <div style="font-size:11px;color:var(--mt);margin-top:2px;" id="last-backup-label">Never backed up</div>
             </div>
             <span class="track-row-arrow">›</span>
@@ -4198,6 +4266,7 @@ input, textarea { font-family: inherit; }
             <span class="you-row-label">Backup reminder</span>
             <span class="you-row-value" id="backup-interval-label">Monthly</span>
           </div>
+
         </div>
       </div>
 
@@ -5956,8 +6025,26 @@ input, textarea { font-family: inherit; }
     <div class="reset-panel active" id="reset-panel-1">
       <div class="reset-step-title">Back up your data first</div>
       <div class="reset-step-sub">Before resetting, we recommend saving a backup of your health data. You can restore it later if needed.</div>
-      <button class="btn-primary" id="reset-backup-now-btn" style="margin-bottom:12px;">Back Up Now</button>
-      <button class="btn-ghost" id="reset-skip-backup-btn">Skip — I don't need a backup</button>
+
+      <!-- Default state -->
+      <div id="reset-backup-default">
+        <button class="btn-primary" id="reset-backup-now-btn" style="margin-bottom:10px;">Back Up Now</button>
+        <div style="font-size:12px;color:var(--acc);font-weight:500;text-align:center;margin-bottom:14px;">Saves to your device’s Downloads folder automatically</div>
+        <button class="btn-ghost" id="reset-skip-backup-btn">Skip — I don’t need a backup</button>
+      </div>
+
+      <!-- Success state — shown after backup completes -->
+      <div id="reset-backup-success" style="display:none;">
+        <div style="background:var(--acc);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;">
+          <div style="font-size:22px;line-height:1;">&#x2713;</div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:3px;">Backup saved</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.85);" id="reset-backup-fname-label">Your file is in your Downloads folder.</div>
+          </div>
+        </div>
+        <button class="btn-primary" id="reset-continue-btn" style="margin-bottom:12px;">Continue to reset →</button>
+        <button class="btn-ghost" id="reset-skip-backup-btn-2">Skip — I don’t need a backup</button>
+      </div>
     </div>
 
     <!-- Panel 2: Warning -->
@@ -6046,7 +6133,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v19-00',
+  version:            'v19-07',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -6649,6 +6736,7 @@ var State = (function() {
     settings: {
       backupInterval: 'monthly',
       lastBackupTs: null,
+      lastBackupFname: null,
       coffeeDefault: 'coffee',  // 'coffee' | 'coffee_milk' | 'coffee_sugar'
     },
     favoriteDrinks: [],  // up to 4 pinned drink IDs for quick-add strip
@@ -8570,40 +8658,70 @@ var ScreenInsights = (function() {
       return;
     }
 
-    var html = '';
-    insights.forEach(function(ins, idx) {
+    // ── Build card HTML helper ─────────────────────────────────
+    function _buildCard(ins, idx, isTop) {
       var cat   = _getCat(ins);
       var delay = (idx * 130) + 'ms';
-      var isTop = idx === 0;
-
-      html += '<div class="card insight-card insight-card' + cat.mod + (isTop ? ' insight-card--top' : '') + '" style="animation-delay:' + delay + ';">';
-      html += '<div class="card-padded insight-card-inner">';
-
-      // Header: icon left, badges right (category + confidence)
-      html += '<div class="insight-card-header">';
-      html += '<div class="insight-icon-wrap insight-icon-wrap' + cat.mod + '">' + ins.icon + '</div>';
-      html += '<div class="insight-badges">';
-      html += '<span class="insight-cat-pill insight-cat-pill' + cat.mod + '">' + Utils.esc(cat.label) + '</span>';
-      html += '<span class="insight-confidence ' + Utils.esc(ins.strength) + '">' + Utils.esc(ins.subLabel) + '</span>';
-      html += '</div>';
-      html += '</div>';
-
-      // Main insight text — the hero
-      html += '<p class="insight-text">' + Utils.esc(ins.text) + '</p>';
-
-      // Frequency count (pattern insights only)
-      if (ins.type === 'pattern' && ins.count >= 1) {
-        html += '<div class="insight-freq insight-freq' + cat.mod + '">' + ins.count + ' times in the last 30 days</div>';
+      var h = '';
+      h += '<div class="card insight-card insight-card' + cat.mod + (isTop ? ' insight-card--top' : '') + '" style="animation-delay:' + delay + ';">';
+      h += '<div class="card-padded insight-card-inner">';
+      h += '<div class="insight-card-header">';
+      h += '<div class="insight-icon-wrap insight-icon-wrap' + cat.mod + '">' + ins.icon + '</div>';
+      h += '<div class="insight-badges">';
+      h += '<span class="insight-cat-pill insight-cat-pill' + cat.mod + '">' + Utils.esc(cat.label) + '</span>';
+      h += '<span class="insight-confidence ' + Utils.esc(ins.strength) + '">' + Utils.esc(ins.subLabel) + '</span>';
+      h += '</div></div>';
+      h += '<p class="insight-text">' + Utils.esc(ins.text) + '</p>';
+      if (ins.tip) {
+        h += '<p class="insight-tip">Tip: ' + Utils.esc(ins.tip) + '</p>';
       }
-
-      // Curiosity hook
+      if (ins.type === 'pattern' && ins.count >= 1) {
+        var freqWindow = ins.windowDays ? ins.windowDays : 30;
+        h += '<div class="insight-freq insight-freq' + cat.mod + '">' + ins.count + ' times in the last ' + freqWindow + ' days</div>';
+      }
       var hook = _getHook(ins.id, ins.type);
-      if (hook) html += '<div class="insight-hook">' + Utils.esc(hook) + '</div>';
+      if (hook) h += '<div class="insight-hook">' + Utils.esc(hook) + '</div>';
+      h += '</div></div>';
+      return h;
+    }
 
-      html += '</div></div>';
+    // ── Active insights ─────────────────────────────────────────
+    var html = '';
+    insights.forEach(function(ins, idx) {
+      html += _buildCard(ins, idx, idx === 0);
     });
 
+    // ── Older patterns (15–60 days) ─────────────────────────────
+    var activeIds = insights.map(function(i) { return i.id; });
+    var older = InsightEngine.runOlder(activeIds);
+
+    if (older.length) {
+      html += '<div class="insights-older-header" id="insights-older-toggle" role="button" tabindex="0" aria-expanded="false">';
+      html += '<span class="insights-older-label">Older patterns</span>';
+      html += '<span class="insights-older-meta">Last 60 days</span>';
+      html += '<span class="insights-older-chevron" id="insights-older-chevron">›</span>';
+      html += '</div>';
+      html += '<div class="insights-older-body" id="insights-older-body" style="display:none;">';
+      older.forEach(function(ins, idx) {
+        html += _buildCard(ins, idx, false);
+      });
+      html += '</div>';
+    }
+
     el.innerHTML = html;
+
+    // Wire older toggle
+    var olderToggle = document.getElementById('insights-older-toggle');
+    if (olderToggle) {
+      olderToggle.addEventListener('click', function() {
+        var body    = document.getElementById('insights-older-body');
+        var chevron = document.getElementById('insights-older-chevron');
+        var open    = body.style.display !== 'none';
+        body.style.display    = open ? 'none' : 'block';
+        chevron.style.transform = open ? '' : 'rotate(90deg)';
+        olderToggle.setAttribute('aria-expanded', String(!open));
+      });
+    }
 
     // Entrance animation — trigger after paint
     requestAnimationFrame(function() {
@@ -9810,7 +9928,9 @@ var Onboarding = (function() {
 var InsightEngine = (function() {
 
   // ── Constants ───────────────────────────────────────────────
-  var PATTERN_WINDOW_MS  = CONFIG.DAY * 30;   // only scan last 30 days
+  var PATTERN_WINDOW_MS  = CONFIG.DAY * 30;   // default pattern scan window (correlation rules)
+  var PATTERN_WINDOW_POS = CONFIG.DAY * 14;   // positive/informational rules — shorter window
+  var OLDER_WINDOW_MS    = CONFIG.DAY * 60;   // "Older patterns" collapsed section
   var EARLY_WINDOW_MS    = CONFIG.DAY * 7;    // supp/med insight if added within 7 days
   var EARLY_EXPIRE_MS    = CONFIG.DAY * 14;   // early insight expires after 14 days
   var GLUCOSE_SPIKE      = 140;               // mg/dL threshold for "spike"
@@ -10104,7 +10224,8 @@ var InsightEngine = (function() {
       id: 'FQ3', priority: 2,
       inputTag: 'dairy', outputType: 'bowel', outputKey: 'bloating',
       windowH: 24, threshold: 3, icon: '🥛',
-      text: 'Dairy has been logged around several days with digestive symptoms. Some people notice a connection — worth watching.',
+      text: 'Dairy has shown up on several days when you also logged digestive symptoms. Lactose and dairy proteins are a common trigger for bloating and altered digestion.',
+      tip: 'Try removing dairy for 5–7 days and note whether symptoms ease.',
       // Rationale: Lactose intolerance affects ~65% of adults globally.
       // Dairy proteins (casein, whey) can also trigger gut inflammation
       // and altered motility independent of lactose. Correlation rule —
@@ -10118,7 +10239,8 @@ var InsightEngine = (function() {
       id: 'FQ4', priority: 2,
       inputTag: 'whey', outputType: 'bowel', outputKey: 'bloating',
       windowH: 24, threshold: 3, icon: '💪',
-      text: 'Whey protein has been logged on several days with digestive symptoms. Whey is dairy-derived — some people find it easier to digest than whole dairy, others don\'t.',
+      text: 'Whey has appeared alongside digestive symptoms a few times. Whey is dairy-derived, and even isolate forms can cause bloating or discomfort in sensitive people.',
+      tip: 'Try a plant-based protein alternative for a week and compare how you feel.',
       // Rationale: Whey is a dairy byproduct. Even whey isolate (lower
       // lactose) contains dairy proteins that can trigger gut symptoms in
       // sensitive individuals. Separate rule from FQ3 because many users
@@ -10128,16 +10250,66 @@ var InsightEngine = (function() {
     },
 
     {
-      id: 'FQ5', priority: 1,
+      id: 'FQ5', priority: 1, windowDays: 14,
       inputTag: 'electrolytes', outputType: 'trend', outputKey: 'stable',
       windowH: null, threshold: 5, icon: '🫧',
-      text: 'You\'ve been consistent with electrolyte water. Mineral balance supports hydration at a cellular level — good habit.',
+      text: 'You\'ve been consistent with electrolyte water. Himalayan salt provides ionized minerals that support cellular hydration, nerve function, and pH balance — plain water alone doesn\'t replace these.',
+      tip: 'Keep the habit going. Morning is the best time — it helps replenish what was lost overnight.',
       // Rationale: Himalayan/sea salt in sole water provides ionized
       // minerals (sodium, potassium, magnesium, trace minerals) that
       // support intracellular hydration, nerve conduction, and pH
       // balance beyond plain water. Positive reinforcement rule.
       // Source: FMD booklet (sole protocol); Seifter JL, NEJM 2014
       // (electrolyte physiology).
+    },
+
+    {
+      id: 'FQ6', priority: 1, windowDays: 14,
+      inputTag: 'nutrient_dense', outputType: 'trend', outputKey: 'stable',
+      windowH: null, threshold: 3, icon: '🫀',
+      text: 'Liver powder has appeared in your logs. It\'s one of the densest sources of fat-soluble vitamins (A, D, K) and bioavailable iron — nutrients most people are quietly deficient in.',
+      tip: 'Log it alongside a meal with healthy fat (avocado, olive oil, butter). Fat-soluble vitamins need dietary fat to absorb.',
+      // Rationale: Desiccated liver is rich in preformed vitamin A, D, K,
+      // B12, heme iron, and CoQ10. Fat-soluble vitamins require dietary fat
+      // for absorption — best logged alongside a fat-containing meal.
+      // Positive informational nudge — fires after 3+ nutrient_dense logs.
+      // Source: FMD booklet (Top 7 Therapeutic Foods — Liver powder);
+      // Masterjohn C., Wise Traditions 2012; Price WA., Nutrition and
+      // Physical Degeneration.
+    },
+
+    {
+      id: 'FQ7', priority: 1, windowDays: 14,
+      inputTag: 'resistant_starch', outputType: 'trend', outputKey: 'stable',
+      windowH: null, threshold: 3, icon: '🌾',
+      text: 'Potato starch has shown up in your logs. As a resistant starch, it passes undigested to the colon where gut bacteria ferment it into butyrate — a compound that reduces inflammation and supports the gut lining.',
+      tip: 'It works best after at least a month grain-free and low-sugar. Introducing it too early can cause bloating.',
+      // Rationale: Potato starch is a Type 2 resistant starch — passes
+      // undigested to the colon where it undergoes fermentation, producing
+      // short-chain fatty acids (butyrate) that support colonocyte health
+      // and reduce inflammation. Per FMD booklet: introduce after ≥1 month
+      // grain-free, no added sugar, high natural fat diet.
+      // Positive informational nudge — fires after 3+ resistant_starch logs.
+      // Source: FMD booklet (Top 7 Therapeutic Foods — Potato Starch);
+      // Birt DF et al., Adv Nutrition 2013; Topping DL, Clifton PM,
+      // Physiol Rev 2001.
+    },
+
+    {
+      id: 'FQ8', priority: 1, windowDays: 14,
+      inputTag: 'gut_support', outputType: 'trend', outputKey: 'stable',
+      windowH: null, threshold: 3, icon: '🍲',
+      text: 'Bone broth or gelatin has shown up in your logs. Both are rich in glycine and collagen precursors that help repair the gut lining — especially useful if you experience bloating, food sensitivities, or irregular digestion.',
+      tip: 'Consistency matters more than amount. A small serving daily beats a large serving occasionally.',
+      // Rationale: Bone broth and gelatin provide glycine, proline, and
+      // hydroxyproline — amino acids that support intestinal mucosal repair
+      // (consistent with GAPS gut healing protocols). High glycine content
+      // may also support sleep quality and reduce anxiety.
+      // Covers both gelatin and bone broth (both tagged gut_support).
+      // Positive informational nudge — fires after 3+ gut_support logs.
+      // Source: FMD booklet (Top 7 Therapeutic Foods — Gelatin, Bone Broth);
+      // Kelly Brogan MD therapeutic food protocol; Rao RK, Samak G.,
+      // Curr Pharm Des 2012 (gut mucosal repair).
     },
 
   ];
@@ -10178,7 +10350,7 @@ var InsightEngine = (function() {
     var s   = State.get();
     var now = Date.now();
 
-    var patterns = _getPatternInsights(s, now);   // already sorted strong→medium
+    var patterns = _getPatternInsights(s, now);   // per-rule windows, sorted strong→medium
     var early    = _getEarlyInsights(s, now);
 
     var results = [];
@@ -10190,13 +10362,25 @@ var InsightEngine = (function() {
 
     // Early insight only takes a slot if there's room AND no Strong patterns dominate
     if (early && results.length < MAX_INSIGHTS) {
-      var hasStrong = results.some(function(r) { return r.strength === 'strong'; });
-      // If we already have 2+ strong patterns, skip early insight entirely
       var strongCount = results.filter(function(r) { return r.strength === 'strong'; }).length;
       if (strongCount < 2) results.push(early);
     }
 
     return results;
+  }
+
+  // Returns older insights (15–60 day window) that did NOT fire in the active section.
+  // activeIds: array of rule id strings already shown — these are excluded.
+  function runOlder(activeIds) {
+    var s   = State.get();
+    var now = Date.now();
+    var excludeIds = {};
+    (activeIds || []).forEach(function(id) { excludeIds[id] = true; });
+    // Force 60-day window for all rules in this pass
+    var older = _getPatternInsights(s, now, OLDER_WINDOW_MS, excludeIds);
+    // Sort: most recent first (highest count as proxy)
+    older.sort(function(a, b) { return b.count - a.count; });
+    return older;
   }
 
   // ── Early insights ──────────────────────────────────────────
@@ -10245,12 +10429,20 @@ var InsightEngine = (function() {
   // ── Pattern insights ────────────────────────────────────────
   // Scans all active PATTERN_RULES against log data.
   // Returns sorted array of insight objects (caller caps to 3).
-  function _getPatternInsights(s, now) {
-    var cutoff  = now - PATTERN_WINDOW_MS;   // only look at last 30 days
+  // windowOverrideMs: if set, forces all rules to use this cutoff (for "older" pass).
+  // excludeIds: set of rule IDs already shown in the active section — skip them.
+  function _getPatternInsights(s, now, windowOverrideMs, excludeIds) {
     var results = [];
+    excludeIds = excludeIds || {};
 
     PATTERN_RULES.forEach(function(rule) {
       if (!rule.outputType) return;            // log source doesn't exist yet
+      if (excludeIds[rule.id]) return;         // already shown in active section
+
+      // Per-rule window: windowDays field overrides default unless caller forces a window
+      var ruleWindowMs = windowOverrideMs ||
+        (rule.windowDays ? CONFIG.DAY * rule.windowDays : PATTERN_WINDOW_MS);
+      var cutoff = now - ruleWindowMs;
 
       var count = _scoreRule(rule, s, cutoff);
       if (count < rule.threshold) return;
@@ -10258,15 +10450,19 @@ var InsightEngine = (function() {
       var strength = count >= 5 ? 'strong' : count >= 3 ? 'medium' : 'weak';
       if (strength === 'weak') return;         // show medium+ only
 
+      var windowLabel = rule.windowDays ? rule.windowDays : 30;
+
       results.push({
-        type:     'pattern',
-        id:       rule.id,
-        icon:     rule.icon,
-        text:     rule.text,
-        subLabel: strength.charAt(0).toUpperCase() + strength.slice(1) + ' pattern',
-        strength: strength,
-        priority: rule.priority,
-        count:    count,
+        type:        'pattern',
+        id:          rule.id,
+        icon:        rule.icon,
+        text:        rule.text,
+        tip:         rule.tip || null,
+        subLabel:    strength.charAt(0).toUpperCase() + strength.slice(1) + ' pattern',
+        strength:    strength,
+        priority:    rule.priority,
+        count:       count,
+        windowDays:  windowLabel,
       });
     });
 
@@ -10487,6 +10683,31 @@ var InsightEngine = (function() {
       return Object.keys(elecDays).length;
     }
 
+    // FQ6: liver powder (nutrient_dense tag) — informational nudge
+    // Fires after 3+ meals tagged nutrient_dense in the window.
+    if (rule.id === 'FQ6') {
+      return (s.logs.meals || []).filter(function(m) {
+        return m.mealTs >= cutoff && m.tags && m.tags.indexOf('nutrient_dense') !== -1;
+      }).length;
+    }
+
+    // FQ7: potato starch (resistant_starch tag) — informational nudge
+    // Fires after 3+ meals tagged resistant_starch in the window.
+    if (rule.id === 'FQ7') {
+      return (s.logs.meals || []).filter(function(m) {
+        return m.mealTs >= cutoff && m.tags && m.tags.indexOf('resistant_starch') !== -1;
+      }).length;
+    }
+
+    // FQ8: bone broth / gelatin (gut_support tag) — informational nudge
+    // Covers both foods — both carry the gut_support tag.
+    // Fires after 3+ meals tagged gut_support in the window.
+    if (rule.id === 'FQ8') {
+      return (s.logs.meals || []).filter(function(m) {
+        return m.mealTs >= cutoff && m.tags && m.tags.indexOf('gut_support') !== -1;
+      }).length;
+    }
+
     return 0;
   }
 
@@ -10509,7 +10730,7 @@ var InsightEngine = (function() {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  return { run };
+  return { run, runOlder };
 
 })();
 
@@ -14453,13 +14674,15 @@ var ScreenSettings = (function() {
     if (!el) return;
     var s = State.get();
     var lastTs = s.settings && s.settings.lastBackupTs;
+    var lastFname = s.settings && s.settings.lastBackupFname;
     if (!lastTs) {
       el.textContent = 'Never backed up';
     } else {
       var days = Math.floor((Date.now() - lastTs) / CONFIG.DAY);
-      el.textContent = days === 0 ? 'Backed up today' :
-                       days === 1 ? 'Backed up yesterday' :
-                       'Backed up ' + days + ' days ago';
+      var when = days === 0 ? 'today' : days === 1 ? 'yesterday' : days + ' days ago';
+      el.textContent = lastFname
+        ? 'Backed up ' + when + ': ' + lastFname
+        : 'Backed up ' + when;
     }
   }
 
@@ -14523,6 +14746,11 @@ var ScreenSettings = (function() {
     // ── Reset App flow ──
     var resetAppBtn = document.getElementById('reset-app-btn');
     if (resetAppBtn) resetAppBtn.addEventListener('click', function() {
+      // Always reset to default (pre-backup) state on open
+      var defaultEl = document.getElementById('reset-backup-default');
+      var successEl = document.getElementById('reset-backup-success');
+      if (defaultEl) defaultEl.style.display = 'block';
+      if (successEl) successEl.style.display = 'none';
       _resetSheetGoTo(1);
       Components.openSheet('sheet-reset');
     });
@@ -14531,14 +14759,34 @@ var ScreenSettings = (function() {
       Components.closeSheet();
     });
 
-    // Panel 1: Back Up Now → trigger export then advance
+    // Panel 1: Back Up Now → export, then reveal success state with filename
     document.getElementById('reset-backup-now-btn').addEventListener('click', function() {
       _doExport();
+      // Show success state — user must explicitly continue
+      var defaultEl  = document.getElementById('reset-backup-default');
+      var successEl  = document.getElementById('reset-backup-success');
+      var fnameLabel = document.getElementById('reset-backup-fname-label');
+      var s = State.get();
+      var fname = s.settings && s.settings.lastBackupFname;
+      if (fnameLabel && fname) {
+        fnameLabel.textContent = fname + ' is in your Downloads folder.';
+      }
+      if (defaultEl) defaultEl.style.display = 'none';
+      if (successEl) successEl.style.display = 'block';
+    });
+
+    // Panel 1: Skip backup → advance to warning (default state)
+    document.getElementById('reset-skip-backup-btn').addEventListener('click', function() {
       _resetSheetGoTo(2);
     });
 
-    // Panel 1: Skip backup → advance to warning
-    document.getElementById('reset-skip-backup-btn').addEventListener('click', function() {
+    // Panel 1: Continue after confirmed backup → advance to warning
+    document.getElementById('reset-continue-btn').addEventListener('click', function() {
+      _resetSheetGoTo(2);
+    });
+
+    // Panel 1: Skip from success state → advance to warning
+    document.getElementById('reset-skip-backup-btn-2').addEventListener('click', function() {
       _resetSheetGoTo(2);
     });
 
@@ -14659,12 +14907,13 @@ var ScreenSettings = (function() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      // Record backup timestamp
+      // Record backup timestamp and filename
       _ensureSettings();
       State.raw().settings.lastBackupTs = Date.now();
+      State.raw().settings.lastBackupFname = fname;
       Storage.save();
       render();
-      Components.toast('Backup saved — store it in Google Drive, iCloud, or OneDrive');
+      Components.toast('\u2713 ' + fname + ' saved to Downloads');
     } catch(e) {
       Utils.reportError('ScreenSettings._doExport', e);
       Components.toast('Export failed — please try again');
