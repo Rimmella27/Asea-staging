@@ -2599,6 +2599,71 @@ input, textarea { font-family: inherit; }
   font-family: var(--font-display); font-size: 40px; font-weight: 300;
   color: var(--mt); padding-bottom: 22px; user-select: none;
 }
+/* HR optional field row */
+.bp-hr-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: var(--sf);
+  border-radius: 12px;
+}
+.bp-hr-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--mt);
+}
+.bp-hr-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.bp-hr-input {
+  width: 72px;
+  padding: 6px 8px;
+  font-size: 16px;
+  font-family: var(--font-display);
+  text-align: center;
+  border: 1.5px solid var(--br);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--tx);
+  -moz-appearance: textfield;
+}
+.bp-hr-input::-webkit-inner-spin-button,
+.bp-hr-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.bp-hr-input:focus { border-color: var(--acc); outline: none; }
+.bp-hr-unit {
+  font-size: 12px;
+  color: var(--mt);
+}
+/* Graph placeholder card */
+.bp-graph-placeholder {
+  margin-top: 16px;
+  padding: 16px 20px;
+  background: var(--sf);
+  border-radius: 16px;
+  text-align: center;
+}
+.bp-graph-placeholder-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+.bp-graph-placeholder-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tx);
+  margin-bottom: 4px;
+}
+.bp-graph-placeholder-sub {
+  font-size: 13px;
+  color: var(--mt);
+  line-height: 1.5;
+}
+
 .bp-hint {
   font-size: 12px; color: var(--mt); text-align: center;
   margin-top: 4px; min-height: 16px;
@@ -4697,6 +4762,14 @@ input, textarea { font-family: inherit; }
             <input class="bp-input" id="bp-screen-dia" type="number" inputmode="numeric" placeholder="80" autocomplete="off" aria-label="Diastolic">
           </div>
         </div>
+        <!-- HR optional field -->
+        <div class="bp-hr-row">
+          <span class="bp-hr-label">Heart Rate <span style="font-size:11px;font-weight:400;color:var(--mt);text-transform:none;letter-spacing:0;">(optional)</span></span>
+          <div class="bp-hr-input-wrap">
+            <input class="bp-hr-input" id="bp-screen-hr" type="number" inputmode="numeric" placeholder="––" min="30" max="250" autocomplete="off" aria-label="Heart rate (optional)">
+            <span class="bp-hr-unit">bpm</span>
+          </div>
+        </div>
         <div class="bp-hint" id="bp-screen-hint"></div>
         <div class="wt-tod-grid" id="bp-tod-grid">
           <button class="wt-tod-pill" data-tod="morning">Morning</button>
@@ -4708,8 +4781,7 @@ input, textarea { font-family: inherit; }
           <div style="font-size:13px;font-weight:600;color:#C62828;margin-bottom:4px;">⚠️ Elevated Reading</div>
           <div style="font-size:13px;color:#B71C1C;line-height:1.5;">A reading at this level is generally considered a reason to contact a medical professional promptly. This app does not provide medical advice — please reach out to your doctor or call emergency services if you feel unwell.</div>
         </div>
-        <div style="height:120px;"></div>
-      </div>
+        <div style="height:40px;"></div>
     </div><!-- /screen-bp -->
 
     <!-- Glucose screen -->
@@ -6155,6 +6227,14 @@ input, textarea { font-family: inherit; }
         <span style="font-size:11px;color:var(--mt);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">Systolic</span>
         <span style="font-size:11px;color:var(--mt);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">Diastolic</span>
       </div>
+      <!-- HR optional field -->
+      <div class="bp-hr-row" style="margin-top:12px;">
+        <span class="bp-hr-label">Heart Rate <span style="font-size:11px;font-weight:400;color:var(--mt);text-transform:none;letter-spacing:0;">(optional)</span></span>
+        <div class="bp-hr-input-wrap">
+          <input class="bp-hr-input" id="bp-sheet-hr" type="number" inputmode="numeric" placeholder="––" min="30" max="250" autocomplete="off" aria-label="Heart rate (optional)">
+          <span class="bp-hr-unit">bpm</span>
+        </div>
+      </div>
     </div>
     <button class="btn-primary" id="bp-save-btn">Save</button>
     <div id="bp-crisis-alert" style="display:none;margin-top:14px;padding:12px 14px;background:#FFF3F3;border:1.5px solid #E57373;border-radius:12px;">
@@ -6203,7 +6283,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v20-10',
+  version:            'v21-03',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -6799,7 +6879,7 @@ var State = (function() {
       meals:     [],  // { id, ts, slot, type:'food'|'snack', text, tags[], mealTs }
       suppLogs:  [],  // { id, ts, slot:'morning'|'afternoon'|'evening', itemId, name, itemType:'supp'|'med' }
       bowel:     [],  // { id, ts, bristolType, color, symptoms[] }
-      bp:        [],  // { id, ts, sys, dia }
+      bp:        [],  // { id, ts, sys, dia, hr, timeOfDay, crisis }
       glucose:   [],  // { id, ts, val, context }
       weight:    [],  // { id, ts, val, unit:'lbs'|'kg', timeOfDay:'morning'|'afternoon'|'evening' }
     },
@@ -7490,7 +7570,8 @@ var ScreenToday = (function() {
       var todLabel = { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' };
       var bpSub = 'Blood pressure' + (l.timeOfDay ? ' · ' + (todLabel[l.timeOfDay] || l.timeOfDay) : '');
       var crisisMarker = l.crisis ? ' ⚠️' : '';
-      items.push({ ts: l.ts, icon: '❤️', title: l.sys + '/' + l.dia + ' mmHg' + crisisMarker, sub: bpSub, color: 'ti-bp' });
+      var hrMarker = l.hr ? ' · HR ' + l.hr : '';
+      items.push({ ts: l.ts, icon: '❤️', title: l.sys + '/' + l.dia + ' mmHg' + hrMarker + crisisMarker, sub: bpSub, color: 'ti-bp' });
     });
     s.logs.glucose.filter(function(l) { return l.ts >= today; }).forEach(function(l) {
       items.push({ ts: l.ts, icon: '📊', title: l.val + ' mg/dL', sub: _capitalize(l.context.replace('_', ' ')), color: 'ti-glucose' });
@@ -7587,9 +7668,10 @@ var ScreenToday = (function() {
     var html = '';
     if (lastBP) {
       var bpCrisisFlag = lastBP.crisis ? ' <span style="font-size:13px;">⚠️</span>' : '';
+      var bpHrStr = lastBP.hr ? '<span style="font-size:13px;color:var(--mt);font-weight:400;"> · HR ' + lastBP.hr + '</span>' : '';
       html += '<div class="today-metric-pill">' +
         '<div class="today-metric-pill-label">Last BP</div>' +
-        '<div class="today-metric-pill-value">' + Utils.esc(lastBP.sys + '/' + lastBP.dia) + bpCrisisFlag + '</div>' +
+        '<div class="today-metric-pill-value">' + Utils.esc(lastBP.sys + '/' + lastBP.dia) + bpCrisisFlag + bpHrStr + '</div>' +
         '<div class="today-metric-pill-age">' + _timeAgo(lastBP.ts) + '</div>' +
         '</div>';
     }
@@ -7772,7 +7854,7 @@ var ScreenTrack = (function() {
     if (bpEl) {
       if (bpToday.length) {
         var last = bpToday[bpToday.length - 1];
-        bpEl.textContent = bpToday.length + ' today · last: ' + last.sys + '/' + last.dia;
+        bpEl.textContent = bpToday.length + ' today · last: ' + last.sys + '/' + last.dia + (last.hr ? ' · HR ' + last.hr : '');
       } else { bpEl.textContent = 'No readings today'; }
     }
 
@@ -11413,7 +11495,8 @@ var ScreenBP = (function() {
     if (lastEl) {
       if (allLogs.length) {
         var last = allLogs[allLogs.length - 1];
-        lastEl.innerHTML = 'Last: <strong>' + last.sys + '/' + last.dia + ' mmHg</strong>';
+        var hrStr = last.hr ? ' &nbsp;·&nbsp; HR ' + last.hr : '';
+        lastEl.innerHTML = 'Last: <strong>' + last.sys + '/' + last.dia + ' mmHg</strong>' + hrStr;
       } else {
         lastEl.textContent = 'No readings yet';
       }
@@ -11526,18 +11609,21 @@ var ScreenBP = (function() {
     var hint  = document.getElementById('bp-screen-hint');
     var sys = Utils.parseNum(sysEl.value, 50, 250);
     var dia = Utils.parseNum(diaEl.value, 30, 150);
+    var hr  = Utils.parseNum((document.getElementById('bp-screen-hr') || {}).value || '', 30, 250);
     if (!sys || !dia) {
       if (hint) hint.textContent = 'Enter both values to save';
       return;
     }
 
-    var entry = { id: Utils.uid(), ts: Date.now(), sys: sys, dia: dia, timeOfDay: _bp_tod || null, crisis: (sys >= 180 || dia >= 120) };
+    var entry = { id: Utils.uid(), ts: Date.now(), sys: sys, dia: dia, hr: hr || null, timeOfDay: _bp_tod || null, crisis: (sys >= 180 || dia >= 120) };
     State.pushLog('bp', entry);
     Storage.sched();
 
     // Clear fields and reset button
     sysEl.value = '';
     diaEl.value = '';
+    var hrEl = document.getElementById('bp-screen-hr');
+    if (hrEl) hrEl.value = '';
     if (hint) hint.textContent = '';
     var alertEl = document.getElementById('bp-screen-crisis-alert');
     if (alertEl) alertEl.style.display = 'none';
@@ -11560,6 +11646,7 @@ var ScreenBP = (function() {
       setTimeout(function() { lastEl.classList.remove('saved'); }, 800);
     }
 
+    var toastHr = hr ? ' · HR ' + hr : '';
     if (entry.crisis) {
       Components.toast('⚠️ ' + sys + '/' + dia + ' mmHg — please contact a medical professional', function() {
         State.removeLog('bp', entry.id);
@@ -11569,7 +11656,7 @@ var ScreenBP = (function() {
         ScreenToday.render();
       });
     } else {
-      Components.toast(sys + '/' + dia + ' mmHg saved', function() {
+      Components.toast(sys + '/' + dia + ' mmHg' + toastHr + ' saved', function() {
         State.removeLog('bp', entry.id);
         Storage.sched();
         render();
@@ -11628,15 +11715,22 @@ var ScreenBP = (function() {
       _checkBPScreenCrisis();
     });
 
-    // DIA: update button state on input
+    // DIA: auto-advance to HR after 2 digits; update button state
     document.getElementById('bp-screen-dia').addEventListener('input', function() {
+      if (this.value.length >= 2) {
+        var hrField = document.getElementById('bp-screen-hr');
+        if (hrField) hrField.focus();
+      }
       _updateBPBtn();
       _checkBPScreenCrisis();
     });
 
-    // Enter on DIA: blur (dismiss keyboard)
+    // Enter on DIA: move to HR field
     document.getElementById('bp-screen-dia').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') { this.blur(); }
+      if (e.key === 'Enter') {
+        var hrField = document.getElementById('bp-screen-hr');
+        if (hrField) hrField.focus(); else this.blur();
+      }
     });
 
     // Enter on SYS: move to DIA
@@ -14765,13 +14859,16 @@ var App = (function() {
       var sys = Utils.parseNum(document.getElementById('bp-sys').value, 50, 250);
       var dia = Utils.parseNum(document.getElementById('bp-dia').value, 30, 150);
       if (!sys || !dia) { Components.toast('Please enter valid readings'); return; }
+      var hr  = Utils.parseNum((document.getElementById('bp-sheet-hr') || {}).value || '', 30, 250);
       var crisis = _isBPCrisis(sys, dia);
-      var entry = { id: Utils.uid(), ts: Date.now(), sys: sys, dia: dia, crisis: crisis };
+      var entry = { id: Utils.uid(), ts: Date.now(), sys: sys, dia: dia, hr: hr || null, crisis: crisis };
       State.pushLog('bp', entry);
       Storage.sched();
       Components.closeSheet();
       document.getElementById('bp-sys').value = '';
       document.getElementById('bp-dia').value = '';
+      var sheetHrEl = document.getElementById('bp-sheet-hr');
+      if (sheetHrEl) sheetHrEl.value = '';
       var alertEl = document.getElementById('bp-crisis-alert');
       if (alertEl) alertEl.style.display = 'none';
       var lastLbl = document.getElementById('bp-last-label');
