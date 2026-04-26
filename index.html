@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" href="./asea-icon-1024x1024.png">
+<link rel="apple-touch-icon" href="./asea-dev-icon-1024x1024.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#123B5A">
+<meta name="theme-color" content="#EAE7DF">
 <title>Asëa</title>
 
 <!--
@@ -130,6 +130,174 @@
   --header-tint: rgba(90,143,184,0.08);
   --header-tint-solid: rgba(90,143,184,0.14);
   --bg-rgb: 34,34,32;
+}
+
+[data-theme="merica"] {
+  /* 'Merica! — Captain America wartime aesthetic */
+  --bg:   #DDD4BC;  /* warmer/darker linen parchment */
+  --bg2:  #D0C6AE;  /* parchment secondary */
+  --sf:   #F2EDE3;  /* surface cards — lighter, pops off bg */
+  --sf2:  #EDE8DC;  /* nested surface */
+  --hdr:  #162850;  /* deep navy for text using --hdr var */
+  --hdr2: #0F1E3C;
+  --acc:  #6B1E1E;  /* deep maroon */
+  --acc2: #551818;
+  --accp: rgba(107,30,30,0.12);
+  --tx:   #2B2211;  /* warm charcoal */
+  --mt:   #7A6E5F;  /* muted warm brown */
+  --bd:   rgba(90,70,50,0.15);
+  --sh:   0 2px 16px rgba(60,30,10,0.12);
+  --sh2:  0 4px 24px rgba(60,30,10,0.18);
+  --ov:   rgba(20,10,5,0.45);
+  --fab:  #162850;  /* blue center — shield */
+  --fab2: #1E3868;
+  --header-tint: rgba(22,40,80,0.06);
+  --header-tint-solid: rgba(22,40,80,0.10);
+  --bg-rgb: 221,212,188;
+}
+
+/* Aged paper gradient background */
+[data-theme="merica"] body {
+  background: radial-gradient(ellipse at 50% 35%, #E8DFC8 0%, #D8CCAE 50%, #C8BB96 100%);
+  min-height: 100vh;
+}
+
+/* Solid red 88%, then soft 12% feather — slightly higher than before */
+[data-theme="merica"] .screen-header {
+  background: linear-gradient(
+    to bottom,
+    #6B1E1E 0%,
+    #6B1E1E 88%,
+    rgba(107,30,30,0.0) 100%
+  ) !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: none !important;
+  border-bottom-color: transparent !important;
+}
+[data-theme="merica"] .screen-header.scrolled {
+  background: linear-gradient(
+    to bottom,
+    #6B1E1E 0%,
+    #6B1E1E 86%,
+    rgba(107,30,30,0.0) 100%
+  ) !important;
+}
+[data-theme="merica"] .screen-date {
+  color: rgba(242,237,227,0.78);
+}
+[data-theme="merica"] .screen-title {
+  color: #F2EDE3;
+}
+/* Clean icon buttons — transparent bg, just white icons */
+[data-theme="merica"] .icon-btn {
+  color: #F2EDE3;
+  background: transparent;
+}
+[data-theme="merica"] .icon-btn:active {
+  background: rgba(242,237,227,0.20);
+}
+[data-theme="merica"] .icon-btn svg {
+  stroke: #F2EDE3;
+}
+/* Cart pill — navy */
+[data-theme="merica"] .shop-cart-pill {
+  background: #162850;
+  color: #F2EDE3;
+}
+[data-theme="merica"] .shop-cart-pill svg {
+  stroke: #F2EDE3;
+}
+
+/* Cart pill — navy override */
+[data-theme="merica"] .icon-btn--cart {
+  background: #162850 !important;
+  border-color: #162850 !important;
+}
+[data-theme="merica"] .icon-btn--cart:active {
+  background: #0F1E3C !important;
+  border-color: #0F1E3C !important;
+}
+/* Gear + profile group — bone pill, red icons */
+[data-theme="merica"] .header-btn-group {
+  background: #F2EDE3;
+}
+[data-theme="merica"] .header-btn-group .icon-btn {
+  background: transparent;
+  color: #6B1E1E;
+}
+[data-theme="merica"] .header-btn-group .icon-btn svg {
+  stroke: #6B1E1E;
+}
+
+/* Navy wave + nav bar */
+[data-theme="merica"] #nav-wave-bg path {
+  fill: #162850;
+}
+[data-theme="merica"] #nav-wave-bg feDropShadow {
+  flood-color: #162850;
+  flood-opacity: 0.30;
+}
+[data-theme="merica"] .nav-item {
+  color: rgba(242,237,227,0.60);
+}
+[data-theme="merica"] .nav-item.active {
+  color: #F2EDE3 !important;
+}
+[data-theme="merica"] .nav-item.active svg {
+  stroke: #F2EDE3 !important;
+}
+[data-theme="merica"] .nav-item.active .nav-ind {
+  background: #F2EDE3;
+}
+/* Target the specific label rule that overrides color */
+[data-theme="merica"] .nav-item.active .nav-label {
+  color: #F2EDE3 !important;
+}
+/* Profile button — red circle, white icon (inverted vs gear) — all screens */
+[data-theme="merica"] .avatar-btn-photo {
+  background: #6B1E1E !important;
+  border-radius: 50% !important;
+}
+[data-theme="merica"] .avatar-btn-photo #avatar-svg,
+[data-theme="merica"] .avatar-btn-photo .avatar-svg-all {
+  stroke: #F2EDE3 !important;
+}
+[data-theme="merica"] .nav-item svg {
+  stroke: rgba(242,237,227,0.60);
+}
+[data-theme="merica"] .nav-label {
+  color: inherit;
+}
+
+/* ── Cap's Shield FAB ── */
+[data-theme="merica"] #fab {
+  background:
+    radial-gradient(circle at 40% 35%, #2a4a8a 0%, #162850 55%, #0F1E3C 100%);
+  box-shadow:
+    /* 3D dome highlight */
+    inset 0 4px 10px rgba(255,255,255,0.20),
+    inset 0 -4px 10px rgba(0,0,0,0.35),
+    /* Inner red ring — tight around blue center */
+    0 0 0 9px #7A1A1A,
+    /* Bone/silver ring — equal width */
+    0 0 0 15px #E2D5C0,
+    /* Outer red ring — equal width */
+    0 0 0 21px #7A1A1A,
+    /* Drop shadow */
+    0 6px 28px rgba(0,0,0,0.45),
+    0 2px 6px rgba(0,0,0,0.25);
+  border: 2px solid #B8A890;
+  /* Shrink the blue center relative to total shield size */
+  width: 36px;
+  height: 36px;
+}
+[data-theme="merica"] #fab svg {
+  stroke: #F2EDE3;
+  stroke-width: 2.6;
+  width: 18px;
+  height: 18px;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
 }
 
 /* ── Reset flow ── */
@@ -6387,7 +6555,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v22-08',
+  version:            'v23-09',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -7227,7 +7395,7 @@ var Utils = (function() {
 ══════════════════════════════════════════════════════════════ */
 var Theme = (function() {
 
-  var _themes = ['neutral', 'light', 'dark'];
+  var _themes = ['neutral', 'light', 'dark', 'merica'];
 
   function apply(theme) {
     var t = _themes.indexOf(theme) >= 0 ? theme : 'neutral';
@@ -15705,6 +15873,38 @@ var ScreenSettings = (function() {
       Storage.sched();
       render();
     });
+
+    // 'Merica! easter egg — long-press version number to unlock
+    (function() {
+      var verEl = document.getElementById('about-version');
+      if (!verEl) return;
+      var _pressTimer = null;
+      var HOLD_MS = 2000;
+
+      function _startPress() {
+        _pressTimer = setTimeout(function() {
+          var current = State.get().theme || 'neutral';
+          var next = current === 'merica' ? 'neutral' : 'merica';
+          Theme.apply(next);
+          State.update('theme', next);
+          Storage.sched();
+          render();
+          var msg = next === 'merica' ? '🇺🇸 \'Merica!' : 'Theme restored';
+          if (typeof Utils !== 'undefined' && Utils.toast) Utils.toast(msg);
+        }, HOLD_MS);
+      }
+
+      function _cancelPress() {
+        if (_pressTimer) { clearTimeout(_pressTimer); _pressTimer = null; }
+      }
+
+      verEl.addEventListener('touchstart', _startPress, { passive: true });
+      verEl.addEventListener('touchend', _cancelPress);
+      verEl.addEventListener('touchcancel', _cancelPress);
+      verEl.addEventListener('mousedown', _startPress);
+      verEl.addEventListener('mouseup', _cancelPress);
+      verEl.addEventListener('mouseleave', _cancelPress);
+    })();
   }
 
   function _ensureSettings() {
