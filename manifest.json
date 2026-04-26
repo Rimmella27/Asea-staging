@@ -1,6 +1,6 @@
 {
-  "name": "Asëa Dev",
-  "short_name": "Asëa Dev",
+  "name": "Asëa",
+  "short_name": "Asëa",
   "description": "Reveal the patterns your body already knows",
   "lang": "en",
   "categories": ["health", "lifestyle"],
@@ -11,31 +11,31 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "./asea-dev-icon-192x192.png?v=3",
+      "src": "./asea-icon-192x192.png?v=3",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./asea-dev-icon-192x192.png?v=3",
+      "src": "./asea-icon-192x192.png?v=3",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "./asea-dev-icon-512x512.png?v=3",
+      "src": "./asea-icon-512x512.png?v=3",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./asea-dev-icon-512x512.png?v=3",
+      "src": "./asea-icon-512x512.png?v=3",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "./asea-dev-icon-1024x1024.png?v=3",
+      "src": "./asea-icon-1024x1024.png?v=3",
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any"
