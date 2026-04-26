@@ -4202,6 +4202,10 @@ input, textarea { font-family: inherit; }
             <div class="you-edit-row">
               <input class="you-edit-input" id="you-input-weight" type="number" min="50" max="700" placeholder="lbs">
             </div>
+            <div style="font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--mt);padding:10px 0 6px;">Goal Weight <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></div>
+            <div class="you-edit-row">
+              <input class="you-edit-input" id="you-input-goalWeight" type="number" min="50" max="700" placeholder="lbs">
+            </div>
             <div class="you-edit-actions">
               <button class="inv-cancel-btn" data-field-cancel="weight">Cancel</button>
               <button class="inv-save-btn"   data-field-save="weight">Save</button>
@@ -4413,10 +4417,10 @@ input, textarea { font-family: inherit; }
 
       <!-- Backup reminder banner (shown conditionally) -->
       <div id="backup-reminder-banner" style="display:none;margin:0 20px 16px;">
-        <div style="background:rgba(193,123,58,0.12);border:1px solid rgba(193,123,58,0.3);border-radius:var(--r-md);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div style="background:rgba(193,123,58,0.15);border:2.5px solid rgba(193,123,58,0.6);border-radius:var(--r-md);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
           <div>
-            <div style="font-size:13px;font-weight:600;color:#C17B3A;margin-bottom:2px;">Backup reminder</div>
-            <div style="font-size:12px;color:var(--mt);" id="backup-reminder-text">It's been a while since your last backup.</div>
+            <div style="font-size:14px;font-weight:700;color:#A8621E;margin-bottom:3px;">⚠️ Backup Reminder</div>
+            <div style="font-size:12px;color:var(--tx);line-height:1.45;" id="backup-reminder-text">It's been a while since your last backup.</div>
           </div>
           <button class="icon-btn" id="backup-reminder-dismiss" aria-label="Dismiss" style="flex-shrink:0;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -4918,6 +4922,8 @@ input, textarea { font-family: inherit; }
         </div>
         <div class="gluc-hint" id="gluc-screen-hint"></div>
         <button class="log-entry-btn" id="gluc-log-entry-btn" disabled>Log Entry</button>
+        <!-- Trend graph — rendered by TrendGraph.render() via ScreenGlucose.render() -->
+        <div id="gluc-trend-graph"></div>
         <div style="height:120px;"></div>
       </div>
     </div><!-- /screen-glucose -->
@@ -4963,6 +4969,8 @@ input, textarea { font-family: inherit; }
         </div>
         <button class="log-entry-btn wt-save-btn" id="wt-save-btn">Log Entry</button>
         <div class="wt-hint" id="wt-screen-hint"></div>
+        <!-- Trend graph — rendered by TrendGraph.render() via ScreenWeight.render() -->
+        <div id="wt-trend-graph"></div>
         <div style="height:120px;"></div>
       </div>
     </div><!-- /screen-weight -->
@@ -6379,7 +6387,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v22-03',
+  version:            'v22-08',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -6982,7 +6990,7 @@ var State = (function() {
     theme: 'neutral',
     units: 'imperial',
     settings: {
-      backupInterval: 'monthly',
+      backupInterval: 'weekly',
       lastBackupTs: null,
       lastBackupFname: null,
       coffeeDefault: 'coffee',  // 'coffee' | 'coffee_milk' | 'coffee_sugar'
@@ -7493,6 +7501,8 @@ var Components = (function() {
 ══════════════════════════════════════════════════════════════ */
 var ScreenToday = (function() {
 
+  var _backupReminderShown = false; // session flag — show toast once per session only
+
   function render() {
     _renderDate();
     _renderHydration();
@@ -7501,6 +7511,11 @@ var ScreenToday = (function() {
     _renderTimeline();
     _renderInsightStrip();
     _renderNudge();
+    // Show backup reminder toast once per session, regardless of how Today was reached
+    if (!_backupReminderShown) {
+      _backupReminderShown = true;
+      setTimeout(function() { ScreenSettings.checkReminderOnOpen(); }, 1200);
+    }
   }
 
   function _renderDate() {
@@ -9077,7 +9092,7 @@ var ScreenYou = (function() {
     var s = State.get();
     var p = s.profile;
 
-    _setText('you-weight',  p.weight  ? p.weight + ' lbs' : '—');
+    _setText('you-weight',  p.weight  ? p.weight + ' lbs' + (p.goalWeight ? '  ·  Goal: ' + p.goalWeight + ' lbs' : '') : '—');
     _setText('you-height',  p.height  || '—');
     _setText('you-age',     p.age     ? p.age + ' yrs'   : '—');
     _setText('you-sex',     p.sex     ? _capitalize(p.sex) : '—');
@@ -9399,6 +9414,8 @@ var ScreenYou = (function() {
     if (field === 'weight') {
       var inp = document.getElementById('you-input-weight');
       if (inp) inp.value = s.profile.weight || '';
+      var gInp = document.getElementById('you-input-goalWeight');
+      if (gInp) gInp.value = s.profile.goalWeight || '';
     } else if (field === 'height') {
       var raw = s.profile.height || '';  // stored as e.g. "5' 11\"" or "5'11\""
       var match = raw.match(/(\d+)'\s*(\d*)/);
@@ -9451,6 +9468,9 @@ var ScreenYou = (function() {
       var val = Utils.parseNum(document.getElementById('you-input-weight').value, 50, 700);
       if (!val) return;
       State.update('profile.weight', val);
+      // Save goal weight — optional, clear if blank
+      var goalVal = Utils.parseNum(document.getElementById('you-input-goalWeight').value, 50, 700);
+      State.update('profile.goalWeight', goalVal || null);
 
     } else if (field === 'height') {
       var ft = parseInt(document.getElementById('you-input-height-ft').value, 10);
@@ -12245,6 +12265,22 @@ var ScreenGlucose = (function() {
         badge.style.display = 'none';
       }
     }
+
+    // Trend graph — single series, all glucose logs chronological
+    var glucLogs = (allLogs || []).slice().sort(function(a,b) { return a.ts - b.ts; });
+    TrendGraph.render({
+      containerId: 'gluc-trend-graph',
+      unit:        'mg/dL',
+      defaultWin:  '1W',
+      series: [
+        {
+          label:  null,  // single series — no legend needed
+          color:  'var(--acc)',
+          dash:   null,
+          points: glucLogs.map(function(l) { return { ts: l.ts, val: l.val }; })
+        }
+      ]
+    });
   }
 
   // Enable/disable Log Entry button
@@ -12535,6 +12571,24 @@ var ScreenWeight = (function() {
         badge.style.display = 'none';
       }
     }
+
+    // Trend graph — single series, optional goal line from profile.goalWeight
+    var wtLogs = (s.logs.weight || []).slice().sort(function(a,b) { return a.ts - b.ts; });
+    TrendGraph.render({
+      containerId: 'wt-trend-graph',
+      unit:        unit,
+      defaultWin:  '1W',
+      goalVal:     s.profile.goalWeight || null,
+      goalLabel:   'Goal',
+      series: [
+        {
+          label:  null,
+          color:  'var(--acc)',
+          dash:   null,
+          points: wtLogs.map(function(l) { return { ts: l.ts, val: l.val }; })
+        }
+      ]
+    });
   }
 
   function _openLogSheet() {
@@ -15159,8 +15213,6 @@ var App = (function() {
     } else {
       Router.go('today');
       ScreenToday.render();
-      // Check backup reminder on open
-      ScreenSettings.checkReminderOnOpen();
     }
   }
 
@@ -15399,9 +15451,9 @@ var App = (function() {
 var ScreenSettings = (function() {
 
   // Backup reminder intervals in days
-  var _intervals = { never: 0, weekly: 7, monthly: 30 };
-  var _intervalLabels = { never: 'Never', weekly: 'Weekly', monthly: 'Monthly' };
-  var _intervalOrder = ['never', 'weekly', 'monthly'];
+  var _intervals = { never: 0, daily: 1, weekly: 7, monthly: 30 };
+  var _intervalLabels = { never: 'Never', daily: 'Weekly', weekly: 'Weekly', monthly: 'Monthly' };
+  var _intervalOrder = ['daily', 'weekly', 'monthly', 'never'];
 
   function render() {
     var s = State.get();
@@ -15414,9 +15466,9 @@ var ScreenSettings = (function() {
     _renderLastBackup();
 
     // Backup interval
-    var interval = s.settings ? (s.settings.backupInterval || 'monthly') : 'monthly';
+    var interval = s.settings ? (s.settings.backupInterval || 'weekly') : 'weekly';
     var intEl = document.getElementById('backup-interval-label');
-    if (intEl) intEl.textContent = _intervalLabels[interval] || 'Monthly';
+    if (intEl) intEl.textContent = _intervalLabels[interval] || 'Weekly';
 
     // Units
     var unitsEl = document.getElementById('units-label');
@@ -15452,17 +15504,23 @@ var ScreenSettings = (function() {
   function _checkBackupReminder(s) {
     var banner = document.getElementById('backup-reminder-banner');
     if (!banner) return;
-    var interval = s.settings && s.settings.backupInterval || 'monthly';
+    var interval = s.settings && s.settings.backupInterval || 'weekly';
     var days = _intervals[interval];
-    if (days === 0) { banner.style.display = 'none'; return; }
     var lastTs = s.settings && s.settings.lastBackupTs;
-    var daysSince = lastTs ? Math.floor((Date.now() - lastTs) / CONFIG.DAY) : 999;
-    if (daysSince >= days) {
+    // Always show if never backed up (regardless of interval setting)
+    if (!lastTs) {
       banner.style.display = 'block';
       var txt = document.getElementById('backup-reminder-text');
-      if (txt) txt.textContent = lastTs
-        ? 'Last backup was ' + daysSince + ' days ago.'
-        : 'You haven\'t backed up yet.';
+      if (txt) txt.textContent = 'Back up your data so you don\'t lose it if you clear your browser cache.';
+      return;
+    }
+    // Interval = never: hide after first backup
+    if (days === 0) { banner.style.display = 'none'; return; }
+    var daysSince = Math.floor((Date.now() - lastTs) / CONFIG.DAY);
+    if (daysSince >= days) {
+      banner.style.display = 'block';
+      var txt2 = document.getElementById('backup-reminder-text');
+      if (txt2) txt2.textContent = 'Last backup was ' + daysSince + (daysSince === 1 ? ' day' : ' days') + ' ago.';
     } else {
       banner.style.display = 'none';
     }
@@ -15471,11 +15529,21 @@ var ScreenSettings = (function() {
   // Also check on app open (Today screen)
   function checkReminderOnOpen() {
     var s = State.get();
-    var interval = s.settings && s.settings.backupInterval || 'monthly';
-    var days = _intervals[interval];
-    if (days === 0) return;
     var lastTs = s.settings && s.settings.lastBackupTs;
-    var daysSince = lastTs ? Math.floor((Date.now() - lastTs) / CONFIG.DAY) : 999;
+    var interval = s.settings && s.settings.backupInterval || 'weekly';
+    var days = _intervals[interval];
+    // Always nudge if never backed up
+    if (!lastTs) {
+      Components.toast(
+        'Back up your data to avoid losing it',
+        null,
+        function() { Router.go('settings'); },
+        'Open'
+      );
+      return;
+    }
+    if (days === 0) return;
+    var daysSince = Math.floor((Date.now() - lastTs) / CONFIG.DAY);
     if (daysSince >= days) {
       Components.toast(
         'Time to back up your data',
@@ -15599,7 +15667,7 @@ var ScreenSettings = (function() {
     var intervalRow = document.getElementById('backup-interval-row');
     if (intervalRow) intervalRow.addEventListener('click', function() {
       var s = State.get();
-      var current = s.settings && s.settings.backupInterval || 'monthly';
+      var current = s.settings && s.settings.backupInterval || 'weekly';
       var idx = _intervalOrder.indexOf(current);
       var next = _intervalOrder[(idx + 1) % _intervalOrder.length];
       _ensureSettings();
