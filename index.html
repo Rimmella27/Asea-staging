@@ -6379,7 +6379,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v22-02',
+  version:            'v22-03',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -11585,7 +11585,7 @@ var FabDrinkSheet = (function() {
 var TrendGraph = (function() {
 
   // ── Constants ──────────────────────────────────────────────
-  var GRAPH_H    = 140;  // SVG inner height (px, viewBox units)
+  var GRAPH_H    = 200;  // SVG inner height (px, viewBox units)
   var PAD_TOP    =  14;
   var PAD_BOTTOM =  20;
   var PAD_LEFT   =  34;  // space for Y-axis labels
@@ -11654,15 +11654,18 @@ var TrendGraph = (function() {
           var py    = (cy / vbH) * rect.height;
           tip.textContent = label;
           tip.style.left  = px + 'px';
-          tip.style.top   = (py + 4) + 'px';  // slight offset so tip sits above
+          tip.style.top   = (py + 4) + 'px';
           tip.classList.add('visible');
+          // Defer dismiss listener — must register AFTER current click event
+          // cycle completes, otherwise it fires immediately and dismisses the tip
+          setTimeout(function() {
+            function _dismiss() {
+              tip.classList.remove('visible');
+              document.removeEventListener('click', _dismiss);
+            }
+            document.addEventListener('click', _dismiss);
+          }, 0);
         });
-      });
-
-      // Dismiss on tap outside
-      document.addEventListener('click', function _dismiss() {
-        if (tip) tip.classList.remove('visible');
-        document.removeEventListener('click', _dismiss);
       });
     }
 
@@ -11816,12 +11819,12 @@ var TrendGraph = (function() {
       legendHTML = '<div class="tg-legend-row">'
         + filtered.map(function(s) {
             var swatchSVG = s.dash
-              ? '<svg width="16" height="8" viewBox="0 0 16 8" style="flex-shrink:0;display:block;">'
-                + '<line x1="0" y1="4" x2="16" y2="4" stroke="' + s.color + '" stroke-width="2"'
+              ? '<svg width="24" height="8" viewBox="0 0 24 8" style="flex-shrink:0;display:block;">'
+                + '<line x1="0" y1="4" x2="24" y2="4" stroke="' + s.color + '" stroke-width="2"'
                 + ' stroke-dasharray="' + s.dash + '" opacity="' + (s.opacity != null ? s.opacity : 1) + '"/>'
                 + '</svg>'
-              : '<svg width="16" height="8" viewBox="0 0 16 8" style="flex-shrink:0;display:block;">'
-                + '<line x1="0" y1="4" x2="16" y2="4" stroke="' + s.color + '" stroke-width="2"'
+              : '<svg width="24" height="8" viewBox="0 0 24 8" style="flex-shrink:0;display:block;">'
+                + '<line x1="0" y1="4" x2="24" y2="4" stroke="' + s.color + '" stroke-width="2"'
                 + ' opacity="' + (s.opacity != null ? s.opacity : 1) + '"/>'
                 + '</svg>';
             return '<div class="tg-legend-item">'
