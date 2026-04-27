@@ -2607,6 +2607,12 @@ input, textarea { font-family: inherit; }
 }
 .ob-fields { display: flex; flex-direction: column; gap: 10px; flex: 1; }
 #screen-onboarding .form-group { margin-bottom: 8px; }
+#ob-step-2 .ob-title { font-size: 26px; margin-bottom: 6px; }
+#ob-step-2 .ob-sub { margin-bottom: 8px; font-size: 14px; }
+#ob-step-2 .ob-back-btn { margin-bottom: 12px; }
+#ob-step-2 .ob-fields { gap: 7px; }
+#ob-step-2 .form-input { padding: 9px 14px; }
+#ob-step-2 .ob-footer { padding-top: 10px; }
 .ob-footer { padding-top: 20px; }
 
 /* ══════════════════════════════════════════════
@@ -5095,7 +5101,7 @@ input, textarea { font-family: inherit; }
             <div class="ob-photo-wrap">
               <div class="ob-photo-circle" id="ob-photo-circle">
                 <img id="ob-photo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">
-                <svg id="ob-photo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="width:42px;height:42px;">
+                <svg id="ob-photo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="width:58px;height:58px;">
                   <circle cx="12" cy="8" r="3.5"/>
                   <path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/>
                 </svg>
@@ -5115,9 +5121,9 @@ input, textarea { font-family: inherit; }
         <div class="ob-step" id="ob-step-6">
           <button class="ob-back-btn" data-ob-back aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
           <div class="ob-title">Here's how it works</div>
-          <div class="ob-sub" style="margin-bottom:12px;">Asëa watches for patterns — silently, privately, on your device.</div>
+          <div class="ob-sub" style="margin-bottom:6px;font-size:14px;">Asëa watches for patterns — silently, privately, on your device.</div>
           <div style="flex:1;display:flex;align-items:center;justify-content:center;">
-            <svg viewBox="0 0 320 408" width="100%" role="img" aria-label="How Asëa turns logs into insights">
+            <svg viewBox="0 0 320 300" width="100%" role="img" aria-label="How Asëa turns logs into insights">
               <defs>
                 <marker id="ob-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                   <path d="M2 1L8 5L2 9" fill="none" stroke="var(--acc)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -5130,7 +5136,7 @@ input, textarea { font-family: inherit; }
               <!-- ROW 1 -->
               <!-- Node 1: You Log -->
               <g>
-                <circle cx="52" cy="72" r="34" fill="var(--accp)" stroke="var(--acc)" stroke-width="2"/>
+                <circle cx="52" cy="72" r="28" fill="var(--accp)" stroke="var(--acc)" stroke-width="2"/>
                 <!-- checklist icon -->
                 <rect x="38" y="58" width="28" height="28" rx="4" fill="none" stroke="var(--acc)" stroke-width="1.4"/>
                 <line x1="43" y1="66" x2="60" y2="66" stroke="var(--acc)" stroke-width="1.2" stroke-linecap="round"/>
@@ -5146,7 +5152,7 @@ input, textarea { font-family: inherit; }
 
               <!-- Node 2: Smart Tag -->
               <g>
-                <circle cx="160" cy="72" r="34" fill="var(--accp)" stroke="var(--acc)" stroke-width="2"/>
+                <circle cx="160" cy="72" r="28" fill="var(--accp)" stroke="var(--acc)" stroke-width="2"/>
                 <!-- tag/label icon -->
                 <path d="M148 60 L172 60 L176 72 L172 84 L148 84 L148 60 Z" fill="none" stroke="var(--acc)" stroke-width="1.4" stroke-linejoin="round"/>
                 <circle cx="153" cy="68" r="2.5" fill="var(--acc)"/>
@@ -5162,65 +5168,65 @@ input, textarea { font-family: inherit; }
 
               <!-- Node 3: Detect Pattern -->
               <g>
-                <circle cx="268" cy="72" r="34" fill="var(--accp)" stroke="var(--acc)" stroke-width="2"/>
+                <circle cx="268" cy="72" r="28" fill="var(--accp)" stroke="var(--acc)" stroke-width="2"/>
                 <!-- magnifier icon -->
                 <circle cx="262" cy="66" r="9" fill="none" stroke="var(--acc)" stroke-width="1.5"/>
                 <line x1="269" y1="73" x2="278" y2="82" stroke="var(--acc)" stroke-width="1.8" stroke-linecap="round"/>
               </g>
               <text x="268" y="124" text-anchor="middle" font-size="11" font-weight="600" font-family="var(--font-body)" fill="var(--hdr)">Spot pattern</text>
               <text x="268" y="138" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">coffee →</text>
-              <text x="268" y="151" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">urgency (3×)</text>
+              <text x="268" y="151" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">gut urgency (3×)</text>
 
               <!-- Down + wrap arrow from node 3 to row 2 left -->
-              <path d="M268 148 Q268 168 240 178 Q200 190 80 190 Q52 190 52 200" fill="none" stroke="var(--mt)" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ob-arrow-down)"/>
+              <path d="M268 157 Q268 170 240 174 Q200 180 80 180 Q52 180 52 182" fill="none" stroke="var(--mt)" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ob-arrow-down)"/>
 
               <!-- ROW 2 -->
               <!-- Node 4: Check Rules -->
               <g>
-                <circle cx="52" cy="242" r="34" fill="var(--accp)" stroke="var(--acc)" stroke-width="2"/>
+                <circle cx="52" cy="210" r="28" fill="var(--accp)" stroke="var(--acc)" stroke-width="2"/>
                 <!-- shield / rules icon -->
-                <path d="M52 226 L66 231 L66 243 Q66 253 52 258 Q38 253 38 243 L38 231 Z" fill="none" stroke="var(--acc)" stroke-width="1.4" stroke-linejoin="round"/>
-                <polyline points="46,242 50,247 58,237" fill="none" stroke="var(--acc)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M52 194 L66 199 L66 211 Q66 221 52 226 Q38 221 38 211 L38 199 Z" fill="none" stroke="var(--acc)" stroke-width="1.4" stroke-linejoin="round"/>
+                <polyline points="46,210 50,215 58,205" fill="none" stroke="var(--acc)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </g>
-              <text x="52" y="294" text-anchor="middle" font-size="11" font-weight="600" font-family="var(--font-body)" fill="var(--hdr)">Check rules</text>
-              <text x="52" y="308" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">confidence</text>
-              <text x="52" y="321" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">threshold met?</text>
+              <text x="52" y="252" text-anchor="middle" font-size="11" font-weight="600" font-family="var(--font-body)" fill="var(--hdr)">Check rules</text>
+              <text x="52" y="265" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">confidence</text>
+              <text x="52" y="277" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">threshold met?</text>
 
               <!-- Arrow 4→5 -->
-              <line x1="88" y1="242" x2="108" y2="242" stroke="var(--acc)" stroke-width="1.2" marker-end="url(#ob-arrow)"/>
+              <line x1="88" y1="210" x2="108" y2="210" stroke="var(--acc)" stroke-width="1.2" marker-end="url(#ob-arrow)"/>
 
               <!-- Node 5: Select Top -->
               <g>
-                <circle cx="160" cy="242" r="34" fill="var(--accp)" stroke="var(--acc)" stroke-width="2"/>
+                <circle cx="160" cy="210" r="28" fill="var(--accp)" stroke="var(--acc)" stroke-width="2"/>
                 <!-- podium / select icon -->
-                <rect x="149" y="250" width="10" height="10" rx="2" fill="var(--acc)" opacity="0.5"/>
-                <rect x="155" y="244" width="10" height="16" rx="2" fill="var(--acc)" opacity="0.75"/>
-                <rect x="161" y="247" width="10" height="13" rx="2" fill="var(--acc)" opacity="0.6"/>
-                <line x1="147" y1="261" x2="174" y2="261" stroke="var(--acc)" stroke-width="1.2" stroke-linecap="round"/>
+                <rect x="149" y="218" width="10" height="10" rx="2" fill="var(--acc)" opacity="0.5"/>
+                <rect x="155" y="212" width="10" height="16" rx="2" fill="var(--acc)" opacity="0.75"/>
+                <rect x="161" y="215" width="10" height="13" rx="2" fill="var(--acc)" opacity="0.6"/>
+                <line x1="147" y1="229" x2="174" y2="229" stroke="var(--acc)" stroke-width="1.2" stroke-linecap="round"/>
               </g>
-              <text x="160" y="294" text-anchor="middle" font-size="11" font-weight="600" font-family="var(--font-body)" fill="var(--hdr)">Select best</text>
-              <text x="160" y="308" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">top 1–3</text>
-              <text x="160" y="321" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">patterns</text>
+              <text x="160" y="252" text-anchor="middle" font-size="11" font-weight="600" font-family="var(--font-body)" fill="var(--hdr)">Select best</text>
+              <text x="160" y="265" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">top 1–3</text>
+              <text x="160" y="277" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">patterns</text>
 
               <!-- Arrow 5→6 -->
-              <line x1="196" y1="242" x2="216" y2="242" stroke="var(--acc)" stroke-width="1.2" marker-end="url(#ob-arrow)"/>
+              <line x1="196" y1="210" x2="216" y2="210" stroke="var(--acc)" stroke-width="1.2" marker-end="url(#ob-arrow)"/>
 
               <!-- Node 6: Your Insight -->
               <g>
-                <circle cx="268" cy="242" r="34" fill="var(--accp)" stroke="var(--acc)" stroke-width="2"/>
+                <circle cx="268" cy="210" r="28" fill="var(--accp)" stroke="var(--acc)" stroke-width="2"/>
                 <!-- lightbulb icon -->
-                <path d="M268 225 Q260 225 257 232 Q254 239 258 245 L260 250 L276 250 L278 245 Q282 239 279 232 Q276 225 268 225 Z" fill="none" stroke="var(--acc)" stroke-width="1.4" stroke-linejoin="round"/>
-                <line x1="262" y1="253" x2="274" y2="253" stroke="var(--acc)" stroke-width="1.3" stroke-linecap="round"/>
-                <line x1="264" y1="257" x2="272" y2="257" stroke="var(--acc)" stroke-width="1.3" stroke-linecap="round"/>
+                <path d="M268 193 Q260 193 257 200 Q254 207 258 213 L260 218 L276 218 L278 213 Q282 207 279 200 Q276 193 268 193 Z" fill="none" stroke="var(--acc)" stroke-width="1.4" stroke-linejoin="round"/>
+                <line x1="262" y1="221" x2="274" y2="221" stroke="var(--acc)" stroke-width="1.3" stroke-linecap="round"/>
+                <line x1="264" y1="225" x2="272" y2="225" stroke="var(--acc)" stroke-width="1.3" stroke-linecap="round"/>
               </g>
-              <text x="268" y="294" text-anchor="middle" font-size="11" font-weight="600" font-family="var(--font-body)" fill="var(--hdr)">Your insight</text>
-              <text x="268" y="308" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">"Coffee may</text>
-              <text x="268" y="321" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">cause urgency"</text>
+              <text x="268" y="252" text-anchor="middle" font-size="11" font-weight="600" font-family="var(--font-body)" fill="var(--hdr)">Your insight</text>
+              <text x="268" y="265" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">"Coffee may</text>
+              <text x="268" y="277" text-anchor="middle" font-size="11" font-family="var(--font-body)" fill="var(--mt)">cause gut urgency"</text>
 
               <!-- Footer privacy note -->
-              <text x="160" y="378" text-anchor="middle" font-size="13" font-weight="500" font-family="var(--font-body)" fill="var(--mt)">🔒 All processing stays on your device</text>
             </svg>
           </div>
+          <div style="text-align:center;padding:14px 0 6px;font-size:13px;font-weight:500;color:var(--mt);">🔒 All processing stays on your device</div>
           <div class="ob-footer">
             <button class="btn-primary" data-ob-next>Got it</button>
           </div>
@@ -5229,9 +5235,13 @@ input, textarea { font-family: inherit; }
         <!-- Step 7: All set -->
         <div class="ob-step" id="ob-step-7">
           <button class="ob-back-btn" data-ob-back aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-          <div class="ob-icon">🌱</div>
+          <div class="ob-icon">
+            <svg viewBox="0 0 56 56" width="52" height="52" fill="none" aria-hidden="true">
+              <path d="M28 4 L31 25 L52 28 L31 31 L28 52 L25 31 L4 28 L25 25 Z" fill="var(--acc)" opacity="0.88"/>
+            </svg>
+          </div>
           <div class="ob-title">You're all set.</div>
-          <div class="ob-sub">Start by logging something in your day. Even one entry begins the pattern.</div>
+          <div class="ob-sub">Start by logging something in your day. Even just one entry begins the pattern.</div>
           <div style="flex:1;"></div>
           <div class="ob-footer">
             <button class="btn-primary" id="ob-finish-btn">Go to Today</button>
@@ -6958,7 +6968,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v23-17',
+  version:            'v23-20',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
