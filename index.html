@@ -1303,6 +1303,14 @@ input, textarea { font-family: inherit; }
 .ti-glucose   { background: rgba(74,155,127,0.12); }
 .ti-weight    { background: rgba(92,110,74,0.12); }
 
+/* Dark theme: stronger alpha so pills read against dark surfaces */
+[data-theme="dark"] .ti-hydration { background: rgba(58,127,193,0.22); }
+[data-theme="dark"] .ti-meal      { background: rgba(193,123,58,0.22); }
+[data-theme="dark"] .ti-bowel     { background: rgba(155,107,155,0.22); }
+[data-theme="dark"] .ti-bp        { background: rgba(193,74,74,0.22); }
+[data-theme="dark"] .ti-glucose   { background: rgba(74,155,127,0.22); }
+[data-theme="dark"] .ti-weight    { background: rgba(92,110,74,0.22); }
+
 /* ══════════════════════════════════════════════
    INSIGHTS SCREEN
 ══════════════════════════════════════════════ */
@@ -4786,7 +4794,7 @@ input, textarea { font-family: inherit; }
           <label for="restore-file-input" class="you-row" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
             <div>
               <div class="you-row-label" style="color:var(--tx);font-weight:500;">Restore from Backup</div>
-              <div style="font-size:11px;color:var(--mt);margin-top:2px;">Import a previously exported file</div>
+              <div style="font-size:11px;color:var(--mt);margin-top:2px;">Import a previously exported file. Look in your Downloads folder for the backup file.</div>
             </div>
             <span class="track-row-arrow">›</span>
           </label>
@@ -7241,6 +7249,12 @@ var FOOD_DB = [
   { name:'Coconut aminos',   cat:'pantry_oils', shopCat:'Pantry — Oils & Condiments',
     tags:['low_glycemic'],
     benefits:['Blood Sugar'] },
+  { name:'Coconut oil',      cat:'pantry_oils', shopCat:'Pantry — Oils & Condiments',
+    tags:['mct','high_fat'],
+    benefits:['Energy','Brain','Fat Burning'] },
+  { name:'MCT oil',          cat:'pantry_oils', shopCat:'Pantry — Oils & Condiments',
+    tags:['mct','high_fat'],
+    benefits:['Energy','Brain','Fat Burning'] },
   { name:'Dijon mustard',    cat:'pantry_oils', shopCat:'Pantry — Oils & Condiments',
     tags:['low_glycemic'],
     benefits:['Blood Sugar'] },
@@ -11001,6 +11015,24 @@ var InsightEngine = (function() {
       // FMD booklet (fermented foods as therapeutic category).
     },
 
+    {
+      id: 'FQ11', priority: 1, windowDays: 14,
+      inputTag: 'mct', outputType: 'trend', outputKey: 'stable',
+      windowH: null, threshold: 3, icon: '🥥',
+      text: 'You\'ve been logging coconut oil or MCT oil regularly. These are rich sources of medium-chain triglycerides (MCTs) — a type of fat the body converts to energy quickly, without requiring the same processing as long-chain fats. Some people find they support sustained energy and mental clarity.',
+      tip: 'MCTs are most useful as part of a diet that\'s already low in refined carbs. Pairing them with high-sugar meals reduces their effect.',
+      // Rationale: Medium-chain triglycerides (MCTs) are absorbed directly via
+      // portal circulation and rapidly converted to ketones in the liver,
+      // providing an alternative fuel source for brain and muscle.
+      // Associated with improved cognitive performance, fat oxidation, and
+      // satiety in functional medicine and metabolic health literature.
+      // Fires after 3+ mct-tagged logs within 14-day window.
+      // outputType:'trend'/outputKey:'stable' = positive informational nudge.
+      // Source: St-Onge MP & Jones PJ, J Nutr 2002 (MCT metabolism);
+      // Fernando WMADB et al., J Alzheimers Dis 2015 (MCT + cognition);
+      // FMD booklet (MCT oils as therapeutic fat category).
+    },
+
   ];
 
   // ── Early insight: fx[] side-effect map ────────────────────
@@ -13145,6 +13177,7 @@ var ScreenMeals = (function() {
     { tags: ['caffeine'],       words: ['coffee','espresso','latte','cappuccino','americano','mocha','cold brew','matcha','tea','energy drink'] },
     { tags: ['alcohol'],        words: ['beer','wine','spirits','whiskey','vodka','gin','rum','cocktail','alcohol','cider'] },
     { tags: ['probiotic'],      words: ['kimchi','sauerkraut','kefir','kombucha','miso','tempeh','yogurt','fermented'] },
+    { tags: ['mct'],            words: ['coconut oil','mct oil','mct'] },
     { tags: ['dairy'],          words: ['milk','cheese','yogurt','cream','butter','ice cream','whey','mozzarella','cheddar','parmesan'] },
     { tags: ['sugar'],          words: ['candy','soda','juice','syrup','honey','chocolate','cake','cookie','donut','pastry','lemonade'] },
     { tags: ['refined_carbs'],  words: ['bread','pasta','rice','noodle','bagel','tortilla','cereal','oatmeal','cracker','pizza'] },
