@@ -4989,11 +4989,7 @@ input, textarea { font-family: inherit; }
 
         <!-- Step 1: Welcome -->
         <div class="ob-step active" id="ob-step-1">
-          <div class="ob-icon">
-            <svg viewBox="0 0 56 56" width="56" height="56" fill="none" aria-hidden="true">
-              <path d="M28 4 L31 25 L52 28 L31 31 L28 52 L25 31 L4 28 L25 25 Z" fill="var(--acc)" opacity="0.88"/>
-            </svg>
-          </div>
+          <div class="ob-icon" style="color:var(--acc);">✦</div>
           <div class="ob-title">Welcome<br>to Asëa</div>
           <div class="ob-sub">Asëa helps you identify health patterns in your day. No tracking pressure. No perfection. Just awareness.</div>
           <div style="flex:1;"></div>
@@ -5235,11 +5231,7 @@ input, textarea { font-family: inherit; }
         <!-- Step 7: All set -->
         <div class="ob-step" id="ob-step-7">
           <button class="ob-back-btn" data-ob-back aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-          <div class="ob-icon">
-            <svg viewBox="0 0 56 56" width="52" height="52" fill="none" aria-hidden="true">
-              <path d="M28 4 L31 25 L52 28 L31 31 L28 52 L25 31 L4 28 L25 25 Z" fill="var(--acc)" opacity="0.88"/>
-            </svg>
-          </div>
+          <div class="ob-icon" style="color:var(--acc);">✦</div>
           <div class="ob-title">You're all set.</div>
           <div class="ob-sub">Start by logging something in your day. Even just one entry begins the pattern.</div>
           <div style="flex:1;"></div>
@@ -6936,11 +6928,11 @@ input, textarea { font-family: inherit; }
     </div>
     <div class="form-group">
       <label class="form-label">Context</label>
-      <div class="pill-row" id="glucose-context-pills">
-        <button class="pill-option" data-ctx="fasting">Fasting</button>
-        <button class="pill-option selected" data-ctx="before_meal">Before Meal</button>
-        <button class="pill-option" data-ctx="after_meal">After Meal</button>
-        <button class="pill-option" data-ctx="bedtime">Bedtime</button>
+      <div class="gluc-context-grid" id="glucose-context-pills">
+        <button class="gluc-pill pill-option" data-ctx="fasting">Fasting</button>
+        <button class="gluc-pill pill-option selected" data-ctx="before_meal">Before Meal</button>
+        <button class="gluc-pill pill-option" data-ctx="after_meal">After Meal</button>
+        <button class="gluc-pill pill-option" data-ctx="bedtime">Bedtime</button>
       </div>
     </div>
     <button class="btn-primary" id="glucose-save-btn">Save</button>
@@ -6949,10 +6941,7 @@ input, textarea { font-family: inherit; }
 
 <!-- Splash screen — sits outside #app, removed after animation -->
 <div id="asea-splash" class="splash-fade-in" role="presentation" aria-hidden="true">
-  <svg class="splash-mark" viewBox="0 0 80 80" width="80" height="80" fill="none">
-    <path d="M40 5 L44 36 L75 40 L44 44 L40 75 L36 44 L5 40 L36 36 Z" fill="var(--acc)" opacity="0.9"/>
-    <path d="M40 5 L44 36 L75 40 L44 44 L40 75 L36 44 L5 40 L36 36 Z" fill="none" stroke="var(--hdr)" stroke-width="0.5" stroke-linejoin="round"/>
-  </svg>
+  <div class="splash-mark" style="font-size:72px;color:var(--acc);line-height:1;">✦</div>
   <div class="splash-wordmark">Asëa</div>
   <div class="splash-tap-hint">Tap to continue</div>
 </div>
@@ -6968,7 +6957,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v23-20',
+  version:            'v23-23',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -7944,6 +7933,8 @@ var Components = (function() {
     _activeSheet = sheetId;
     overlay.classList.add('visible');
     Utils.haptic('light');
+    // Push a history entry so Android back button closes sheet instead of backgrounding app
+    history.pushState({ sheet: sheetId }, '');
     // rAF ensures CSS transition fires
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
@@ -15845,7 +15836,19 @@ var App = (function() {
       ScreenToday.render();
     }
 
-    // 7. Splash screen — show on every cold open, tap to dismiss early
+    // 7. Android back button — intercept popstate to close active sheet
+    // When a sheet is open and user presses Android back, popstate fires.
+    // We close the sheet and consume the event rather than exiting the app.
+    window.addEventListener('popstate', function(e) {
+      if (Components && typeof Components.closeSheet === 'function') {
+        var overlay = document.getElementById('sheet-overlay');
+        if (overlay && overlay.classList.contains('visible')) {
+          Components.closeSheet();
+          // Don't push another state — let the browser's history settle
+          return;
+        }
+      }
+    });
     (function() {
       var splash = document.getElementById('asea-splash');
       if (!splash) return;
