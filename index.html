@@ -1189,6 +1189,22 @@ input, textarea { font-family: inherit; }
   font-weight: 500;
   margin-top: 1px;
 }
+/* Expandable supplog timeline items */
+.timeline-item--expandable { cursor: pointer; }
+.timeline-item--expandable:active { opacity: 0.7; }
+.timeline-expand-hint {
+  font-size: 11px; color: var(--acc); margin-top: 2px; font-weight: 500;
+}
+.timeline-supp-detail {
+  margin-top: 6px; padding-top: 6px;
+  border-top: 1px solid var(--bd);
+}
+.timeline-supp-detail-row {
+  display: flex; align-items: baseline; gap: 6px;
+  font-size: 12px; color: var(--mt); padding: 2px 0;
+}
+.timeline-supp-detail-name { font-weight: 500; color: var(--tx); }
+.timeline-supp-detail-dose { color: var(--mt); }
 
 /* Insight strip */
 .insight-strip {
@@ -8265,6 +8281,7 @@ var Components = (function() {
 var ScreenToday = (function() {
 
   var _backupReminderShown = false; // session flag — show toast once per session only
+  var _expandedSuppLogs   = {};    // suppLog id → true when detail rows are visible
 
   function render() {
     _renderDate();
@@ -8455,6 +8472,19 @@ var ScreenToday = (function() {
       var todLabel = { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' };
       items.push({ ts: l.ts, icon: '⚖️', title: l.val + wtUnit, sub: (todLabel[l.timeOfDay] || '') + ' weight', color: 'ti-weight' });
     });
+    // suppLogs — group and individual entries
+    (s.logs.suppLogs || []).filter(function(l) { return l.ts >= today; }).forEach(function(l) {
+      if (!Array.isArray(l.items) || l.items.length === 0) return;
+      var icon  = l.items[0].itemType === 'med' ? '💉' : '💊';
+      var count = l.items.length;
+      var title;
+      if (l.logType === 'group') {
+        title = (l.groupLabel || 'Supplements') + ' · ' + count + ' item' + (count > 1 ? 's' : '');
+      } else {
+        title = count === 1 ? l.items[0].name : count + ' items logged';
+      }
+      items.push({ ts: l.ts, icon: icon, title: title, sub: '', color: 'ti-supp', suppLogId: l.id, suppItems: l.items });
+    });
 
     items.sort(function(a, b) { return a.ts - b.ts; });
 
@@ -8475,15 +8505,47 @@ var ScreenToday = (function() {
       html += '<div class="timeline-overflow">+ ' + overflow + ' earlier entr' + (overflow === 1 ? 'y' : 'ies') + ' · tap Track to see all</div>';
     }
     visible.forEach(function(item) {
-      html += '<div class="timeline-item">';
+      var isExpandable = !!item.suppLogId;
+      var isExpanded   = isExpandable && !!_expandedSuppLogs[item.suppLogId];
+      html += '<div class="timeline-item' + (isExpandable ? ' timeline-item--expandable' : '') + '"'
+            + (isExpandable ? ' data-supp-log-id="' + Utils.esc(item.suppLogId) + '"' : '') + '>';
       html += '<div class="timeline-dot"></div>';
       html += '<div class="timeline-time">' + Utils.esc(Utils.fmtTime(item.ts)) + '</div>';
       html += '<div class="timeline-content">';
       html += '<div class="timeline-title">' + item.icon + ' ' + Utils.esc(item.title) + '</div>';
       if (item.sub) html += '<div class="timeline-sub">' + item.sub + '</div>'; // [SAFE: pre-escaped above]
+      if (isExpandable) {
+        html += '<div class="timeline-expand-hint">' + (isExpanded ? '▲ Hide details' : '▼ Show details') + '</div>';
+        if (isExpanded) {
+          html += '<div class="timeline-supp-detail">';
+          item.suppItems.forEach(function(si) {
+            html += '<div class="timeline-supp-detail-row">';
+            html += '<span class="timeline-supp-detail-name">' + Utils.esc(si.name) + '</span>';
+            if (si.dose) html += '<span class="timeline-supp-detail-dose">' + Utils.esc(si.dose) + '</span>';
+            html += '</div>';
+          });
+          html += '</div>';
+        }
+      }
       html += '</div></div>';
     });
     el.innerHTML = html;
+
+    // Expand/collapse tap — bind once on the container (guard against re-binding on re-render)
+    if (!el.dataset.suppExpandBound) {
+      el.dataset.suppExpandBound = '1';
+      el.addEventListener('click', function(e) {
+        var row = e.target.closest('.timeline-item--expandable[data-supp-log-id]');
+        if (!row) return;
+        var id = row.dataset.suppLogId;
+        if (_expandedSuppLogs[id]) {
+          delete _expandedSuppLogs[id];
+        } else {
+          _expandedSuppLogs[id] = true;
+        }
+        _renderTimeline();
+      });
+    }
   }
 
   // Show due supplements/medications for current time slot.
@@ -8522,9 +8584,11 @@ var ScreenToday = (function() {
       return l.ts >= today && l.slot === slot;
     });
 
-    // If ANY group log exists for this slot today, the entire slot is satisfied — hide strip.
-    var groupLogged = todaySlotLogs.some(function(l) { return l.logType === 'group'; });
-    if (groupLogged) { el.style.display = 'none'; return; }
+    // If ANY supplog exists for this slot today (group or individual), the slot is satisfied — hide strip.
+    var slotLogged = todaySlotLogs.some(function(l) {
+      return l.logType === 'group' || l.logType === 'individual';
+    });
+    if (slotLogged) { el.style.display = 'none'; return; }
 
     // Legacy path: collect individually logged itemIds
     var loggedIds = todaySlotLogs.map(function(l) { return l.itemId; }).filter(Boolean);
