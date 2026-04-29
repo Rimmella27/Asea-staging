@@ -222,6 +222,23 @@
 [data-theme="dark"] .sheet .icon-btn svg {
   stroke: var(--acc);
 }
+/* Drink button — white-pill treatment on all dark-header themes */
+[data-theme="light"] .meals-hyd-btn,
+[data-theme="dark"] .meals-hyd-btn,
+[data-theme="merica"] .meals-hyd-btn,
+html:not([data-theme]) .meals-hyd-btn,
+[data-theme=""] .meals-hyd-btn {
+  background: rgba(255,255,255,0.14) !important;
+  border-color: rgba(255,255,255,0.50) !important;
+  color: #FFFFFF !important;
+}
+[data-theme="light"] .meals-hyd-btn:active,
+[data-theme="dark"] .meals-hyd-btn:active,
+[data-theme="merica"] .meals-hyd-btn:active,
+html:not([data-theme]) .meals-hyd-btn:active,
+[data-theme=""] .meals-hyd-btn:active {
+  background: rgba(255,255,255,0.24) !important;
+}
 
 /* Natural — forest green header fading to warm linen, white text (mirrors Light pattern) */
 html:not([data-theme]) .screen-header,
@@ -1196,25 +1213,62 @@ input, textarea { font-family: inherit; }
   line-height: 1.5;
 }
 
-/* Supplement / medication reminder strip */
+/* Supplement / medication reminder card */
+:root {
+  --reminder-bg:     rgba(201,123,42,0.08);
+  --reminder-border: rgba(201,123,42,0.28);
+  --reminder-spine:  #C97B2A;
+  --reminder-label:  #A0621E;
+  --reminder-tx:     #3D2800;
+}
+[data-theme="light"] {
+  --reminder-bg:     rgba(180,100,20,0.07);
+  --reminder-border: rgba(180,100,20,0.22);
+  --reminder-spine:  #B46414;
+  --reminder-label:  #8C4E10;
+  --reminder-tx:     #2A1800;
+}
+[data-theme="dark"] {
+  --reminder-bg:     rgba(180,120,40,0.12);
+  --reminder-border: rgba(180,120,40,0.25);
+  --reminder-spine:  #B47828;
+  --reminder-label:  #C49050;
+  --reminder-tx:     #F0DFC0;
+}
+[data-theme="merica"] {
+  --reminder-bg:     rgba(200,50,50,0.07);
+  --reminder-border: rgba(200,50,50,0.22);
+  --reminder-spine:  #C03030;
+  --reminder-label:  #A02020;
+  --reminder-tx:     #2A0000;
+}
 .today-supp-strip {
-  margin: 12px 20px 0;
+  margin: 0 20px 14px;
   padding: 11px 14px;
-  background: var(--sf);
-  border: 1px solid var(--bd);
-  border-left: 3px solid var(--acc);
+  background: var(--reminder-bg);
+  border: 1px solid var(--reminder-border);
+  border-left: 3px solid var(--reminder-spine);
   border-radius: var(--r-md);
-  font-size: 13px;
-  color: var(--tx);
   line-height: 1.5;
 }
+.today-supp-strip-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 2px;
+}
+.today-supp-strip-icon { font-size: 12px; line-height: 1; }
 .today-supp-strip-label {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--acc);
-  margin-bottom: 3px;
+  color: var(--reminder-label);
+}
+.today-supp-strip-body {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--reminder-tx);
 }
 
 /* Last BP / glucose metrics strip */
@@ -2068,22 +2122,33 @@ input, textarea { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px 12px 13px;
+  padding: 9px 10px 9px 13px;
+  gap: 8px;
 }
-.inv-item-left { display: flex; flex-direction: column; flex: 1; min-width: 0; gap: 3px; }
-.inv-item-name { font-size: 14px; font-weight: 500; color: var(--tx); }
-.inv-item-dose { font-size: 12px; color: var(--mt); }
-/* Slot pills (read-only badges on saved items) */
-.inv-item-slot-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
-.inv-item-slot-badge {
+.inv-item-left { display: flex; flex-direction: column; flex: 1; min-width: 0; gap: 2px; }
+.inv-item-main-row { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.inv-item-name { font-size: 13px; font-weight: 500; color: var(--tx); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.inv-item-dose { font-size: 11px; color: var(--mt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Inline slot toggles on saved rows */
+.inv-item-slot-row { display: flex; flex-wrap: nowrap; gap: 4px; margin-top: 3px; }
+.inv-item-slot-pill {
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 2px 8px;
+  letter-spacing: 0.03em;
+  padding: 2px 7px;
   border-radius: 20px;
+  border: 1.5px solid var(--bd);
+  background: var(--sf2);
+  color: var(--mt);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  flex-shrink: 0;
+}
+.inv-item-slot-pill.active {
   background: var(--accp);
+  border-color: var(--acc);
   color: var(--acc);
-  border: 1px solid var(--acc);
 }
 .inv-item-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
 .inv-edit-btn, .inv-del-btn {
@@ -2177,6 +2242,30 @@ input, textarea { font-family: inherit; }
   border-radius: var(--r-lg);
   border-left: 3px solid var(--bd);
 }
+
+/* Add form sits above list — open top corners, no top border */
+.inv-add-form.open {
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  border-top: none;
+  border-bottom: 1px solid var(--bd);
+}
+
+/* Dose change inline confirm bar */
+.inv-dose-confirm {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--accp);
+  border-radius: var(--r-md);
+  border: 1px solid var(--bd);
+}
+.inv-dose-confirm-msg {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tx);
+  margin-bottom: 8px;
+}
+.inv-dose-confirm-detail { font-weight: 400; color: var(--mt); font-size: 12px; }
+.inv-dose-confirm-btns { display: flex; gap: 8px; }
 
 /* Inline autocomplete dropdown */
 .inv-ac-wrap { position: relative; margin-bottom: 8px; }
@@ -3865,6 +3954,13 @@ input, textarea { font-family: inherit; }
 .suppmed-log-time {
   font-size: 11px; color: var(--mt); flex-shrink: 0;
 }
+.suppmed-log-delete {
+  background: none; border: none; padding: 4px 2px 4px 6px;
+  cursor: pointer; color: var(--mt); flex-shrink: 0;
+  opacity: 0.5; transition: opacity 0.15s;
+  display: flex; align-items: center;
+}
+.suppmed-log-delete:active { opacity: 1; }
 
 /* Supp/Med entry sheet inventory */
 .suppmed-inventory-item {
@@ -3909,6 +4005,84 @@ input, textarea { font-family: inherit; }
   font-size: 13px; color: var(--mt); text-align: center;
   margin-bottom: 16px;
 }
+
+/* ── Group path (Path A) ── */
+.suppmed-group-header {
+  display: flex; align-items: baseline; gap: 8px;
+  margin-bottom: 12px;
+}
+.suppmed-group-title {
+  font-size: 15px; font-weight: 600; color: var(--tx);
+}
+.suppmed-group-count {
+  font-size: 12px; color: var(--mt);
+}
+/* Group items start pre-checked — tap removes check */
+.suppmed-group-item {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--sf); border-radius: 14px;
+  border: 2px solid var(--acc); background: var(--accp);
+  padding: 12px 16px; margin-bottom: 8px; cursor: pointer;
+  transition: border-color 0.15s, background 0.12s, opacity 0.15s;
+}
+.suppmed-group-item.skipped {
+  border-color: transparent; background: var(--sf); opacity: 0.5;
+}
+.suppmed-group-item:active { opacity: 0.7; }
+.suppmed-group-item-left { display: flex; align-items: center; gap: 10px; }
+.suppmed-group-item-icon { font-size: 18px; }
+.suppmed-group-item-name {
+  font-size: 15px; font-weight: 500; color: var(--tx);
+}
+.suppmed-group-item-dose {
+  font-size: 11px; color: var(--mt); margin-top: 1px;
+}
+.suppmed-group-item-check {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--acc); background: var(--acc);
+  flex-shrink: 0; transition: border-color 0.15s, background 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.suppmed-group-item.skipped .suppmed-group-item-check {
+  border-color: var(--bg2); background: transparent;
+}
+.suppmed-group-item-checkmark {
+  display: block; width: 10px; height: 10px;
+}
+.suppmed-group-item.skipped .suppmed-group-item-checkmark { display: none; }
+.suppmed-group-nudge {
+  font-size: 12px; color: var(--mt); font-style: italic;
+  text-align: center; padding: 12px 0 4px; line-height: 1.5;
+}
+.suppmed-group-nudge a {
+  color: var(--acc); font-style: normal; font-weight: 500;
+  text-decoration: none; cursor: pointer;
+}
+/* Path B — individual picker link */
+.suppmed-path-b-link {
+  display: block; text-align: center; margin-top: 16px; margin-bottom: 2px;
+  font-size: 13px; color: var(--acc); font-weight: 500;
+  cursor: pointer; text-decoration: none; padding: 4px 0;
+  opacity: 0.8;
+}
+.suppmed-path-b-link:active { opacity: 1; }
+.suppmed-path-b-link-primary {
+  display: block; text-align: center; margin-top: 8px; margin-bottom: 2px;
+  font-size: 14px; color: var(--acc); font-weight: 600;
+  cursor: pointer; text-decoration: none; padding: 8px 0;
+}
+.suppmed-path-b-back {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--mt); cursor: pointer;
+  margin-bottom: 12px;
+}
+.suppmed-path-b-back:active { opacity: 0.6; }
+.suppmed-already-logged {
+  text-align: center; padding: 16px 0 8px;
+  font-size: 14px; color: var(--mt);
+}
+.suppmed-already-logged-icon { font-size: 22px; margin-bottom: 4px; }
+.suppmed-already-logged-msg { font-size: 13px; color: var(--acc); font-weight: 500; }
 
 /* ── Meal entry sheet ── */
 .meal-entry-label {
@@ -4452,6 +4626,9 @@ input, textarea { font-family: inherit; }
       <div id="today-nudge" class="today-nudge" style="display:none;"></div>
 
       <!-- Timeline -->
+      <!-- Supplement / medication reminder — shown above Today's Log when items are due -->
+      <div id="today-supp-strip" class="today-supp-strip" style="display:none;"></div>
+
       <div class="mt-md">
         <div class="section-label">Today's Log</div>
         <div class="timeline-wrap card" id="today-timeline" style="margin:0 20px;">
@@ -4462,9 +4639,6 @@ input, textarea { font-family: inherit; }
           </div>
         </div>
       </div>
-
-      <!-- Supplement / medication reminder -->
-      <div id="today-supp-strip" class="today-supp-strip" style="display:none;"></div>
 
       <!-- Last BP / glucose at a glance -->
       <div id="today-metrics-strip" class="today-metrics-strip" style="display:none;"></div>
@@ -4788,7 +4962,7 @@ input, textarea { font-family: inherit; }
           <div class="you-section-title" style="margin-bottom:0;">Supplements</div>
           <button class="inv-add-btn" id="inv-supp-add-btn">+ Add</button>
         </div>
-        <div id="inv-supp-add-form" class="inv-form" style="border-radius:var(--r-lg) var(--r-lg) 0 0; border-top:none; border-bottom:1px solid var(--bd);">
+        <div id="inv-supp-add-form" class="inv-form inv-add-form">
           <div class="inv-ac-wrap">
             <input class="inv-form-input" id="inv-supp-name-input" type="text" placeholder="Name or search…" maxlength="60" autocomplete="off">
             <div class="inv-ac-dropdown" id="inv-supp-ac-dropdown"></div>
@@ -4813,7 +4987,7 @@ input, textarea { font-family: inherit; }
           <div class="you-section-title" style="margin-bottom:0;">Medications</div>
           <button class="inv-add-btn" id="inv-med-add-btn">+ Add</button>
         </div>
-        <div id="inv-med-add-form" class="inv-form" style="border-radius:var(--r-lg) var(--r-lg) 0 0; border-top:none; border-bottom:1px solid var(--bd);">
+        <div id="inv-med-add-form" class="inv-form inv-add-form">
           <div class="inv-ac-wrap">
             <input class="inv-form-input" id="inv-med-name-input" type="text" placeholder="Name or search…" maxlength="60" autocomplete="off">
             <div class="inv-ac-dropdown" id="inv-med-ac-dropdown"></div>
@@ -5814,19 +5988,16 @@ input, textarea { font-family: inherit; }
     <div class="sheet-inner">
       <div class="sheet-handle"></div>
       <div class="sheet-title-row">
-        <div class="sheet-title" id="suppmed-entry-title">Morning Supps &amp; Meds</div>
+        <div class="sheet-title" id="suppmed-entry-title">Morning Supplements</div>
         <button class="icon-btn" id="suppmed-entry-close-btn" aria-label="Close">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <div style="padding:0 20px 32px;">
-        <!-- Inventory list — injected by JS -->
-        <div id="suppmed-inventory-list"></div>
-        <!-- Empty state — shown when no inventory -->
-        <div id="suppmed-empty-state" style="display:none;">
-          <div class="suppmed-empty-msg">No supplements or medications in your inventory yet.</div>
-          <div class="suppmed-empty-hint">Add them in Settings to log them here.</div>
-        </div>
+        <!-- PATH A: Group checklist — injected by JS -->
+        <div id="suppmed-group-list"></div>
+        <!-- Status: nudge / empty / already-logged — injected by JS -->
+        <div id="suppmed-status-area"></div>
         <!-- Time field -->
         <div class="meal-entry-label" style="margin-top:16px;" id="suppmed-time-label">Time</div>
         <input id="suppmed-entry-time" class="meal-entry-time" type="time" aria-label="Time taken">
@@ -6957,7 +7128,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v23-23',
+  version:            'v24-13',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -7001,123 +7172,124 @@ var CONFIG = {
 ─────────────────────────────────────────────────────────── */
 var COMMON_SUPPS = [
   // ── Blood Sugar & Metabolic ──────────────────────────────
-  { name: 'Berberine',            dose: '500 mg',        cat: 'Blood Sugar & Metabolic', fx: ['loose_stool','nausea','cramping','bloating'] },
-  { name: 'Chromium Picolinate',  dose: '200 mcg',       cat: 'Blood Sugar & Metabolic', fx: ['nausea','headache'] },
-  { name: 'Cinnamon Extract',     dose: '500 mg',        cat: 'Blood Sugar & Metabolic', fx: ['reflux','nausea'] },
-  { name: 'Gymnema Sylvestre',    dose: '400 mg',        cat: 'Blood Sugar & Metabolic', fx: ['nausea','appetite_change'] },
-  { name: 'Bitter Melon',         dose: '500 mg',        cat: 'Blood Sugar & Metabolic', fx: ['loose_stool','nausea','cramping'] },
-  { name: 'Alpha Lipoic Acid',    dose: '300 mg',        cat: 'Blood Sugar & Metabolic', fx: ['nausea','reflux','glucose_effect'] },
-  { name: 'Inositol (Myo)',       dose: '2000 mg',       cat: 'Blood Sugar & Metabolic', fx: ['nausea','loose_stool','fatigue'] },
+  { name: 'Berberine',            dose: '500 mg',  doseUnit:'mg', cat: 'Blood Sugar & Metabolic', fx: ['loose_stool','nausea','cramping','bloating'], benefits:['insulin_sensitivity','a1c_support','cholesterol','gut'] },
+  { name: 'Chromium Picolinate',  dose: '200 mcg', doseUnit:'mcg',cat: 'Blood Sugar & Metabolic', fx: ['nausea','headache'], benefits:['insulin_sensitivity','a1c_support','metabolic'] },
+  { name: 'Cinnamon Extract',     dose: '500 mg',  doseUnit:'mg',  cat: 'Blood Sugar & Metabolic', fx: ['reflux','nausea'],                      benefits:['insulin_sensitivity','a1c_support','metabolic'] },
+  { name: 'Gymnema Sylvestre',    dose: '400 mg',  doseUnit:'mg',  cat: 'Blood Sugar & Metabolic', fx: ['nausea','appetite_change'],              benefits:['insulin_sensitivity','a1c_support','metabolic'] },
+  { name: 'Bitter Melon',         dose: '500 mg',  doseUnit:'mg',  cat: 'Blood Sugar & Metabolic', fx: ['loose_stool','nausea','cramping'],        benefits:['insulin_sensitivity','a1c_support','metabolic'] },
+  { name: 'Alpha Lipoic Acid',    dose: '300 mg',  doseUnit:'mg',  cat: 'Blood Sugar & Metabolic', fx: ['nausea','reflux','glucose_effect'],       benefits:['insulin_sensitivity','antioxidant','metabolic'] },
+  { name: 'Inositol (Myo)',       dose: '2000 mg', doseUnit:'mg',  cat: 'Blood Sugar & Metabolic', fx: ['nausea','loose_stool','fatigue'],         benefits:['insulin_sensitivity','hormone','mood'] },
   // ── Weight Management ────────────────────────────────────
-  { name: 'Green Tea Extract',    dose: '500 mg',        cat: 'Weight Management',        fx: ['nausea','reflux','loose_stool'] },
-  { name: 'Glucomannan',          dose: '1000 mg',       cat: 'Weight Management',        fx: ['bloating','constipation','loose_stool'] },
-  { name: 'CLA (Conjugated LA)',  dose: '3000 mg',       cat: 'Weight Management',        fx: ['loose_stool','nausea','bloating'] },
-  { name: 'Garcinia Cambogia',    dose: '500 mg',        cat: 'Weight Management',        fx: ['nausea','loose_stool','headache'] },
-  { name: 'L-Carnitine',          dose: '500 mg',        cat: 'Weight Management',        fx: ['nausea','loose_stool','cramping'] },
+  { name: 'Green Tea Extract',    dose: '500 mg',  doseUnit:'mg',  cat: 'Weight Management',        fx: ['nausea','reflux','loose_stool'],          benefits:['metabolic','antioxidant','energy'] },
+  { name: 'Glucomannan',          dose: '1000 mg', doseUnit:'mg',  cat: 'Weight Management',        fx: ['bloating','constipation','loose_stool'],  benefits:['gut','insulin_sensitivity','metabolic'] },
+  { name: 'CLA (Conjugated LA)',  dose: '3000 mg', doseUnit:'mg',  cat: 'Weight Management',        fx: ['loose_stool','nausea','bloating'],        benefits:['muscle','metabolic'] },
+  { name: 'Garcinia Cambogia',    dose: '500 mg',  doseUnit:'mg',  cat: 'Weight Management',        fx: ['nausea','loose_stool','headache'],        benefits:['metabolic'] },
+  { name: 'L-Carnitine',          dose: '500 mg',  doseUnit:'mg',  cat: 'Weight Management',        fx: ['nausea','loose_stool','cramping'],        benefits:['energy','metabolic','muscle'] },
   // ── Blood Pressure & Heart ───────────────────────────────
-  { name: 'CoQ10',                dose: '200 mg',        cat: 'Blood Pressure & Heart',   fx: ['nausea','loose_stool','bp_effect'] },
-  { name: 'L-Arginine',           dose: '3000 mg',       cat: 'Blood Pressure & Heart',   fx: ['nausea','bloating','loose_stool','bp_effect'] },
-  { name: 'Hawthorn Berry',       dose: '500 mg',        cat: 'Blood Pressure & Heart',   fx: ['nausea','dizziness','bp_effect'] },
-  { name: 'Olive Leaf Extract',   dose: '500 mg',        cat: 'Blood Pressure & Heart',   fx: ['nausea','bp_effect'] },
-  { name: 'Beetroot Extract',     dose: '500 mg',        cat: 'Blood Pressure & Heart',   fx: ['loose_stool','bp_effect'] },
-  { name: 'Magnesium',            dose: '400 mg',        cat: 'Blood Pressure & Heart',   fx: ['loose_stool','nausea','bp_effect'] },
-  { name: 'Magnesium Glycinate',  dose: '400 mg',        cat: 'Blood Pressure & Heart',   fx: ['loose_stool','sleep_effect'] },
-  { name: 'Potassium',            dose: '99 mg',         cat: 'Blood Pressure & Heart',   fx: ['nausea','cramping','bp_effect'] },
-  { name: 'Omega-3 Fish Oil',     dose: '1000 mg',       cat: 'Blood Pressure & Heart',   fx: ['loose_stool','reflux','nausea'] },
-  { name: 'Krill Oil',            dose: '500 mg',        cat: 'Blood Pressure & Heart',   fx: ['reflux','loose_stool'] },
+  { name: 'CoQ10',                dose: '200 mg',  doseUnit:'mg', cat: 'Blood Pressure & Heart', fx: ['nausea','loose_stool','bp_effect'], benefits:['cardiovascular','energy','antioxidant','migraine'] },
+  { name: 'L-Arginine',           dose: '3000 mg', doseUnit:'mg',  cat: 'Blood Pressure & Heart',   fx: ['nausea','bloating','loose_stool','bp_effect'], benefits:['cardiovascular','muscle','energy'] },
+  { name: 'Hawthorn Berry',       dose: '500 mg',  doseUnit:'mg',  cat: 'Blood Pressure & Heart',   fx: ['nausea','dizziness','bp_effect'],             benefits:['cardiovascular'] },
+  { name: 'Olive Leaf Extract',   dose: '500 mg',  doseUnit:'mg',  cat: 'Blood Pressure & Heart',   fx: ['nausea','bp_effect'],                         benefits:['cardiovascular','immune','antioxidant'] },
+  { name: 'Beetroot Extract',     dose: '500 mg',  doseUnit:'mg',  cat: 'Blood Pressure & Heart',   fx: ['loose_stool','bp_effect'],                    benefits:['cardiovascular','energy'] },
+  { name: 'Magnesium',            dose: '400 mg',  doseUnit:'mg',  cat: 'Blood Pressure & Heart',   fx: ['loose_stool','nausea','bp_effect'],            benefits:['cardiovascular','muscle','sleep'] },
+  { name: 'Magnesium Glycinate',  dose: '400 mg',  doseUnit:'mg', cat: 'Blood Pressure & Heart', fx: ['loose_stool','sleep_effect'], benefits:['insulin_sensitivity','sleep','muscle','mood'] },
+  { name: 'Potassium',            dose: '99 mg',   doseUnit:'mg',  cat: 'Blood Pressure & Heart',   fx: ['nausea','cramping','bp_effect'],               benefits:['cardiovascular','muscle'] },
+  { name: 'Omega-3 Fish Oil',     dose: '1000 mg', doseUnit:'mg',  cat: 'Blood Pressure & Heart',   fx: ['loose_stool','reflux','nausea'],               benefits:['cardiovascular','inflammation','cognitive','cholesterol'] },
+  { name: 'Krill Oil',            dose: '500 mg',  doseUnit:'mg',  cat: 'Blood Pressure & Heart',   fx: ['reflux','loose_stool'],                        benefits:['cardiovascular','inflammation','cognitive'] },
   // ── Gut Health & Digestion ───────────────────────────────
-  { name: 'Probiotic',            dose: '10 billion CFU',cat: 'Gut Health & Digestion',   fx: ['bloating','loose_stool','cramping'] },
-  { name: 'Saccharomyces Boulardii', dose: '250 mg',     cat: 'Gut Health & Digestion',   fx: ['bloating','constipation'] },
-  { name: 'Psyllium Husk',        dose: '5 g',           cat: 'Gut Health & Digestion',   fx: ['bloating','constipation','cramping'] },
-  { name: 'L-Glutamine',          dose: '5 g',           cat: 'Gut Health & Digestion',   fx: ['bloating','nausea'] },
-  { name: 'Digestive Enzymes',    dose: '1 capsule',     cat: 'Gut Health & Digestion',   fx: ['nausea','loose_stool','cramping'] },
-  { name: 'DGL Licorice',         dose: '380 mg',        cat: 'Gut Health & Digestion',   fx: ['nausea','bloating'] },
-  { name: 'Slippery Elm',         dose: '400 mg',        cat: 'Gut Health & Digestion',   fx: ['bloating','nausea'] },
-  { name: 'Marshmallow Root',     dose: '500 mg',        cat: 'Gut Health & Digestion',   fx: ['bloating','loose_stool'] },
-  { name: 'Peppermint Oil (EC)',  dose: '180 mg',        cat: 'Gut Health & Digestion',   fx: ['reflux','bloating','loose_stool'] },
-  { name: 'Zinc Carnosine',       dose: '75 mg',         cat: 'Gut Health & Digestion',   fx: ['nausea','cramping'] },
-  { name: 'Collagen Peptides',    dose: '10 g',          cat: 'Gut Health & Digestion',   fx: ['bloating','nausea'] },
-  { name: 'Aloe Vera (Inner Leaf)', dose: '200 mg',      cat: 'Gut Health & Digestion',   fx: ['loose_stool','cramping','nausea'] },
+  { name: 'Probiotic',            dose: '10 billion CFU',               cat: 'Gut Health & Digestion',   fx: ['bloating','loose_stool','cramping'],       benefits:['gut','probiotic','immune'] },
+  { name: 'Saccharomyces Boulardii', dose: '250 mg',  doseUnit:'mg',    cat: 'Gut Health & Digestion',   fx: ['bloating','constipation'],                benefits:['gut','probiotic'] },
+  { name: 'Psyllium Husk',        dose: '5 g',     doseUnit:'g',  cat: 'Gut Health & Digestion', fx: ['bloating','constipation','cramping'], benefits:['gut','insulin_sensitivity','cholesterol'] },
+  { name: 'L-Glutamine',          dose: '5 g',         doseUnit:'g',    cat: 'Gut Health & Digestion',   fx: ['bloating','nausea'],                      benefits:['gut','muscle','immune'] },
+  { name: 'Digestive Enzymes',    dose: '1 capsule',   doseUnit:'capsules', cat: 'Gut Health & Digestion', fx: ['nausea','loose_stool','cramping'],       benefits:['gut'] },
+  { name: 'DGL Licorice',         dose: '380 mg',      doseUnit:'mg',   cat: 'Gut Health & Digestion',   fx: ['nausea','bloating'],                      benefits:['gut'] },
+  { name: 'Slippery Elm',         dose: '400 mg',      doseUnit:'mg',   cat: 'Gut Health & Digestion',   fx: ['bloating','nausea'],                      benefits:['gut'] },
+  { name: 'Marshmallow Root',     dose: '500 mg',      doseUnit:'mg',   cat: 'Gut Health & Digestion',   fx: ['bloating','loose_stool'],                 benefits:['gut'] },
+  { name: 'Peppermint Oil (EC)',  dose: '180 mg',      doseUnit:'mg',   cat: 'Gut Health & Digestion',   fx: ['reflux','bloating','loose_stool'],         benefits:['gut'] },
+  { name: 'Zinc Carnosine',       dose: '75 mg',       doseUnit:'mg',   cat: 'Gut Health & Digestion',   fx: ['nausea','cramping'],                      benefits:['gut','immune'] },
+  { name: 'Collagen Peptides',    dose: '10 g',        doseUnit:'g',    cat: 'Gut Health & Digestion',   fx: ['bloating','nausea'],                      benefits:['gut','bone','muscle'] },
+  { name: 'Aloe Vera (Inner Leaf)', dose: '200 mg',    doseUnit:'mg',   cat: 'Gut Health & Digestion',   fx: ['loose_stool','cramping','nausea'],         benefits:['gut'] },
   // ── Inflammation & Immune ────────────────────────────────
-  { name: 'Turmeric / Curcumin',  dose: '500 mg',        cat: 'Inflammation & Immune',    fx: ['loose_stool','nausea','bloating'] },
-  { name: 'Boswellia',            dose: '400 mg',        cat: 'Inflammation & Immune',    fx: ['nausea','loose_stool','reflux'] },
-  { name: 'Quercetin',            dose: '500 mg',        cat: 'Inflammation & Immune',    fx: ['nausea','headache'] },
-  { name: 'NAC (N-Acetyl Cysteine)', dose: '600 mg',     cat: 'Inflammation & Immune',    fx: ['nausea','loose_stool','reflux'] },
-  { name: 'Bromelain',            dose: '500 mg',        cat: 'Inflammation & Immune',    fx: ['nausea','loose_stool','cramping'] },
-  { name: 'Stinging Nettle',      dose: '300 mg',        cat: 'Inflammation & Immune',    fx: ['loose_stool','bloating'] },
-  { name: 'Resveratrol',          dose: '250 mg',        cat: 'Inflammation & Immune',    fx: ['nausea','loose_stool'] },
-  { name: 'Vitamin C',            dose: '1000 mg',       cat: 'Inflammation & Immune',    fx: ['loose_stool','nausea','cramping'] },
-  { name: 'Zinc',                 dose: '30 mg',         cat: 'Inflammation & Immune',    fx: ['nausea','cramping','reflux'] },
+  { name: 'Turmeric / Curcumin',  dose: '500 mg',  doseUnit:'mg',  cat: 'Inflammation & Immune',    fx: ['loose_stool','nausea','bloating'],        benefits:['inflammation','antioxidant','gut'] },
+  { name: 'Boswellia',            dose: '400 mg',  doseUnit:'mg',  cat: 'Inflammation & Immune',    fx: ['nausea','loose_stool','reflux'],           benefits:['inflammation','bone'] },
+  { name: 'Quercetin',            dose: '500 mg',  doseUnit:'mg',  cat: 'Inflammation & Immune',    fx: ['nausea','headache'],                      benefits:['inflammation','immune','antioxidant'] },
+  { name: 'NAC (N-Acetyl Cysteine)', dose: '600 mg', doseUnit:'mg', cat: 'Inflammation & Immune',   fx: ['nausea','loose_stool','reflux'],           benefits:['antioxidant','detox','immune'] },
+  { name: 'Bromelain',            dose: '500 mg',  doseUnit:'mg',  cat: 'Inflammation & Immune',    fx: ['nausea','loose_stool','cramping'],        benefits:['inflammation','gut'] },
+  { name: 'Stinging Nettle',      dose: '300 mg',  doseUnit:'mg',  cat: 'Inflammation & Immune',    fx: ['loose_stool','bloating'],                 benefits:['inflammation','immune'] },
+  { name: 'Resveratrol',          dose: '250 mg',  doseUnit:'mg',  cat: 'Inflammation & Immune',    fx: ['nausea','loose_stool'],                   benefits:['antioxidant','cardiovascular','metabolic'] },
+  { name: 'Vitamin C',            dose: '1000 mg', doseUnit:'mg',  cat: 'Inflammation & Immune',    fx: ['loose_stool','nausea','cramping'],        benefits:['immune','antioxidant','cardiovascular'] },
+  { name: 'Zinc',                 dose: '30 mg',   doseUnit:'mg', cat: 'Inflammation & Immune', fx: ['nausea','cramping','reflux'], benefits:['immune','hormone'] },
   // ── Sleep & Stress ───────────────────────────────────────
-  { name: 'Melatonin',            dose: '3 mg',          cat: 'Sleep & Stress',           fx: ['fatigue','headache','sleep_effect'] },
-  { name: 'Ashwagandha',          dose: '600 mg',        cat: 'Sleep & Stress',           fx: ['loose_stool','nausea','sleep_effect'] },
-  { name: 'L-Theanine',           dose: '200 mg',        cat: 'Sleep & Stress',           fx: ['fatigue','sleep_effect'] },
-  { name: 'Phosphatidylserine',   dose: '100 mg',        cat: 'Sleep & Stress',           fx: ['nausea','sleep_effect'] },
-  { name: 'Passionflower',        dose: '500 mg',        cat: 'Sleep & Stress',           fx: ['fatigue','dizziness','sleep_effect'] },
-  { name: 'Valerian Root',        dose: '450 mg',        cat: 'Sleep & Stress',           fx: ['fatigue','headache','loose_stool','sleep_effect'] },
-  { name: 'Rhodiola Rosea',       dose: '400 mg',        cat: 'Sleep & Stress',           fx: ['nausea','dizziness','sleep_effect'] },
-  { name: 'Holy Basil (Tulsi)',   dose: '500 mg',        cat: 'Sleep & Stress',           fx: ['nausea','loose_stool'] },
+  { name: 'Melatonin',            dose: '3 mg',    doseUnit:'mg',  cat: 'Sleep & Stress',           fx: ['fatigue','headache','sleep_effect'],      benefits:['sleep'] },
+  { name: 'Ashwagandha',          dose: '600 mg',  doseUnit:'mg',  cat: 'Sleep & Stress',           fx: ['loose_stool','nausea','sleep_effect'],    benefits:['sleep','mood','adrenal','energy'] },
+  { name: 'L-Theanine',           dose: '200 mg',  doseUnit:'mg',  cat: 'Sleep & Stress',           fx: ['fatigue','sleep_effect'],                 benefits:['sleep','mood','cognitive'] },
+  { name: 'Phosphatidylserine',   dose: '100 mg',  doseUnit:'mg',  cat: 'Sleep & Stress',           fx: ['nausea','sleep_effect'],                  benefits:['cognitive','mood','adrenal'] },
+  { name: 'Passionflower',        dose: '500 mg',  doseUnit:'mg',  cat: 'Sleep & Stress',           fx: ['fatigue','dizziness','sleep_effect'],     benefits:['sleep','mood'] },
+  { name: 'Valerian Root',        dose: '450 mg',  doseUnit:'mg', cat: 'Sleep & Stress', fx: ['fatigue','headache','loose_stool','sleep_effect'], benefits:['sleep'] },
+  { name: 'Rhodiola Rosea',       dose: '400 mg',  doseUnit:'mg',  cat: 'Sleep & Stress',           fx: ['nausea','dizziness','sleep_effect'],      benefits:['energy','mood','adrenal'] },
+  { name: 'Holy Basil (Tulsi)',   dose: '500 mg',  doseUnit:'mg',  cat: 'Sleep & Stress',           fx: ['nausea','loose_stool'],                   benefits:['mood','adrenal','immune'] },
   // ── Hormonal & Women\'s Health ───────────────────────────
-  { name: 'Vitex (Chaste Tree)',  dose: '400 mg',        cat: "Hormonal & Women's Health",fx: ['nausea','headache','fatigue'] },
-  { name: 'Evening Primrose Oil', dose: '1000 mg',       cat: "Hormonal & Women's Health",fx: ['nausea','loose_stool','bloating'] },
-  { name: 'DIM (Diindolylmethane)', dose: '200 mg',      cat: "Hormonal & Women's Health",fx: ['nausea','headache','loose_stool'] },
-  { name: 'Maca Root',            dose: '1500 mg',       cat: "Hormonal & Women's Health",fx: ['bloating','nausea','sleep_effect'] },
-  { name: 'DHEA',                 dose: '25 mg',         cat: "Hormonal & Women's Health",fx: ['nausea','fatigue'] },
+  { name: 'Vitex (Chaste Tree)',  dose: '400 mg',  doseUnit:'mg',  cat: "Hormonal & Women's Health",fx: ['nausea','headache','fatigue'],            benefits:['hormone','mood'] },
+  { name: 'Evening Primrose Oil', dose: '1000 mg', doseUnit:'mg',  cat: "Hormonal & Women's Health",fx: ['nausea','loose_stool','bloating'],        benefits:['hormone','inflammation'] },
+  { name: 'DIM (Diindolylmethane)', dose: '200 mg', doseUnit:'mg', cat: "Hormonal & Women's Health",fx: ['nausea','headache','loose_stool'],        benefits:['hormone','metabolic','antioxidant'] },
+  { name: 'Maca Root',            dose: '1500 mg', doseUnit:'mg',  cat: "Hormonal & Women's Health",fx: ['bloating','nausea','sleep_effect'],       benefits:['hormone','energy','mood'] },
+  { name: 'DHEA',                 dose: '25 mg',   doseUnit:'mg',  cat: "Hormonal & Women's Health",fx: ['nausea','fatigue'],                       benefits:['hormone','energy','metabolic'] },
   // ── Performance & Energy ─────────────────────────────────
-  { name: 'Creatine',             dose: '5 g',           cat: 'Performance & Energy',     fx: ['bloating','cramping','loose_stool'] },
-  { name: 'Beta-Alanine',         dose: '3.2 g',         cat: 'Performance & Energy',     fx: ['nausea','cramping'] },
-  { name: 'Caffeine',             dose: '200 mg',        cat: 'Performance & Energy',     fx: ['urgency','loose_stool','nausea','sleep_effect'] },
-  { name: 'Electrolytes',         dose: '1 serving',     cat: 'Performance & Energy',     fx: ['nausea','bloating'] },
-  { name: 'B-Complex',            dose: '1 capsule',     cat: 'Performance & Energy',     fx: ['nausea','loose_stool'] },
+  { name: 'Creatine',             dose: '5 g',     doseUnit:'g',  cat: 'Performance & Energy', fx: ['bloating','cramping','loose_stool'], benefits:['muscle','energy','cognitive'] },
+  { name: 'Beta-Alanine',         dose: '3.2 g',   doseUnit:'g',   cat: 'Performance & Energy',     fx: ['nausea','cramping'],                      benefits:['muscle','energy'] },
+  { name: 'Caffeine',             dose: '200 mg',  doseUnit:'mg',  cat: 'Performance & Energy',     fx: ['urgency','loose_stool','nausea','sleep_effect'], benefits:['energy','cognitive'] },
+  { name: 'Electrolytes',         dose: '1 serving',              cat: 'Performance & Energy',     fx: ['nausea','bloating'],                      benefits:['metabolic','muscle','energy'] },
+  { name: 'B-Complex',            dose: '1 capsule', doseUnit:'capsules', cat: 'Performance & Energy', fx: ['nausea','loose_stool'],               benefits:['energy','metabolic','mood'] },
   // ── Vitamins & Minerals ──────────────────────────────────
-  { name: 'Vitamin D3',           dose: '2000 IU',       cat: 'Vitamins & Minerals',      fx: ['nausea','constipation'] },
-  { name: 'Vitamin D3 (High Dose)', dose: '5000 IU',     cat: 'Vitamins & Minerals',      fx: ['nausea','constipation','appetite_change'] },
-  { name: 'Vitamin K2',           dose: '100 mcg',       cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'] },
-  { name: 'Vitamin B12',          dose: '1000 mcg',      cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'] },
-  { name: 'Vitamin B12 (Injection)', dose: '1000 mcg',   cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'] },
-  { name: 'Folate (B9)',          dose: '400 mcg',       cat: 'Vitamins & Minerals',      fx: ['nausea','bloating'] },
-  { name: 'Biotin',               dose: '5000 mcg',      cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'] },
-  { name: 'Iron',                 dose: '18 mg',         cat: 'Vitamins & Minerals',      fx: ['constipation','nausea','cramping','bloating'] },
-  { name: 'Calcium',              dose: '500 mg',        cat: 'Vitamins & Minerals',      fx: ['constipation','bloating','nausea'] },
-  { name: 'Selenium',             dose: '200 mcg',       cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'] },
-  { name: 'Iodine',               dose: '150 mcg',       cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'] },
-  { name: 'Vitamin A',            dose: '900 mcg',       cat: 'Vitamins & Minerals',      fx: ['nausea','headache','appetite_change'] },
-  { name: 'Vitamin E',            dose: '400 IU',        cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'] },
+  { name: 'Vitamin D3',           dose: '2000 IU', doseUnit:'IU', cat: 'Vitamins & Minerals', fx: ['nausea','constipation'], benefits:['immune','bone','mood'] },
+  { name: 'Vitamin D3 (High Dose)', dose: '5000 IU', doseUnit:'IU', cat: 'Vitamins & Minerals',     fx: ['nausea','constipation','appetite_change'], benefits:['immune','bone','mood'] },
+  { name: 'Vitamin K2',           dose: '100 mcg', doseUnit:'mcg', cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'],                   benefits:['bone','cardiovascular'] },
+  { name: 'Vitamin B12',          dose: '1000 mcg',doseUnit:'mcg', cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'],                   benefits:['energy','mood','metabolic'] },
+  { name: 'Vitamin B12 (Injection)', dose: '1000 mcg', doseUnit:'mcg', cat: 'Vitamins & Minerals',  fx: ['nausea','loose_stool'],                   benefits:['energy','mood','metabolic'] },
+  { name: 'Folate (B9)',          dose: '400 mcg', doseUnit:'mcg', cat: 'Vitamins & Minerals',      fx: ['nausea','bloating'],                      benefits:['metabolic','mood','energy'] },
+  { name: 'Biotin',               dose: '5000 mcg',doseUnit:'mcg',cat: 'Vitamins & Minerals', fx: ['nausea','loose_stool'], benefits:['hormone'] },
+  { name: 'Iron',                 dose: '18 mg',   doseUnit:'mg',  cat: 'Vitamins & Minerals',      fx: ['constipation','nausea','cramping','bloating'], benefits:['energy','metabolic'] },
+  { name: 'Calcium',              dose: '500 mg',  doseUnit:'mg', cat: 'Vitamins & Minerals', fx: ['constipation','bloating','nausea'], benefits:['bone','muscle'] },
+  { name: 'Selenium',             dose: '200 mcg', doseUnit:'mcg', cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'],                   benefits:['thyroid','immune','antioxidant'] },
+  { name: 'Iodine',               dose: '150 mcg', doseUnit:'mcg', cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'],                   benefits:['thyroid','metabolic'] },
+  { name: 'Vitamin A',            dose: '900 mcg', doseUnit:'mcg', cat: 'Vitamins & Minerals',      fx: ['nausea','headache','appetite_change'],    benefits:['immune','bone','antioxidant'] },
+  { name: 'Vitamin E',            dose: '400 IU',  doseUnit:'IU',  cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'],                   benefits:['antioxidant','immune','cardiovascular'] },
   // ── Bone & Joint ─────────────────────────────────────────
-  { name: 'Glucosamine',          dose: '1500 mg',       cat: 'Bone & Joint',             fx: ['nausea','loose_stool','bloating'] },
-  { name: 'Chondroitin',          dose: '1200 mg',       cat: 'Bone & Joint',             fx: ['nausea','loose_stool','bloating'] },
-  { name: 'Collagen Type II',     dose: '40 mg',         cat: 'Bone & Joint',             fx: ['nausea','bloating'] },
+  { name: 'Glucosamine',          dose: '1500 mg', doseUnit:'mg',  cat: 'Bone & Joint',             fx: ['nausea','loose_stool','bloating'],        benefits:['bone','inflammation'] },
+  { name: 'Chondroitin',          dose: '1200 mg', doseUnit:'mg',  cat: 'Bone & Joint',             fx: ['nausea','loose_stool','bloating'],        benefits:['bone','inflammation'] },
+  { name: 'Collagen Type II',     dose: '40 mg',   doseUnit:'mg',  cat: 'Bone & Joint',             fx: ['nausea','bloating'],                      benefits:['bone','inflammation','gut'] },
   // ── Nootropics & Brain ───────────────────────────────────
-  { name: "Lion's Mane",          dose: '500 mg',        cat: 'Nootropics & Brain',       fx: ['nausea','loose_stool','bloating'] },
-  { name: 'Ginkgo Biloba',        dose: '120 mg',        cat: 'Nootropics & Brain',       fx: ['headache','nausea','loose_stool'] },
-  { name: '5-HTP',                dose: '100 mg',        cat: 'Nootropics & Brain',       fx: ['nausea','loose_stool','cramping','sleep_effect'] },
-  { name: 'Flaxseed Oil',         dose: '1000 mg',       cat: 'Nootropics & Brain',       fx: ['loose_stool','bloating','nausea'] },
+  { name: "Lion's Mane",          dose: '500 mg',  doseUnit:'mg',  cat: 'Nootropics & Brain',       fx: ['nausea','loose_stool','bloating'],        benefits:['cognitive','immune','gut'] },
+  { name: 'Ginkgo Biloba',        dose: '120 mg',  doseUnit:'mg',  cat: 'Nootropics & Brain',       fx: ['headache','nausea','loose_stool'],        benefits:['cognitive','cardiovascular'] },
+  { name: '5-HTP',                dose: '100 mg',  doseUnit:'mg',  cat: 'Nootropics & Brain',       fx: ['nausea','loose_stool','cramping','sleep_effect'], benefits:['mood','sleep'] },
+  { name: 'Flaxseed Oil',         dose: '1000 mg', doseUnit:'mg',  cat: 'Nootropics & Brain',       fx: ['loose_stool','bloating','nausea'],        benefits:['cardiovascular','inflammation','cognitive'] },
 
   // ── Standard Process & Functional Whole Food ────────────
-  { name: 'SP Cod Liver Oil',         dose: '3 softgels',    cat: 'Blood Pressure & Heart',   fx: ['loose_stool','reflux','nausea'] },
-  { name: 'SP Catalyn (Multivitamin)', dose: '6 tablets',    cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'] },
-  { name: 'SP Trace Minerals B12',    dose: '3 tablets',     cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'] },
-  { name: 'SP Calcium Lactate',       dose: '3 tablets',     cat: 'Bone & Joint',             fx: ['constipation','bloating','nausea'] },
-  { name: 'SP Zinc Complex',          dose: '6 tablets',     cat: 'Inflammation & Immune',    fx: ['nausea','cramping','reflux'] },
-  { name: 'SP Chromium Complex',      dose: '6 tablets',     cat: 'Blood Sugar & Metabolic',  fx: ['nausea','headache'] },
-  { name: 'SP Betafood',              dose: '6 tablets',     cat: 'Gut Health & Digestion',   fx: ['loose_stool','bloating','nausea'] },
-  { name: 'SP Livaplex',              dose: '3 capsules',    cat: 'Gut Health & Digestion',   fx: ['loose_stool','nausea','bloating'] },
-  { name: 'SP Soybean Lecithin',      dose: '3 softgels',    cat: 'Nootropics & Brain',       fx: ['loose_stool','bloating','nausea'] },
-  { name: 'SP Diaplex',               dose: '3 capsules',    cat: 'Blood Sugar & Metabolic',  fx: ['loose_stool','nausea','bloating'] },
-  { name: 'SP Nevaton Forte',         dose: '2 tablets',     cat: 'Sleep & Stress',           fx: ['fatigue','loose_stool','sleep_effect'] },
-  { name: 'SP Metabol Complex',       dose: '3 tablets',     cat: 'Blood Sugar & Metabolic',  fx: ['bloating','loose_stool','nausea'] },
-  { name: 'SP Garlic / Garlic Forte', dose: '2 tablets',     cat: 'Blood Pressure & Heart',   fx: ['reflux','nausea','loose_stool'] },
-  { name: 'SP Lactic Acid Yeast',     dose: '6 wafers',      cat: 'Gut Health & Digestion',   fx: ['bloating','loose_stool'] },
-  { name: 'SP Inulin (Prebiotic)',    dose: '1 tsp 2x/day',  cat: 'Gut Health & Digestion',   fx: ['bloating','cramping','loose_stool'] },
-  { name: 'SP Milk Thistle Forte',    dose: '2 tablets',     cat: 'Gut Health & Digestion',   fx: ['loose_stool','nausea','bloating'] },
-  { name: 'SP Spanish Black Radish',  dose: '3 tablets',     cat: 'Gut Health & Digestion',   fx: ['loose_stool','cramping','bloating'] },
-  { name: 'SP Cataplex B2',           dose: '6 tablets',     cat: 'Performance & Energy',     fx: ['nausea','loose_stool'] },
-  { name: 'SP Chaste Tree',           dose: '2 tablets',     cat: "Hormonal & Women's Health",fx: ['nausea','headache','fatigue'] },
+  { name: 'SP Cod Liver Oil',         dose: '3 softgels',   doseUnit:'softgels', cat: 'Blood Pressure & Heart',   fx: ['loose_stool','reflux','nausea'],        benefits: ['cardiovascular','immune','energy'] },
+  { name: 'SP Catalyn (Multivitamin)', dose: '6 tablets',   doseUnit:'tablets',  cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'],                benefits: ['energy','immune','metabolic'] },
+  { name: 'SP Trace Minerals B12',    dose: '3 tablets',    doseUnit:'tablets',  cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'],                benefits: ['thyroid','energy','bone'] },
+  { name: 'SP Calcium Lactate',       dose: '3 tablets',    doseUnit:'tablets',  cat: 'Bone & Joint',             fx: ['constipation','bloating','nausea'],     benefits: ['bone','immune','muscle'] },
+  { name: 'SP Zinc Complex',          dose: '6 tablets',    doseUnit:'tablets',  cat: 'Inflammation & Immune',    fx: ['nausea','cramping','reflux'],           benefits: ['immune','hormone'] },
+  { name: 'SP Chromium Complex',      dose: '6 tablets',    doseUnit:'tablets',  cat: 'Blood Sugar & Metabolic',  fx: ['nausea','headache'],                   benefits: ['insulin_sensitivity','a1c_support','metabolic'] },
+  { name: 'SP Betafood',              dose: '6 tablets',    doseUnit:'tablets',  cat: 'Gut Health & Digestion',   fx: ['loose_stool','bloating','nausea'],      benefits: ['gut','detox','cholesterol'] },
+  { name: 'SP Livaplex',              dose: '3 capsules',   doseUnit:'capsules', cat: 'Gut Health & Digestion',   fx: ['loose_stool','nausea','bloating'],      benefits: ['gut','detox'] },
+  { name: 'SP Soybean Lecithin',      dose: '3 softgels',   doseUnit:'softgels', cat: 'Nootropics & Brain',       fx: ['loose_stool','bloating','nausea'],      benefits: ['cognitive','cholesterol','metabolic'] },
+  { name: 'SP Diaplex',               dose: '3 capsules',   doseUnit:'capsules', cat: 'Blood Sugar & Metabolic',  fx: ['loose_stool','nausea','bloating'],      benefits: ['insulin_sensitivity','a1c_support','gut'] },
+  { name: 'SP Nevaton Forte',         dose: '2 tablets',    doseUnit:'tablets',  cat: 'Sleep & Stress',           fx: ['fatigue','loose_stool','sleep_effect'], benefits: ['mood','sleep','adrenal'] },
+  { name: 'SP Metabol Complex',       dose: '3 tablets',    doseUnit:'tablets',  cat: 'Blood Sugar & Metabolic',  fx: ['bloating','loose_stool','nausea'],      benefits: ['insulin_sensitivity','a1c_support','metabolic'] },
+  { name: 'SP Garlic / Garlic Forte', dose: '2 tablets',    doseUnit:'tablets',  cat: 'Blood Pressure & Heart',   fx: ['reflux','nausea','loose_stool'],        benefits: ['cardiovascular','cholesterol','immune'] },
+  { name: 'SP Lactic Acid Yeast',     dose: '6 wafers',     doseUnit:'wafers',   cat: 'Gut Health & Digestion',   fx: ['bloating','loose_stool'],               benefits: ['gut','probiotic'] },
+  { name: 'SP Inulin (Prebiotic)',    dose: '1 tsp 2x/day', doseUnit:'tsp',      cat: 'Gut Health & Digestion',   fx: ['bloating','cramping','loose_stool'],    benefits: ['gut','probiotic','metabolic'] },
+  { name: 'SP Milk Thistle Forte',    dose: '2 tablets',    doseUnit:'tablets',  cat: 'Gut Health & Digestion',   fx: ['loose_stool','nausea','bloating'],      benefits: ['detox','gut','antioxidant'] },
+  { name: 'SP Spanish Black Radish',  dose: '3 tablets',    doseUnit:'tablets',  cat: 'Gut Health & Digestion',   fx: ['loose_stool','cramping','bloating'],    benefits: ['detox','gut'] },
+  { name: 'SP Cataplex B2',           dose: '6 tablets',    doseUnit:'tablets',  cat: 'Performance & Energy',     fx: ['nausea','loose_stool'],                benefits: ['energy','cardiovascular','migraine'] },
+  { name: 'SP Chaste Tree',           dose: '2 tablets',    doseUnit:'tablets',  cat: "Hormonal & Women's Health",fx: ['nausea','headache','fatigue'],          benefits: ['hormone','mood'] },
+  { name: 'SP Berberine Active',      dose: '2 tablets',    doseUnit:'tablets',  cat: 'Blood Sugar & Metabolic',  fx: ['gi_upset','loose_stool','nausea'],      benefits: ['insulin_sensitivity','a1c_support','cholesterol','gut'] },
   // ── General / Other ──────────────────────────────────────
-  { name: 'Whey Protein Isolate',     dose: '25 g',          cat: 'Performance & Energy',     fx: ['bloating','nausea','loose_stool'] },
-  { name: 'Multivitamin (ONE)',        dose: '1 capsule',     cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'] },
-  { name: 'Calcium (Slow Release)',   dose: '1200 mg',       cat: 'Bone & Joint',             fx: ['constipation','bloating','nausea'] },
-  { name: 'Himalayan Salt Water',     dose: '2 tbsp/gallon', cat: 'Blood Pressure & Heart',   fx: ['bloating','nausea'] },
+  { name: 'Whey Protein Isolate',     dose: '25 g',         doseUnit:'g',        cat: 'Performance & Energy',     fx: ['bloating','nausea','loose_stool'],      benefits: ['muscle','energy'] },
+  { name: 'Multivitamin (ONE)',        dose: '1 capsule',   doseUnit:'capsules', cat: 'Vitamins & Minerals',      fx: ['nausea','loose_stool'],                benefits: ['immune','energy','metabolic'] },
+  { name: 'Calcium (Slow Release)',   dose: '1200 mg',      doseUnit:'mg',       cat: 'Bone & Joint',             fx: ['constipation','bloating','nausea'],     benefits: ['bone','immune'] },
+  { name: 'Himalayan Salt Water',     dose: '2 tbsp/gallon',doseUnit:'tbsp',     cat: 'Blood Pressure & Heart',   fx: ['bloating','nausea'],                   benefits: ['metabolic'] },
 ];
 
 /* ── Common Medications catalogue ───────────────────────────
@@ -7128,110 +7300,110 @@ var COMMON_SUPPS = [
 ─────────────────────────────────────────────────────────── */
 var COMMON_MEDS = [
   // ── Diabetes & Blood Sugar ───────────────────────────────
-  { name: 'Metformin',                   hint: 'e.g. 500 mg',   cat: 'Diabetes & Blood Sugar',  fx: ['loose_stool','nausea','cramping','bloating','appetite_change'] },
-  { name: 'Metformin ER',                hint: 'e.g. 500 mg',   cat: 'Diabetes & Blood Sugar',  fx: ['loose_stool','nausea','bloating'] },
-  { name: 'Ozempic (Semaglutide)',        hint: 'e.g. 0.5 mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','constipation','bloating','appetite_change'] },
-  { name: 'Wegovy (Semaglutide)',         hint: 'e.g. 0.25 mg', cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','constipation','bloating','appetite_change'] },
-  { name: 'Mounjaro (Tirzepatide)',       hint: 'e.g. 2.5 mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','constipation','bloating','appetite_change'] },
-  { name: 'Zepbound (Tirzepatide)',       hint: 'e.g. 2.5 mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','constipation','bloating','appetite_change'] },
-  { name: 'Victoza (Liraglutide)',        hint: 'e.g. 0.6 mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','bloating','appetite_change'] },
-  { name: 'Trulicity (Dulaglutide)',      hint: 'e.g. 0.75 mg', cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','bloating','appetite_change'] },
-  { name: 'Jardiance (Empagliflozin)',    hint: 'e.g. 10 mg',   cat: 'Diabetes & Blood Sugar',  fx: ['loose_stool','nausea','urgency'] },
-  { name: 'Farxiga (Dapagliflozin)',      hint: 'e.g. 10 mg',   cat: 'Diabetes & Blood Sugar',  fx: ['loose_stool','nausea','urgency'] },
-  { name: 'Invokana (Canagliflozin)',     hint: 'e.g. 100 mg',  cat: 'Diabetes & Blood Sugar',  fx: ['loose_stool','nausea','urgency'] },
-  { name: 'Januvia (Sitagliptin)',        hint: 'e.g. 100 mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','bloating'] },
-  { name: 'Tradjenta (Linagliptin)',      hint: 'e.g. 5 mg',    cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool'] },
-  { name: 'Glipizide',                   hint: 'e.g. 5 mg',    cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','appetite_change'] },
-  { name: 'Glimepiride',                 hint: 'e.g. 1 mg',    cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool'] },
-  { name: 'Actos (Pioglitazone)',         hint: 'e.g. 15 mg',   cat: 'Diabetes & Blood Sugar',  fx: ['bloating','loose_stool','nausea'] },
-  { name: 'Insulin (Basal)',             hint: 'e.g. 10 units', cat: 'Diabetes & Blood Sugar',  fx: ['appetite_change','bloating'] },
-  { name: 'Insulin (Rapid)',             hint: 'e.g. 4 units',  cat: 'Diabetes & Blood Sugar',  fx: ['appetite_change','nausea'] },
-  { name: 'Insulin (Mixed)',             hint: 'e.g. 10 units', cat: 'Diabetes & Blood Sugar',  fx: ['appetite_change','nausea'] },
+  { name: 'Metformin',                   hint: 'e.g. 500 mg',   doseUnit:'mg', brandNames:['Glucophage'], cat: 'Diabetes & Blood Sugar', fx: ['loose_stool','nausea','cramping','bloating','appetite_change'], benefits:['insulin_sensitivity','a1c_support','metabolic'] },
+  { name: 'Metformin ER',                hint: 'e.g. 500 mg',   doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['loose_stool','nausea','bloating'],                              benefits:['insulin_sensitivity','a1c_support','metabolic'] },
+  { name: 'Ozempic (Semaglutide)',        hint: 'e.g. 0.5 mg',  doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','constipation','bloating','appetite_change'], benefits:['metabolic','a1c_support','cardiovascular'] },
+  { name: 'Wegovy (Semaglutide)',         hint: 'e.g. 0.25 mg', doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','constipation','bloating','appetite_change'], benefits:['metabolic','a1c_support'] },
+  { name: 'Mounjaro (Tirzepatide)',       hint: 'e.g. 2.5 mg',  doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','constipation','bloating','appetite_change'], benefits:['metabolic','a1c_support','insulin_sensitivity'] },
+  { name: 'Zepbound (Tirzepatide)',       hint: 'e.g. 2.5 mg',  doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','constipation','bloating','appetite_change'], benefits:['metabolic','a1c_support'] },
+  { name: 'Victoza (Liraglutide)',        hint: 'e.g. 0.6 mg',  doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','bloating','appetite_change'],               benefits:['metabolic','a1c_support','cardiovascular'] },
+  { name: 'Trulicity (Dulaglutide)',      hint: 'e.g. 0.75 mg', doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','bloating','appetite_change'],               benefits:['metabolic','a1c_support'] },
+  { name: 'Jardiance (Empagliflozin)',    hint: 'e.g. 10 mg',   doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['loose_stool','nausea','urgency'],                                  benefits:['metabolic','a1c_support','cardiovascular'] },
+  { name: 'Farxiga (Dapagliflozin)',      hint: 'e.g. 10 mg',   doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['loose_stool','nausea','urgency'],                                  benefits:['metabolic','a1c_support'] },
+  { name: 'Invokana (Canagliflozin)',     hint: 'e.g. 100 mg',  doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['loose_stool','nausea','urgency'],                                  benefits:['metabolic','a1c_support'] },
+  { name: 'Januvia (Sitagliptin)',        hint: 'e.g. 100 mg',  doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','bloating'],                                 benefits:['insulin_sensitivity','a1c_support'] },
+  { name: 'Tradjenta (Linagliptin)',      hint: 'e.g. 5 mg',    doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool'],                                            benefits:['insulin_sensitivity','a1c_support'] },
+  { name: 'Glipizide',                   hint: 'e.g. 5 mg',    doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool','appetite_change'],                          benefits:['insulin_sensitivity','a1c_support'] },
+  { name: 'Glimepiride',                 hint: 'e.g. 1 mg',    doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['nausea','loose_stool'],                                            benefits:['insulin_sensitivity','a1c_support'] },
+  { name: 'Actos (Pioglitazone)',         hint: 'e.g. 15 mg',   doseUnit:'mg',  cat: 'Diabetes & Blood Sugar',  fx: ['bloating','loose_stool','nausea'],                                 benefits:['insulin_sensitivity','a1c_support','metabolic'] },
+  { name: 'Insulin (Basal)',              hint: 'e.g. 10 units', doseUnit:'tablets', cat: 'Diabetes & Blood Sugar', fx: ['appetite_change','bloating'],                                  benefits:['insulin_sensitivity','a1c_support'] },
+  { name: 'Insulin (Rapid)',              hint: 'e.g. 4 units',  doseUnit:'tablets', cat: 'Diabetes & Blood Sugar', fx: ['appetite_change','nausea'],                                    benefits:['insulin_sensitivity','a1c_support'] },
+  { name: 'Insulin (Mixed)',              hint: 'e.g. 10 units', doseUnit:'tablets', cat: 'Diabetes & Blood Sugar', fx: ['appetite_change','nausea'],                                    benefits:['insulin_sensitivity','a1c_support'] },
   // ── Weight Management ────────────────────────────────────
-  { name: 'Qsymia (Phentermine/Topiramate)', hint: 'e.g. 3.75 mg', cat: 'Weight Management', fx: ['constipation','nausea','appetite_change','dizziness'] },
-  { name: 'Contrave (Naltrexone/Bupropion)', hint: 'e.g. 8/90 mg', cat: 'Weight Management', fx: ['nausea','constipation','loose_stool','headache','appetite_change'] },
-  { name: 'Saxenda (Liraglutide)',        hint: 'e.g. 0.6 mg',  cat: 'Weight Management',       fx: ['nausea','loose_stool','constipation','appetite_change'] },
-  { name: 'Xenical (Orlistat)',           hint: 'e.g. 120 mg',  cat: 'Weight Management',       fx: ['loose_stool','urgency','bloating','cramping'] },
+  { name: 'Qsymia (Phentermine/Topiramate)', hint: 'e.g. 3.75 mg', doseUnit:'mg', cat: 'Weight Management', fx: ['constipation','nausea','appetite_change','dizziness'],               benefits:['metabolic'] },
+  { name: 'Contrave (Naltrexone/Bupropion)', hint: 'e.g. 8/90 mg', doseUnit:'mg', cat: 'Weight Management', fx: ['nausea','constipation','loose_stool','headache','appetite_change'],  benefits:['metabolic','mood'] },
+  { name: 'Saxenda (Liraglutide)',        hint: 'e.g. 0.6 mg',  doseUnit:'mg',  cat: 'Weight Management',       fx: ['nausea','loose_stool','constipation','appetite_change'],           benefits:['metabolic','a1c_support'] },
+  { name: 'Xenical (Orlistat)',           hint: 'e.g. 120 mg',  doseUnit:'mg',  cat: 'Weight Management',       fx: ['loose_stool','urgency','bloating','cramping'],                     benefits:['metabolic'] },
   // ── Blood Pressure ───────────────────────────────────────
-  { name: 'Lisinopril',                  hint: 'e.g. 10 mg',   cat: 'Blood Pressure',           fx: ['nausea','loose_stool','bp_effect'] },
-  { name: 'Amlodipine',                  hint: 'e.g. 5 mg',    cat: 'Blood Pressure',           fx: ['nausea','bloating','bp_effect'] },
-  { name: 'Losartan',                    hint: 'e.g. 50 mg',   cat: 'Blood Pressure',           fx: ['loose_stool','nausea','bp_effect'] },
-  { name: 'Valsartan',                   hint: 'e.g. 80 mg',   cat: 'Blood Pressure',           fx: ['nausea','loose_stool','bp_effect'] },
-  { name: 'Metoprolol',                  hint: 'e.g. 25 mg',   cat: 'Blood Pressure',           fx: ['fatigue','nausea','bp_effect'] },
-  { name: 'Atenolol',                    hint: 'e.g. 50 mg',   cat: 'Blood Pressure',           fx: ['fatigue','nausea','bp_effect'] },
-  { name: 'Carvedilol',                  hint: 'e.g. 6.25 mg', cat: 'Blood Pressure',           fx: ['fatigue','loose_stool','nausea','bp_effect'] },
-  { name: 'Hydrochlorothiazide',         hint: 'e.g. 25 mg',   cat: 'Blood Pressure',           fx: ['loose_stool','nausea','bp_effect'] },
-  { name: 'Furosemide (Lasix)',          hint: 'e.g. 20 mg',   cat: 'Blood Pressure',           fx: ['loose_stool','nausea','bp_effect','fatigue'] },
-  { name: 'Spironolactone',              hint: 'e.g. 25 mg',   cat: 'Blood Pressure',           fx: ['nausea','cramping','loose_stool','bp_effect'] },
-  { name: 'Clonidine',                   hint: 'e.g. 0.1 mg',  cat: 'Blood Pressure',           fx: ['constipation','fatigue','nausea','bp_effect'] },
+  { name: 'Lisinopril',                  hint: 'e.g. 10 mg',   doseUnit:'mg', brandNames:['Prinivil','Zestril'], cat: 'Blood Pressure', fx: ['nausea','loose_stool','bp_effect'], benefits:['cardiovascular'] },
+  { name: 'Amlodipine',                  hint: 'e.g. 5 mg',    doseUnit:'mg', brandNames:['Norvasc'], cat: 'Blood Pressure', fx: ['nausea','bloating','bp_effect'], benefits:['cardiovascular'] },
+  { name: 'Losartan',                    hint: 'e.g. 50 mg',   doseUnit:'mg', brandNames:['Cozaar'], cat: 'Blood Pressure', fx: ['loose_stool','nausea','bp_effect'], benefits:['cardiovascular'] },
+  { name: 'Valsartan',                   hint: 'e.g. 80 mg',   doseUnit:'mg',  cat: 'Blood Pressure',           fx: ['nausea','loose_stool','bp_effect'],                                benefits:['cardiovascular'] },
+  { name: 'Metoprolol',                  hint: 'e.g. 25 mg',   doseUnit:'mg', brandNames:['Lopressor','Toprol'], cat: 'Blood Pressure', fx: ['fatigue','nausea','bp_effect'], benefits:['cardiovascular'] },
+  { name: 'Atenolol',                    hint: 'e.g. 50 mg',   doseUnit:'mg',  cat: 'Blood Pressure',           fx: ['fatigue','nausea','bp_effect'],                                    benefits:['cardiovascular'] },
+  { name: 'Carvedilol',                  hint: 'e.g. 6.25 mg', doseUnit:'mg',  cat: 'Blood Pressure',           fx: ['fatigue','loose_stool','nausea','bp_effect'],                      benefits:['cardiovascular'] },
+  { name: 'Hydrochlorothiazide',         hint: 'e.g. 25 mg',   doseUnit:'mg',  cat: 'Blood Pressure',           fx: ['loose_stool','nausea','bp_effect'],                                benefits:['cardiovascular'] },
+  { name: 'Furosemide (Lasix)',          hint: 'e.g. 20 mg',   doseUnit:'mg',  cat: 'Blood Pressure',           fx: ['loose_stool','nausea','bp_effect','fatigue'],                      benefits:['cardiovascular'] },
+  { name: 'Spironolactone',              hint: 'e.g. 25 mg',   doseUnit:'mg',  cat: 'Blood Pressure',           fx: ['nausea','cramping','loose_stool','bp_effect'],                     benefits:['cardiovascular'] },
+  { name: 'Clonidine',                   hint: 'e.g. 0.1 mg',  doseUnit:'mg',  cat: 'Blood Pressure',           fx: ['constipation','fatigue','nausea','bp_effect'],                     benefits:['cardiovascular'] },
   // ── Cholesterol ──────────────────────────────────────────
-  { name: 'Atorvastatin (Lipitor)',       hint: 'e.g. 20 mg',  cat: 'Cholesterol',              fx: ['loose_stool','nausea','cramping','bloating'] },
-  { name: 'Rosuvastatin (Crestor)',       hint: 'e.g. 10 mg',  cat: 'Cholesterol',              fx: ['loose_stool','nausea','cramping'] },
-  { name: 'Simvastatin',                 hint: 'e.g. 20 mg',   cat: 'Cholesterol',              fx: ['loose_stool','nausea','cramping'] },
-  { name: 'Ezetimibe',                   hint: 'e.g. 10 mg',   cat: 'Cholesterol',              fx: ['loose_stool','nausea','bloating'] },
-  { name: 'Fenofibrate',                 hint: 'e.g. 145 mg',  cat: 'Cholesterol',              fx: ['loose_stool','nausea','bloating','cramping'] },
+  { name: 'Atorvastatin (Lipitor)',       hint: 'e.g. 20 mg',  doseUnit:'mg', brandNames:['Lipitor'], cat: 'Cholesterol', fx: ['loose_stool','nausea','cramping','bloating'], benefits:['cholesterol','cardiovascular'] },
+  { name: 'Rosuvastatin (Crestor)',       hint: 'e.g. 10 mg',  doseUnit:'mg', brandNames:['Crestor'], cat: 'Cholesterol', fx: ['loose_stool','nausea','cramping'], benefits:['cholesterol','cardiovascular'] },
+  { name: 'Simvastatin',                 hint: 'e.g. 20 mg',   doseUnit:'mg',  cat: 'Cholesterol',              fx: ['loose_stool','nausea','cramping'],                                  benefits:['cholesterol','cardiovascular'] },
+  { name: 'Ezetimibe',                   hint: 'e.g. 10 mg',   doseUnit:'mg',  cat: 'Cholesterol',              fx: ['loose_stool','nausea','bloating'],                                  benefits:['cholesterol','cardiovascular'] },
+  { name: 'Fenofibrate',                 hint: 'e.g. 145 mg',  doseUnit:'mg',  cat: 'Cholesterol',              fx: ['loose_stool','nausea','bloating','cramping'],                       benefits:['cholesterol','cardiovascular'] },
   // ── GI & Digestive ───────────────────────────────────────
-  { name: 'Omeprazole (Prilosec)',        hint: 'e.g. 20 mg',  cat: 'GI & Digestive',           fx: ['loose_stool','nausea','bloating','constipation'] },
-  { name: 'Pantoprazole',                hint: 'e.g. 40 mg',   cat: 'GI & Digestive',           fx: ['loose_stool','nausea','bloating'] },
-  { name: 'Esomeprazole (Nexium)',        hint: 'e.g. 20 mg',  cat: 'GI & Digestive',           fx: ['loose_stool','nausea','bloating'] },
-  { name: 'Famotidine (Pepcid)',          hint: 'e.g. 20 mg',  cat: 'GI & Digestive',           fx: ['loose_stool','nausea','constipation'] },
-  { name: 'Mesalamine',                  hint: 'e.g. 800 mg',  cat: 'GI & Digestive',           fx: ['nausea','cramping','loose_stool','bloating'] },
-  { name: 'Budesonide',                  hint: 'e.g. 9 mg',    cat: 'GI & Digestive',           fx: ['nausea','bloating','fatigue'] },
-  { name: 'Prednisone',                  hint: 'e.g. 10 mg',   cat: 'GI & Digestive',           fx: ['bloating','appetite_change','nausea','glucose_effect'] },
-  { name: 'Humira (Adalimumab)',          hint: 'e.g. 40 mg',  cat: 'GI & Digestive',           fx: ['nausea','loose_stool','bloating','fatigue'] },
-  { name: 'Stelara (Ustekinumab)',        hint: 'e.g. 45 mg',  cat: 'GI & Digestive',           fx: ['nausea','loose_stool','fatigue'] },
-  { name: 'Entyvio (Vedolizumab)',        hint: 'e.g. 300 mg', cat: 'GI & Digestive',           fx: ['nausea','loose_stool','cramping','fatigue'] },
-  { name: 'Remicade (Infliximab)',        hint: 'e.g. 5 mg/kg',cat: 'GI & Digestive',           fx: ['nausea','loose_stool','cramping','fatigue'] },
-  { name: 'Loperamide (Imodium)',         hint: 'e.g. 2 mg',   cat: 'GI & Digestive',           fx: ['constipation','bloating','nausea'] },
-  { name: 'Dicyclomine',                 hint: 'e.g. 20 mg',   cat: 'GI & Digestive',           fx: ['constipation','bloating','nausea'] },
-  { name: 'Linzess (Linaclotide)',        hint: 'e.g. 145 mcg',cat: 'GI & Digestive',           fx: ['loose_stool','urgency','cramping','bloating'] },
-  { name: 'Amitiza (Lubiprostone)',       hint: 'e.g. 8 mcg',  cat: 'GI & Digestive',           fx: ['nausea','loose_stool','cramping','bloating'] },
+  { name: 'Omeprazole (Prilosec)',        hint: 'e.g. 20 mg',  doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['loose_stool','nausea','bloating','constipation'],                  benefits:['gut'] },
+  { name: 'Pantoprazole',                hint: 'e.g. 40 mg',   doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['loose_stool','nausea','bloating'],                                  benefits:['gut'] },
+  { name: 'Esomeprazole (Nexium)',        hint: 'e.g. 20 mg',  doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['loose_stool','nausea','bloating'],                                  benefits:['gut'] },
+  { name: 'Famotidine (Pepcid)',          hint: 'e.g. 20 mg',  doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['loose_stool','nausea','constipation'],                              benefits:['gut'] },
+  { name: 'Mesalamine',                  hint: 'e.g. 800 mg',  doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['nausea','cramping','loose_stool','bloating'],                       benefits:['gut','inflammation'] },
+  { name: 'Budesonide',                  hint: 'e.g. 9 mg',    doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['nausea','bloating','fatigue'],                                      benefits:['gut','inflammation'] },
+  { name: 'Prednisone',                  hint: 'e.g. 10 mg',   doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['bloating','appetite_change','nausea','glucose_effect'],             benefits:['inflammation'] },
+  { name: 'Humira (Adalimumab)',          hint: 'e.g. 40 mg',  doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['nausea','loose_stool','bloating','fatigue'],                        benefits:['gut','inflammation'] },
+  { name: 'Stelara (Ustekinumab)',        hint: 'e.g. 45 mg',  doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['nausea','loose_stool','fatigue'],                                   benefits:['gut','inflammation'] },
+  { name: 'Entyvio (Vedolizumab)',        hint: 'e.g. 300 mg', doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['nausea','loose_stool','cramping','fatigue'],                        benefits:['gut','inflammation'] },
+  { name: 'Remicade (Infliximab)',        hint: 'e.g. 5 mg/kg',doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['nausea','loose_stool','cramping','fatigue'],                        benefits:['gut','inflammation'] },
+  { name: 'Loperamide (Imodium)',         hint: 'e.g. 2 mg',   doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['constipation','bloating','nausea'],                                 benefits:['gut'] },
+  { name: 'Dicyclomine',                 hint: 'e.g. 20 mg',   doseUnit:'mg',  cat: 'GI & Digestive',           fx: ['constipation','bloating','nausea'],                                 benefits:['gut'] },
+  { name: 'Linzess (Linaclotide)',        hint: 'e.g. 145 mcg',doseUnit:'mcg', cat: 'GI & Digestive',           fx: ['loose_stool','urgency','cramping','bloating'],                      benefits:['gut'] },
+  { name: 'Amitiza (Lubiprostone)',       hint: 'e.g. 8 mcg',  doseUnit:'mcg', cat: 'GI & Digestive',           fx: ['nausea','loose_stool','cramping','bloating'],                       benefits:['gut'] },
   // ── Thyroid ──────────────────────────────────────────────
-  { name: 'Levothyroxine',               hint: 'e.g. 50 mcg',  cat: 'Thyroid',                  fx: ['loose_stool','nausea','appetite_change','fatigue'] },
-  { name: 'Liothyronine (T3)',           hint: 'e.g. 25 mcg',  cat: 'Thyroid',                  fx: ['loose_stool','appetite_change','fatigue'] },
-  { name: 'Armour Thyroid (NDT)',         hint: 'e.g. 30 mg',  cat: 'Thyroid',                  fx: ['loose_stool','nausea','appetite_change'] },
+  { name: 'Levothyroxine',               hint: 'e.g. 50 mcg',  doseUnit:'mcg', brandNames:['Synthroid','Levoxyl'], cat: 'Thyroid', fx: ['loose_stool','nausea','appetite_change','fatigue'], benefits:['thyroid','energy','metabolic'] },
+  { name: 'Liothyronine (T3)',           hint: 'e.g. 25 mcg',  doseUnit:'mcg', cat: 'Thyroid',                  fx: ['loose_stool','appetite_change','fatigue'],                          benefits:['thyroid','energy','metabolic'] },
+  { name: 'Armour Thyroid (NDT)',         hint: 'e.g. 30 mg',  doseUnit:'mg',  cat: 'Thyroid',                  fx: ['loose_stool','nausea','appetite_change'],                           benefits:['thyroid','energy','metabolic'] },
   // ── Mental Health & Mood ─────────────────────────────────
-  { name: 'Sertraline (Zoloft)',          hint: 'e.g. 50 mg',  cat: 'Mental Health & Mood',     fx: ['nausea','loose_stool','appetite_change','sleep_effect'] },
-  { name: 'Escitalopram (Lexapro)',       hint: 'e.g. 10 mg',  cat: 'Mental Health & Mood',     fx: ['nausea','loose_stool','appetite_change','sleep_effect'] },
-  { name: 'Fluoxetine (Prozac)',          hint: 'e.g. 20 mg',  cat: 'Mental Health & Mood',     fx: ['nausea','loose_stool','appetite_change','sleep_effect'] },
-  { name: 'Bupropion (Wellbutrin)',       hint: 'e.g. 150 mg', cat: 'Mental Health & Mood',     fx: ['nausea','constipation','appetite_change','sleep_effect'] },
-  { name: 'Buspirone',                   hint: 'e.g. 10 mg',   cat: 'Mental Health & Mood',     fx: ['nausea','loose_stool','dizziness'] },
-  { name: 'Venlafaxine (Effexor)',        hint: 'e.g. 75 mg',  cat: 'Mental Health & Mood',     fx: ['nausea','loose_stool','constipation','appetite_change','sleep_effect'] },
-  { name: 'Duloxetine (Cymbalta)',        hint: 'e.g. 30 mg',  cat: 'Mental Health & Mood',     fx: ['nausea','loose_stool','constipation','appetite_change'] },
+  { name: 'Sertraline (Zoloft)',          hint: 'e.g. 50 mg',  doseUnit:'mg', brandNames:['Zoloft'], cat: 'Mental Health & Mood', fx: ['nausea','loose_stool','appetite_change','sleep_effect'], benefits:['mood'] },
+  { name: 'Escitalopram (Lexapro)',       hint: 'e.g. 10 mg',  doseUnit:'mg', brandNames:['Lexapro'], cat: 'Mental Health & Mood', fx: ['nausea','loose_stool','appetite_change','sleep_effect'], benefits:['mood'] },
+  { name: 'Fluoxetine (Prozac)',          hint: 'e.g. 20 mg',  doseUnit:'mg',  cat: 'Mental Health & Mood',     fx: ['nausea','loose_stool','appetite_change','sleep_effect'],            benefits:['mood'] },
+  { name: 'Bupropion (Wellbutrin)',       hint: 'e.g. 150 mg', doseUnit:'mg',  cat: 'Mental Health & Mood',     fx: ['nausea','constipation','appetite_change','sleep_effect'],           benefits:['mood','energy'] },
+  { name: 'Buspirone',                   hint: 'e.g. 10 mg',   doseUnit:'mg',  cat: 'Mental Health & Mood',     fx: ['nausea','loose_stool','dizziness'],                                 benefits:['mood'] },
+  { name: 'Venlafaxine (Effexor)',        hint: 'e.g. 75 mg',  doseUnit:'mg',  cat: 'Mental Health & Mood',     fx: ['nausea','loose_stool','constipation','appetite_change','sleep_effect'], benefits:['mood'] },
+  { name: 'Duloxetine (Cymbalta)',        hint: 'e.g. 30 mg',  doseUnit:'mg',  cat: 'Mental Health & Mood',     fx: ['nausea','loose_stool','constipation','appetite_change'],            benefits:['mood','pain'] },
   // ── Sleep ────────────────────────────────────────────────
-  { name: 'Trazodone',                   hint: 'e.g. 50 mg',   cat: 'Sleep',                    fx: ['nausea','constipation','loose_stool','fatigue','sleep_effect'] },
-  { name: 'Hydroxyzine',                 hint: 'e.g. 25 mg',   cat: 'Sleep',                    fx: ['constipation','fatigue','sleep_effect'] },
-  { name: 'Ambien (Zolpidem)',           hint: 'e.g. 5 mg',    cat: 'Sleep',                    fx: ['nausea','loose_stool','fatigue','sleep_effect'] },
-  { name: 'Lunesta (Eszopiclone)',        hint: 'e.g. 1 mg',   cat: 'Sleep',                    fx: ['nausea','loose_stool','fatigue','sleep_effect'] },
+  { name: 'Trazodone',                   hint: 'e.g. 50 mg',   doseUnit:'mg',  cat: 'Sleep',                    fx: ['nausea','constipation','loose_stool','fatigue','sleep_effect'],    benefits:['sleep','mood'] },
+  { name: 'Hydroxyzine',                 hint: 'e.g. 25 mg',   doseUnit:'mg',  cat: 'Sleep',                    fx: ['constipation','fatigue','sleep_effect'],                            benefits:['sleep'] },
+  { name: 'Ambien (Zolpidem)',           hint: 'e.g. 5 mg',    doseUnit:'mg',  cat: 'Sleep',                    fx: ['nausea','loose_stool','fatigue','sleep_effect'],                   benefits:['sleep'] },
+  { name: 'Lunesta (Eszopiclone)',        hint: 'e.g. 1 mg',   doseUnit:'mg',  cat: 'Sleep',                    fx: ['nausea','loose_stool','fatigue','sleep_effect'],                   benefits:['sleep'] },
   // ── Pain & Inflammation ──────────────────────────────────
-  { name: 'Ibuprofen',                   hint: 'e.g. 400 mg',  cat: 'Pain & Inflammation',      fx: ['nausea','bloating','loose_stool','cramping','reflux'] },
-  { name: 'Naproxen',                    hint: 'e.g. 220 mg',  cat: 'Pain & Inflammation',      fx: ['nausea','bloating','loose_stool','reflux'] },
-  { name: 'Celecoxib',                   hint: 'e.g. 200 mg',  cat: 'Pain & Inflammation',      fx: ['loose_stool','nausea','bloating'] },
-  { name: 'Meloxicam',                   hint: 'e.g. 7.5 mg',  cat: 'Pain & Inflammation',      fx: ['nausea','loose_stool','bloating','cramping'] },
+  { name: 'Ibuprofen',                   hint: 'e.g. 400 mg',  doseUnit:'mg',  cat: 'Pain & Inflammation',      fx: ['nausea','bloating','loose_stool','cramping','reflux'],              benefits:['pain','inflammation'] },
+  { name: 'Naproxen',                    hint: 'e.g. 220 mg',  doseUnit:'mg',  cat: 'Pain & Inflammation',      fx: ['nausea','bloating','loose_stool','reflux'],                         benefits:['pain','inflammation'] },
+  { name: 'Celecoxib',                   hint: 'e.g. 200 mg',  doseUnit:'mg',  cat: 'Pain & Inflammation',      fx: ['loose_stool','nausea','bloating'],                                  benefits:['pain','inflammation'] },
+  { name: 'Meloxicam',                   hint: 'e.g. 7.5 mg',  doseUnit:'mg',  cat: 'Pain & Inflammation',      fx: ['nausea','loose_stool','bloating','cramping'],                       benefits:['pain','inflammation'] },
   // ── Allergy & Respiratory ────────────────────────────────
-  { name: 'Cetirizine (Zyrtec)',          hint: 'e.g. 10 mg',  cat: 'Allergy & Respiratory',    fx: ['fatigue','loose_stool','nausea'] },
-  { name: 'Loratadine (Claritin)',        hint: 'e.g. 10 mg',  cat: 'Allergy & Respiratory',    fx: ['fatigue','loose_stool','nausea'] },
-  { name: 'Fexofenadine (Allegra)',       hint: 'e.g. 180 mg', cat: 'Allergy & Respiratory',    fx: ['nausea','loose_stool'] },
-  { name: 'Montelukast (Singulair)',      hint: 'e.g. 10 mg',  cat: 'Allergy & Respiratory',    fx: ['nausea','loose_stool','fatigue'] },
+  { name: 'Cetirizine (Zyrtec)',          hint: 'e.g. 10 mg',  doseUnit:'mg',  cat: 'Allergy & Respiratory',    fx: ['fatigue','loose_stool','nausea'],                                   benefits:['immune'] },
+  { name: 'Loratadine (Claritin)',        hint: 'e.g. 10 mg',  doseUnit:'mg',  cat: 'Allergy & Respiratory',    fx: ['fatigue','loose_stool','nausea'],                                   benefits:['immune'] },
+  { name: 'Fexofenadine (Allegra)',       hint: 'e.g. 180 mg', doseUnit:'mg',  cat: 'Allergy & Respiratory',    fx: ['nausea','loose_stool'],                                             benefits:['immune'] },
+  { name: 'Montelukast (Singulair)',      hint: 'e.g. 10 mg',  doseUnit:'mg',  cat: 'Allergy & Respiratory',    fx: ['nausea','loose_stool','fatigue'],                                   benefits:['immune'] },
   // ── Blood Thinners ───────────────────────────────────────
-  { name: 'Aspirin (Low Dose)',           hint: 'e.g. 81 mg',  cat: 'Blood Thinners',           fx: ['nausea','bloating','loose_stool','reflux'] },
-  { name: 'Warfarin (Coumadin)',          hint: 'e.g. 5 mg',   cat: 'Blood Thinners',           fx: ['nausea','bloating'] },
-  { name: 'Apixaban (Eliquis)',           hint: 'e.g. 5 mg',   cat: 'Blood Thinners',           fx: ['nausea','bloating','loose_stool'] },
-  { name: 'Rivaroxaban (Xarelto)',        hint: 'e.g. 20 mg',  cat: 'Blood Thinners',           fx: ['nausea','bloating','loose_stool'] },
+  { name: 'Aspirin (Low Dose)',           hint: 'e.g. 81 mg',  doseUnit:'mg',  cat: 'Blood Thinners',           fx: ['nausea','bloating','loose_stool','reflux'],                         benefits:['cardiovascular'] },
+  { name: 'Warfarin (Coumadin)',          hint: 'e.g. 5 mg',   doseUnit:'mg',  cat: 'Blood Thinners',           fx: ['nausea','bloating'],                                                benefits:['cardiovascular'] },
+  { name: 'Apixaban (Eliquis)',           hint: 'e.g. 5 mg',   doseUnit:'mg',  cat: 'Blood Thinners',           fx: ['nausea','bloating','loose_stool'],                                  benefits:['cardiovascular'] },
+  { name: 'Rivaroxaban (Xarelto)',        hint: 'e.g. 20 mg',  doseUnit:'mg',  cat: 'Blood Thinners',           fx: ['nausea','bloating','loose_stool'],                                  benefits:['cardiovascular'] },
   // ── Vitamins (Prescription Strength) ─────────────────────
-  { name: 'Vitamin D (Rx 50,000 IU)',    hint: 'e.g. 50,000 IU weekly', cat: 'Prescription Vitamins', fx: ['nausea','constipation','appetite_change'] },
-  { name: 'Vitamin B12 (Injection)',     hint: 'e.g. 1000 mcg', cat: 'Prescription Vitamins',   fx: ['nausea','loose_stool'] },
-  { name: 'Folic Acid (Rx)',             hint: 'e.g. 1 mg',    cat: 'Prescription Vitamins',    fx: ['nausea','bloating'] },
+  { name: 'Vitamin D (Rx 50,000 IU)',    hint: 'e.g. 50,000 IU weekly', doseUnit:'IU',  cat: 'Prescription Vitamins', fx: ['nausea','constipation','appetite_change'],                  benefits:['immune','bone','metabolic'] },
+  { name: 'Vitamin B12 (Injection)',     hint: 'e.g. 1000 mcg', doseUnit:'mcg', cat: 'Prescription Vitamins',   fx: ['nausea','loose_stool'],                                            benefits:['energy','cognitive','mood'] },
+  { name: 'Folic Acid (Rx)',             hint: 'e.g. 1 mg',    doseUnit:'mg',  cat: 'Prescription Vitamins',    fx: ['nausea','bloating'],                                               benefits:['mood','metabolic','immune'] },
 
   // ── Hormonal & Menopause ─────────────────────────────────
-  { name: 'Progesterone (Micronized)', hint: 'e.g. 100 mg',  cat: "Hormonal & Women's Health", fx: ['fatigue','loose_stool','bloating','sleep_effect'] },
-  { name: 'Estradiol',                hint: 'e.g. 1 mg',     cat: "Hormonal & Women's Health", fx: ['nausea','bloating','fatigue'] },
-  { name: 'Estradiol Patch',          hint: 'e.g. 0.05 mg',  cat: "Hormonal & Women's Health", fx: ['nausea','bloating'] },
-  { name: 'Premarin (Conjugated Estrogen)', hint: 'e.g. 0.625 mg', cat: "Hormonal & Women's Health", fx: ['nausea','bloating','loose_stool'] },
+  { name: 'Progesterone (Micronized)', hint: 'e.g. 100 mg',  doseUnit:'mg', brandNames:['Prometrium'], cat: "Hormonal & Women's Health", fx: ['fatigue','loose_stool','bloating','sleep_effect'], benefits:['hormone','sleep'] },
+  { name: 'Estradiol',                hint: 'e.g. 1 mg',     doseUnit:'mg', brandNames:['Estrace','Vivelle'], cat: "Hormonal & Women's Health", fx: ['nausea','bloating','fatigue'], benefits:['hormone'] },
+  { name: 'Estradiol Patch',          hint: 'e.g. 0.05 mg',  doseUnit:'mg',  cat: "Hormonal & Women's Health", fx: ['nausea','bloating'],                                             benefits:['hormone'] },
+  { name: 'Premarin (Conjugated Estrogen)', hint: 'e.g. 0.625 mg', doseUnit:'mg',  cat: "Hormonal & Women's Health", fx: ['nausea','bloating','loose_stool'],                          benefits:['hormone'] },
   // ── Hair Loss ────────────────────────────────────────────
-  { name: 'Finasteride',              hint: 'e.g. 1 mg',     cat: 'Hair & Skin',               fx: ['nausea','fatigue','loose_stool'] },
-  { name: 'Dutasteride',              hint: 'e.g. 0.5 mg',   cat: 'Hair & Skin',               fx: ['nausea','fatigue','loose_stool'] },
-  { name: 'Minoxidil (oral)',         hint: 'e.g. 2.5 mg',   cat: 'Hair & Skin',               fx: ['nausea','loose_stool','bp_effect'] },
+  { name: 'Finasteride',              hint: 'e.g. 1 mg',     doseUnit:'mg', brandNames:['Propecia','Proscar'], cat: 'Hair & Skin', fx: ['nausea','fatigue','loose_stool'], benefits:[] },
+  { name: 'Dutasteride',              hint: 'e.g. 0.5 mg',   doseUnit:'mg',  cat: 'Hair & Skin',               fx: ['nausea','fatigue','loose_stool'],                                   benefits:[] },
+  { name: 'Minoxidil (oral)',         hint: 'e.g. 2.5 mg',   doseUnit:'mg',  cat: 'Hair & Skin',               fx: ['nausea','loose_stool','bp_effect'],                                 benefits:[] },
 ];
 
 /* ══════════════════════════════════════════════════════════════
@@ -7557,7 +7729,7 @@ var State = (function() {
     logs: {
       hydration: [],  // { id, ts, oz, type }
       meals:     [],  // { id, ts, slot, type:'food'|'snack', text, tags[], mealTs }
-      suppLogs:  [],  // { id, ts, slot:'morning'|'afternoon'|'evening', itemId, name, itemType:'supp'|'med' }
+      suppLogs:  [],  // v24 extended: { id, ts, mealTs, slot:'morning'|'afternoon'|'evening', logType:'group'|'individual', groupLabel:string|null, items:[{itemId,name,itemType,dose}] } — legacy single-item fields kept for migration safety
       bowel:     [],  // { id, ts, bristolType, color, symptoms[] }
       bp:        [],  // { id, ts, sys, dia, hr, timeOfDay, crisis }
       glucose:   [],  // { id, ts, val, context }
@@ -7599,8 +7771,21 @@ var State = (function() {
   function _migrateInventory(arr) {
     return (arr || []).map(function(item) {
       if (typeof item === 'string') {
-        return { id: Utils.uid(), name: item, slots: [] };
+        return {
+          id: Utils.uid(), name: item, slots: [],
+          sideEffects: [], benefits: [], changeLog: [],
+          doseUnit: '', brandNames: []
+        };
       }
+      // v24 field migrations — safe fallbacks for all existing records
+      // NOTE: fx[] on catalogue items currently stores side effect tags.
+      // Future cleanup: rename fx[] → sideEffects[] across catalogue +
+      // engine for explicitness. Tracked in BUILD STATE.
+      if (!Array.isArray(item.sideEffects))  item.sideEffects = [];
+      if (!Array.isArray(item.benefits))     item.benefits    = [];
+      if (!Array.isArray(item.changeLog))    item.changeLog   = [];
+      if (!Array.isArray(item.brandNames))   item.brandNames  = [];
+      if (item.doseUnit === undefined)       item.doseUnit    = '';
       return item;
     });
   }
@@ -8309,10 +8494,22 @@ var ScreenToday = (function() {
     if (!el) return;
     var s    = State.get();
     var hour = new Date().getHours();
-    var slot = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+
+    // Determine active slot and its cutoff hour
+    // Morning: active until noon | Afternoon: noon–5pm | Evening: 5pm–10pm
+    // After cutoff: strip silently disappears
+    var slot, cutoffHour;
+    if      (hour < 12) { slot = 'morning';   cutoffHour = 12; }
+    else if (hour < 17) { slot = 'afternoon'; cutoffHour = 17; }
+    else if (hour < 22) { slot = 'evening';   cutoffHour = 22; }
+    else {
+      el.style.display = 'none';
+      return; // after 10pm — nothing to remind
+    }
+
     var today = Utils.dayStart();
 
-    // Items with this slot assigned
+    // Items assigned to this slot
     var allItems = (s.supplements || []).concat(s.medications || []);
     var due = allItems.filter(function(item) {
       return item.slots && item.slots.indexOf(slot) !== -1;
@@ -8320,21 +8517,50 @@ var ScreenToday = (function() {
     if (!due.length) { el.style.display = 'none'; return; }
 
     // Which have already been logged today for this slot?
-    var logged = (s.logs.suppLogs || []).filter(function(l) {
+    // Handles both v24 group entries (items[]) and legacy single-item entries.
+    var todaySlotLogs = (s.logs.suppLogs || []).filter(function(l) {
       return l.ts >= today && l.slot === slot;
-    }).map(function(l) { return l.itemId; });
+    });
+
+    // If ANY group log exists for this slot today, the entire slot is satisfied — hide strip.
+    var groupLogged = todaySlotLogs.some(function(l) { return l.logType === 'group'; });
+    if (groupLogged) { el.style.display = 'none'; return; }
+
+    // Legacy path: collect individually logged itemIds
+    var loggedIds = todaySlotLogs.map(function(l) { return l.itemId; }).filter(Boolean);
 
     var remaining = due.filter(function(item) {
-      return logged.indexOf(item.id) === -1;
+      return loggedIds.indexOf(item.id) === -1;
     });
+
+    // All logged — hide strip
     if (!remaining.length) { el.style.display = 'none'; return; }
 
     var slotLabel = slot.charAt(0).toUpperCase() + slot.slice(1);
-    var names = remaining.slice(0, 3).map(function(i) { return Utils.esc(i.name); });
-    if (remaining.length > 3) names.push('+ ' + (remaining.length - 3) + ' more');
 
-    el.innerHTML = '<div class="today-supp-strip-label">' + slotLabel + ' reminder</div>' +
-                   names.join(' · ');
+    // Smart body copy: specific for 1–2 items, stack summary for 3+
+    // For 3+: distinguish supps-only, meds-only, or mixed
+    var bodyText;
+    if (remaining.length === 1) {
+      bodyText = 'Take your ' + Utils.esc(remaining[0].name);
+    } else if (remaining.length === 2) {
+      bodyText = 'Take your ' + Utils.esc(remaining[0].name) + ' and ' + Utils.esc(remaining[1].name);
+    } else {
+      var hasSupps = remaining.some(function(i) { return i.itemType === 'supp' || !i.itemType; });
+      var hasMeds  = remaining.some(function(i) { return i.itemType === 'med'; });
+      var stackLabel;
+      if (hasSupps && hasMeds) stackLabel = slotLabel.toLowerCase() + ' supps & meds';
+      else if (hasMeds)        stackLabel = slotLabel.toLowerCase() + ' meds';
+      else                     stackLabel = slotLabel.toLowerCase() + ' stack';
+      bodyText = 'Take your ' + stackLabel + ' · ' + remaining.length + ' items';
+    }
+
+    el.innerHTML =
+      '<div class="today-supp-strip-header">'
+      + '<span class="today-supp-strip-icon">🔔</span>'
+      + '<span class="today-supp-strip-label">' + slotLabel + ' reminder</span>'
+      + '</div>'
+      + '<div class="today-supp-strip-body">' + bodyText + '</div>';
     el.style.display = '';
   }
 
@@ -9761,24 +9987,27 @@ var ScreenYou = (function() {
     items.forEach(function(item) {
       var isEditing = (_editingId && _editingId.type === type && _editingId.id === item.id);
 
-      var badgeHtml = (item.slots && item.slots.length)
-        ? item.slots.map(function(sl) {
-            return '<span class="inv-item-slot-badge">' + _capitalize(sl) + '</span>';
-          }).join('')
-        : '<span class="inv-item-slot-badge" style="background:var(--bg2);border-color:var(--bd);color:var(--mt);">No schedule</span>';
+      // Inline tappable slot pills on saved row
+      var slotRowHtml = ['morning','afternoon','evening'].map(function(slot) {
+        var active = (item.slots && item.slots.indexOf(slot) !== -1) ? ' active' : '';
+        var label  = _capitalize(slot);
+        return '<button class="inv-item-slot-pill' + active + '" data-action="slot-toggle" data-slot="' + slot + '" data-id="' + Utils.esc(item.id) + '" data-type="' + type + '" aria-label="' + _capitalize(slot) + '">' + label + '</button>';
+      }).join('');
 
-      var slotHtml = ['morning','afternoon','evening'].map(function(slot) {
-        var active = item.slots && item.slots.indexOf(slot) !== -1 ? ' active' : '';
-        return '<button class="inv-slot-pill' + active + '" data-slot="' + slot + '">'
-          + _capitalize(slot) + '</button>';
+      // Edit form slot pills
+      var editSlotHtml = ['morning','afternoon','evening'].map(function(slot) {
+        var active = (item.slots && item.slots.indexOf(slot) !== -1) ? ' active' : '';
+        return '<button class="inv-slot-pill' + active + '" data-slot="' + slot + '">' + _capitalize(slot) + '</button>';
       }).join('');
 
       html += '<div class="inv-item" data-id="' + Utils.esc(item.id) + '" data-type="' + type + '">'
         + '<div class="inv-item-row">'
         +   '<div class="inv-item-left">'
-        +     '<div class="inv-item-name">' + Utils.esc(item.name) + '</div>'
-        +     (item.dose ? '<div class="inv-item-dose">' + Utils.esc(item.dose) + '</div>' : '')
-        +     '<div class="inv-item-slot-row">' + badgeHtml + '</div>'
+        +     '<div class="inv-item-main-row">'
+        +       '<span class="inv-item-name">' + Utils.esc(item.name) + '</span>'
+        +       (item.dose ? '<span class="inv-item-dose">' + Utils.esc(item.dose) + '</span>' : '')
+        +     '</div>'
+        +     '<div class="inv-item-slot-row">' + slotRowHtml + '</div>'
         +   '</div>'
         +   '<div class="inv-item-actions">'
         +     '<button class="inv-edit-btn" data-action="edit" data-id="' + Utils.esc(item.id) + '" data-type="' + type + '" aria-label="Edit">✎</button>'
@@ -9786,9 +10015,12 @@ var ScreenYou = (function() {
         +   '</div>'
         + '</div>'
         + '<div class="inv-form' + (isEditing ? ' open' : '') + '" data-edit-form="' + Utils.esc(item.id) + '">'
-        +   '<input class="inv-form-input inv-edit-name" type="text" value="' + Utils.esc(item.name) + '" maxlength="60" autocomplete="off" placeholder="Name">'
+        +   '<div class="inv-ac-wrap">'
+        +     '<input class="inv-form-input inv-edit-name" type="text" value="' + Utils.esc(item.name) + '" maxlength="60" autocomplete="off" placeholder="Name">'
+        +     '<div class="inv-ac-dropdown" data-ac-edit-id="' + Utils.esc(item.id) + '" data-ac-type="' + type + '"></div>'
+        +   '</div>'
         +   '<input class="inv-form-input inv-form-input--secondary inv-edit-dose" type="text" value="' + Utils.esc(item.dose || '') + '" maxlength="40" autocomplete="off" placeholder="Dosage (optional)">'
-        +   '<div class="inv-slot-row">' + slotHtml + '</div>'
+        +   '<div class="inv-slot-row">' + editSlotHtml + '</div>'
         +   '<div class="inv-form-actions">'
         +     '<button class="inv-cancel-btn" data-action="edit-cancel" data-id="' + Utils.esc(item.id) + '" data-type="' + type + '">Cancel</button>'
         +     '<button class="inv-save-btn"   data-action="edit-save"   data-id="' + Utils.esc(item.id) + '" data-type="' + type + '">Save</button>'
@@ -9796,7 +10028,12 @@ var ScreenYou = (function() {
         + '</div>'
         + '</div>';
     });
-    listEl.innerHTML = html;
+    listEl.innerHTML = html; // [SAFE: Utils.esc()]
+
+    // Wire InvAC to any newly-rendered edit forms that are open
+    if (_editingId && _editingId.type === type) {
+      InvAC.bindEditForm(type, _editingId.id);
+    }
   }
 
   // ── Add form (top of list) ─────────────────────────────────
@@ -9835,12 +10072,29 @@ var ScreenYou = (function() {
 
     var s = State.get();
     var arr = type === 'supp' ? (s.supplements || []) : (s.medications || []);
-    // Carry fx[] from catalogue so the insight engine can use it
+    // Carry fx[], sideEffects[], benefits[], brandNames[], doseUnit from catalogue
     var catalogue = type === 'supp' ? COMMON_SUPPS : COMMON_MEDS;
     var catEntry  = catalogue.filter(function(c) { return c.name.toLowerCase() === name.toLowerCase(); })[0];
-    var fx        = catEntry ? (catEntry.fx || []) : [];
+    var fx           = catEntry ? (catEntry.fx           || []) : [];
+    var sideEffects  = catEntry ? (catEntry.sideEffects  || []) : [];
+    var benefits     = catEntry ? (catEntry.benefits     || []) : [];
+    var brandNames   = catEntry ? (catEntry.brandNames   || []) : [];
+    var doseUnit     = catEntry ? (catEntry.doseUnit     || '')  : '';
+    var nowTs = Date.now();
 
-    arr.push({ id: Utils.uid(), name: name, dose: dose, slots: slots, addedTs: Date.now(), fx: fx });
+    arr.push({
+      id: Utils.uid(),
+      name: name,
+      dose: dose,
+      slots: slots,
+      addedTs: nowTs,
+      fx: fx,
+      sideEffects: sideEffects,
+      benefits: benefits,
+      brandNames: brandNames,
+      doseUnit: doseUnit,
+      changeLog: [{ ts: nowTs, changeType: 'added', previousDose: null, newDose: dose, note: null }]
+    });
     State.update(type === 'supp' ? 'supplements' : 'medications', arr);
     Storage.sched();
     _closeAddForm(type);
@@ -9850,12 +10104,12 @@ var ScreenYou = (function() {
 
   // ── Edit (inline expand) ────────────────────────────────────
 
-  function _openEdit(type, id) {
+  function _openInvEdit(type, id) {
     _editingId = { type: type, id: id };
     _renderInventory(type);
   }
 
-  function _cancelEdit(type) {
+  function _cancelInvEdit(type) {
     _editingId = null;
     _renderInventory(type);
   }
@@ -9876,14 +10130,77 @@ var ScreenYou = (function() {
 
     var s = State.get();
     var key = type === 'supp' ? 'supplements' : 'medications';
-    var arr = (s[key] || []).map(function(item) {
-      return item.id === id ? { id: item.id, name: name, dose: dose, slots: slots, addedTs: item.addedTs || null } : item;
-    });
-    State.update(key, arr);
-    Storage.sched();
-    _editingId = null;
-    _renderInventory(type);
-    Components.toast(name + ' updated.');
+    var existing = (s[key] || []).filter(function(i) { return i.id === id; })[0];
+    if (!existing) return;
+
+    var previousDose = existing.dose || '';
+    var doseChanged  = dose !== previousDose;
+
+    // Preserve all v24 fields — critical: prior code silently dropped them on save
+    var updatedItem = {
+      id:          existing.id,
+      name:        name,
+      dose:        dose,
+      slots:       slots,
+      addedTs:     existing.addedTs || null,
+      fx:          existing.fx          || [],
+      sideEffects: existing.sideEffects || [],
+      benefits:    existing.benefits    || [],
+      brandNames:  existing.brandNames  || [],
+      doseUnit:    existing.doseUnit    || '',
+      changeLog:   (existing.changeLog  || []).slice()
+    };
+
+    function _doSave(logDoseChange) {
+      if (logDoseChange) {
+        updatedItem.changeLog.push({
+          ts:           Date.now(),
+          changeType:   'dose_change',
+          previousDose: previousDose,
+          newDose:      dose,
+          note:         null
+        });
+      }
+      var arr = (s[key] || []).map(function(item) {
+        return item.id === id ? updatedItem : item;
+      });
+      State.update(key, arr);
+      Storage.sched();
+      _editingId = null;
+      _renderInventory(type);
+      Components.toast(name + ' updated.');
+    }
+
+    if (doseChanged && dose) {
+      // Dose changed — show inline confirm bar in the form
+      _showDoseChangeConfirm(formEl, name, previousDose, dose, function(logIt) {
+        _doSave(logIt);
+      });
+    } else {
+      _doSave(false);
+    }
+  }
+
+  // Renders a small confirm bar at the bottom of the edit form asking about dose change
+  function _showDoseChangeConfirm(formEl, name, prevDose, newDose, cb) {
+    // Remove any prior confirm bar
+    var old = formEl.querySelector('.inv-dose-confirm');
+    if (old) old.parentNode.removeChild(old);
+
+    var bar = document.createElement('div');
+    bar.className = 'inv-dose-confirm';
+    bar.innerHTML =
+      '<div class="inv-dose-confirm-msg">Log dose change?' +
+        (prevDose ? ' <span class="inv-dose-confirm-detail">(' + Utils.esc(prevDose) + ' → ' + Utils.esc(newDose) + ')</span>' : '') +
+      '</div>' +
+      '<div class="inv-dose-confirm-btns">' +
+        '<button class="inv-cancel-btn inv-dose-no">Skip</button>' +
+        '<button class="inv-save-btn inv-dose-yes">Log it</button>' +
+      '</div>';
+    formEl.appendChild(bar);
+
+    bar.querySelector('.inv-dose-yes').addEventListener('click', function() { cb(true);  });
+    bar.querySelector('.inv-dose-no' ).addEventListener('click', function() { cb(false); });
   }
 
   // ── Delete ─────────────────────────────────────────────────
@@ -9941,13 +10258,35 @@ var ScreenYou = (function() {
       }
     });
 
-    // Item list delegation (edit / delete / edit-form pills / edit-save / edit-cancel)
+    // Item list delegation (slot-toggle / edit / delete / edit-form pills / edit-save / edit-cancel)
     ['supp','med'].forEach(function(type) {
       var listEl = document.getElementById('inv-' + type + '-list');
       if (!listEl) return;
       listEl.addEventListener('click', function(e) {
+        // Edit-form slot pills
         var pill = e.target.closest('.inv-slot-pill');
-        if (pill) { pill.classList.toggle('active'); return; }
+        if (pill && pill.closest('[data-edit-form]')) { pill.classList.toggle('active'); return; }
+
+        // Saved-row inline slot toggles — update state immediately
+        var slotBtn = e.target.closest('[data-action="slot-toggle"]');
+        if (slotBtn) {
+          var slotId   = slotBtn.dataset.id;
+          var slotName = slotBtn.dataset.slot;
+          var sNow = State.get();
+          var keyNow = type === 'supp' ? 'supplements' : 'medications';
+          var arrNow = (sNow[keyNow] || []).map(function(item) {
+            if (item.id !== slotId) return item;
+            var slots = (item.slots || []).slice();
+            var idx   = slots.indexOf(slotName);
+            if (idx === -1) slots.push(slotName);
+            else slots.splice(idx, 1);
+            return Object.assign({}, item, { slots: slots });
+          });
+          State.update(keyNow, arrNow);
+          Storage.sched();
+          slotBtn.classList.toggle('active');
+          return;
+        }
 
         var btn = e.target.closest('[data-action]');
         if (!btn) return;
@@ -9955,8 +10294,8 @@ var ScreenYou = (function() {
         var id     = btn.dataset.id;
         var t      = btn.dataset.type || type;
 
-        if (action === 'edit')        _openEdit(t, id);
-        else if (action === 'edit-cancel') _cancelEdit(t);
+        if      (action === 'edit')        _openInvEdit(t, id);
+        else if (action === 'edit-cancel') _cancelInvEdit(t);
         else if (action === 'edit-save')   _saveEdit(t, id);
         else if (action === 'delete')      _deleteItem(t, id);
       });
@@ -13783,6 +14122,18 @@ var ScreenMeals = (function() {
         if (!btn) return;
         _openSuppMedSheet(btn.dataset.slot);
       });
+
+      // Delete suppmed group log entry
+      scrollBody.addEventListener('click', function(e) {
+        var btn = e.target.closest('.suppmed-log-delete[data-log-id]');
+        if (!btn) return;
+        var id = btn.dataset.logId;
+        State.removeLog('suppLogs', id);
+        Storage.sched();
+        _renderSuppMedStrips();
+        ScreenToday.render();
+        Components.toast('Entry removed');
+      });
     }
 
     _bindSuppMedSheet();
@@ -13941,113 +14292,338 @@ var ScreenMeals = (function() {
   // ── Supp/Med sheet ─────────────────────────────────────────
   var _pendingSuppSlot = null;
   var _pendingSuppType = null;  // 'supp'|'med'
-  var _selectedItems   = {};
+  var _skippedItems    = {};    // itemIds user tapped to uncheck in group path
+  var _pathBActive     = false; // true when individual picker (Path B) is showing
+
+  // ── Helper: compute group items for a slot + type from inventory ────────
+  function _computeGroup(slot, itemType) {
+    var s    = State.get();
+    var list = itemType === 'med' ? (s.medications || []) : (s.supplements || []);
+    return list.filter(function(item) {
+      return item && item.name && Array.isArray(item.slots) && item.slots.indexOf(slot) !== -1;
+    }).map(function(item) {
+      return { id: item.id, name: item.name, dose: item.dose || '', itemType: itemType };
+    });
+  }
+
+  // ── Helper: check if this slot+type already logged today ─────────────────
+  function _alreadyLoggedToday(slot, itemType) {
+    var s       = State.get();
+    var logs    = s.logs.suppLogs || [];
+    var today   = new Date(); today.setHours(0, 0, 0, 0);
+    var todayTs = today.getTime();
+    return logs.some(function(e) {
+      return e.slot === slot && e.mealTs >= todayTs &&
+             // v24 group entry
+             ((e.logType && e.items && e.items.length > 0 &&
+               e.items[0].itemType === itemType) ||
+             // legacy single-item entry
+             (!e.logType && e.itemType === itemType));
+    });
+  }
 
   function _openSuppMedSheet(slot, itemType) {
     _pendingSuppSlot = slot;
     _pendingSuppType = itemType;
-    _selectedItems   = {};
+    // _skippedItems: set of itemIds the user has tapped to uncheck
+    _skippedItems = {};
+    _pathBActive  = false;
 
     var slotLabel = slot.charAt(0).toUpperCase() + slot.slice(1);
     var typeLabel = itemType === 'med' ? 'Medications' : 'Supplements';
     document.getElementById('suppmed-entry-title').textContent = slotLabel + ' ' + typeLabel;
     document.getElementById('suppmed-entry-time').value = _nowTimeStr();
 
-    _renderSuppMedInventory(itemType);
+    _renderSuppMedSheet();
     Components.openSheet('sheet-suppmed-entry');
   }
 
-  function _renderSuppMedInventory(itemType) {
+  function _renderSuppMedSheet() {
+    var slot     = _pendingSuppSlot;
+    var itemType = _pendingSuppType;
+    var typeWord = itemType === 'med' ? 'medications' : 'supplements';
+    var icon     = itemType === 'med' ? '💉' : '💊';
+
+    var groupEl  = document.getElementById('suppmed-group-list');
+    var statusEl = document.getElementById('suppmed-status-area');
+    var timeEl   = document.getElementById('suppmed-time-label');
+    var timeInEl = document.getElementById('suppmed-entry-time');
+    var saveEl   = document.getElementById('suppmed-entry-save-btn');
+
+    groupEl.innerHTML  = '';
+    statusEl.innerHTML = '';
+
+    // Helper: show/hide time row and save button together
+    function _showActions(show) {
+      var d = show ? '' : 'none';
+      timeEl.style.display   = d;
+      timeInEl.style.display = d;
+      saveEl.style.display   = d;
+    }
+
+    // If Path B is active — render individual picker instead
+    if (_pathBActive) {
+      _renderPathB();
+      return;
+    }
+
+    // 1. Already logged today? → show confirmation state + Path B link for additive entry
+    if (_alreadyLoggedToday(slot, itemType)) {
+      var slotLabel = slot.charAt(0).toUpperCase() + slot.slice(1);
+      statusEl.innerHTML =
+        '<div class="suppmed-already-logged">' +
+        '<div class="suppmed-already-logged-icon">✓</div>' +
+        '<div class="suppmed-already-logged-msg">' + slotLabel + ' ' + typeWord + ' already logged today</div>' +
+        '</div>' +
+        '<a class="suppmed-path-b-link" id="suppmed-path-b-trigger">+ Log additional item</a>';
+      _showActions(false);
+      return;
+    }
+
+    // 2. Compute group for this slot
+    var group = _computeGroup(slot, itemType);
+
+    // 3. No inventory at all
     var s    = State.get();
     var list = itemType === 'med' ? (s.medications || []) : (s.supplements || []);
-    var all  = list.map(function(name, i) {
-      return { id: itemType + '-' + i, name: name, itemType: itemType };
-    }).filter(function(item) { return !!item.name; });
+    var hasInventory = list.filter(function(i) { return i && i.name; }).length > 0;
 
-    var listEl  = document.getElementById('suppmed-inventory-list');
-    var emptyEl = document.getElementById('suppmed-empty-state');
-    var timeEl  = document.getElementById('suppmed-time-label');
-    var saveEl  = document.getElementById('suppmed-entry-save-btn');
-
-    if (all.length === 0) {
-      var typeWord = itemType === 'med' ? 'medications' : 'supplements';
-      listEl.innerHTML = '';
-      emptyEl.innerHTML =
+    if (!hasInventory) {
+      statusEl.innerHTML =
         '<div class="suppmed-empty-msg">No ' + typeWord + ' in your inventory yet.</div>' +
-        '<button class="btn-primary" id="suppmed-goto-settings" style="margin-top:8px;">Go to You tab</button>';
-      emptyEl.style.display = 'block';
-      timeEl.style.display  = 'none';
-      saveEl.style.display  = 'none';
-      // Wire settings redirect
-      var btn = document.getElementById('suppmed-goto-settings');
+        '<button class="btn-primary" id="suppmed-goto-you" style="margin-top:8px;">Go to You tab</button>';
+      _showActions(false);
+      var btn = document.getElementById('suppmed-goto-you');
       if (btn) btn.addEventListener('click', function() {
         Components.closeSheet('sheet-suppmed-entry');
         Router.go('you');
-        Components.toast('Add ' + typeWord + ' in the You tab');
       });
       return;
     }
 
-    emptyEl.style.display = 'none';
-    timeEl.style.display  = 'block';
-    saveEl.style.display  = 'block';
+    // 4. No slots assigned — fallback: nudge + Path B as primary CTA
+    if (group.length === 0) {
+      statusEl.innerHTML =
+        '<div class="suppmed-group-nudge">No ' + slot + ' routine set up yet.<br>' +
+        'Assign slots in <a id="suppmed-nudge-link">You → ' +
+        (itemType === 'med' ? 'Medications' : 'Supplements') + '</a> to enable one-tap group logging.</div>' +
+        '<a class="suppmed-path-b-link-primary" id="suppmed-path-b-trigger">Log individual item</a>';
+      _showActions(false);
+      var link = document.getElementById('suppmed-nudge-link');
+      if (link) link.addEventListener('click', function() {
+        Components.closeSheet('sheet-suppmed-entry');
+        Router.go('you');
+      });
+      return;
+    }
 
-    var icon = itemType === 'med' ? '💉' : '💊';
+    // 5. PATH A — group checklist (all pre-checked)
     var html = '';
-    all.forEach(function(item) {
+    group.forEach(function(item) {
+      html += '<div class="suppmed-group-item" data-item-id="' + Utils.esc(item.id) + '"' +
+              ' data-item-name="' + Utils.esc(item.name) + '"' +
+              ' data-item-dose="' + Utils.esc(item.dose) + '"' +
+              ' data-item-type="' + Utils.esc(item.itemType) + '">';
+      html += '<div class="suppmed-group-item-left">';
+      html += '<span class="suppmed-group-item-icon">' + icon + '</span>';
+      html += '<div>';
+      html += '<div class="suppmed-group-item-name">' + Utils.esc(item.name) + '</div>';
+      if (item.dose) {
+        html += '<div class="suppmed-group-item-dose">' + Utils.esc(item.dose) + '</div>';
+      }
+      html += '</div></div>';
+      html += '<div class="suppmed-group-item-check">';
+      html += '<svg class="suppmed-group-item-checkmark" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>';
+      html += '</div></div>';
+    });
+    // Path B link at bottom of group list
+    html += '<a class="suppmed-path-b-link" id="suppmed-path-b-trigger">Log individual item instead</a>';
+    groupEl.innerHTML = html; // [SAFE: Utils.esc()]
+
+    _showActions(true);
+  }
+
+  // ── Path B: individual item picker ───────────────────────────────────────
+  function _renderPathB() {
+    var itemType = _pendingSuppType;
+    var icon     = itemType === 'med' ? '💉' : '💊';
+    var typeWord = itemType === 'med' ? 'medications' : 'supplements';
+
+    var groupEl  = document.getElementById('suppmed-group-list');
+    var statusEl = document.getElementById('suppmed-status-area');
+    var timeEl   = document.getElementById('suppmed-time-label');
+    var timeInEl = document.getElementById('suppmed-entry-time');
+    var saveEl   = document.getElementById('suppmed-entry-save-btn');
+
+    statusEl.innerHTML = '';
+
+    var s    = State.get();
+    var list = (itemType === 'med' ? (s.medications || []) : (s.supplements || []))
+               .filter(function(i) { return i && i.name; });
+
+    var html = '';
+    // Back link
+    html += '<div class="suppmed-path-b-back" id="suppmed-path-b-back">‹ Back</div>';
+
+    if (list.length === 0) {
+      html += '<div class="suppmed-empty-msg">No ' + typeWord + ' in inventory.</div>';
+      groupEl.innerHTML = html;
+      timeEl.style.display   = 'none';
+      timeInEl.style.display = 'none';
+      saveEl.style.display   = 'none';
+      return;
+    }
+
+    list.forEach(function(item) {
       html += '<div class="suppmed-inventory-item" data-item-id="' + Utils.esc(item.id) + '"' +
               ' data-item-name="' + Utils.esc(item.name) + '"' +
-              ' data-item-type="' + Utils.esc(item.itemType) + '">';
+              ' data-item-dose="' + Utils.esc(item.dose || '') + '"' +
+              ' data-item-type="' + Utils.esc(itemType) + '">';
       html += '<div class="suppmed-item-left">';
       html += '<span class="suppmed-item-icon">' + icon + '</span>';
-      html += '<div><div class="suppmed-item-name">' + Utils.esc(item.name) + '</div></div>';
-      html += '</div>';
+      html += '<div>';
+      html += '<div class="suppmed-item-name">' + Utils.esc(item.name) + '</div>';
+      if (item.dose) {
+        html += '<div class="suppmed-group-item-dose">' + Utils.esc(item.dose) + '</div>';
+      }
+      html += '</div></div>';
       html += '<div class="suppmed-item-check">';
       html += '<svg class="suppmed-item-checkmark" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>';
       html += '</div></div>';
     });
-    listEl.innerHTML = html; // [SAFE: Utils.esc()]
+
+    groupEl.innerHTML = html; // [SAFE: Utils.esc()]
+
+    // Show save button, update label
+    timeEl.style.display   = '';
+    timeInEl.style.display = '';
+    saveEl.style.display   = '';
+    saveEl.textContent = 'Log selected';
+
+    // Bind back button
+    var backBtn = document.getElementById('suppmed-path-b-back');
+    if (backBtn) backBtn.addEventListener('click', function() {
+      _pathBActive = false;
+      saveEl.textContent = 'Log';
+      _renderSuppMedSheet();
+    });
   }
 
   function _saveSuppMed() {
-    var selected = Object.keys(_selectedItems);
-    if (selected.length === 0) {
-      Components.toast('Select at least one item');
-      return;
-    }
-    var timeStr = document.getElementById('suppmed-entry-time').value;
-    var mealTs  = _timeStrToTs(timeStr);
-    var savedIds = [];
+    if (_pathBActive) { _saveIndividual(); return; }
 
-    // Read item details from DOM (already sanitized via Utils.esc on render)
-    var items = document.querySelectorAll('#suppmed-inventory-list .suppmed-inventory-item.selected');
+    // Collect items: all group items that are NOT skipped
+    var items = document.querySelectorAll('#suppmed-group-list .suppmed-group-item');
+    var snapshot = [];
     items.forEach(function(el) {
-      var entry = {
-        id:       Utils.uid(),
-        ts:       Date.now(),
-        mealTs:   mealTs,
-        slot:     _pendingSuppSlot,
-        itemId:   el.dataset.itemId,
-        name:     el.dataset.itemName,
-        itemType: el.dataset.itemType,
-      };
-      State.pushLog('suppLogs', entry);
-      savedIds.push(entry.id);
+      if (!el.classList.contains('skipped')) {
+        snapshot.push({
+          itemId:   el.dataset.itemId,
+          name:     el.dataset.itemName,
+          itemType: el.dataset.itemType,
+          dose:     el.dataset.itemDose || ''
+        });
+      }
     });
 
+    if (snapshot.length === 0) {
+      Components.toast('Nothing to log — all items unchecked');
+      return;
+    }
+
+    var timeStr    = document.getElementById('suppmed-entry-time').value;
+    var mealTs     = _timeStrToTs(timeStr);
+    var typeWord   = _pendingSuppType === 'med' ? 'Med' : 'Supp';
+    var slotLabel  = _pendingSuppSlot.charAt(0).toUpperCase() + _pendingSuppSlot.slice(1);
+    var groupLabel = slotLabel + ' ' + (typeWord === 'Med' ? 'Medications' : 'Supplements');
+
+    var entry = {
+      id:         Utils.uid(),
+      ts:         Date.now(),
+      mealTs:     mealTs,
+      slot:       _pendingSuppSlot,
+      logType:    'group',
+      groupLabel: groupLabel,
+      items:      snapshot   // snapshot at time of logging — never look up live inventory
+    };
+
+    State.pushLog('suppLogs', entry);
     Storage.sched();
     Components.closeSheet('sheet-suppmed-entry');
     _renderSuppMedStrips();
+    ScreenToday.render();
 
-    var label = savedIds.length > 1 ? savedIds.length + ' items logged' : 'Logged';
+    var count = snapshot.length;
+    var label = count === 1
+      ? snapshot[0].name + ' logged'
+      : count + ' ' + typeWord + 's logged';
+
+    var entryId = entry.id;
     Components.toast(label, function() {
-      savedIds.forEach(function(id) { State.removeLog('suppLogs', id); });
+      State.removeLog('suppLogs', entryId);
       Storage.sched();
       _renderSuppMedStrips();
+      ScreenToday.render();
     });
   }
 
-  // Renders all three suppmed logged areas from state
+  function _saveIndividual() {
+    var items = document.querySelectorAll('#suppmed-group-list .suppmed-inventory-item.selected');
+    var snapshot = [];
+    items.forEach(function(el) {
+      snapshot.push({
+        itemId:   el.dataset.itemId,
+        name:     el.dataset.itemName,
+        itemType: el.dataset.itemType,
+        dose:     el.dataset.itemDose || ''
+      });
+    });
+
+    if (snapshot.length === 0) {
+      Components.toast('Select at least one item to log');
+      return;
+    }
+
+    var timeStr  = document.getElementById('suppmed-entry-time').value;
+    var mealTs   = _timeStrToTs(timeStr);
+    var typeWord = _pendingSuppType === 'med' ? 'Med' : 'Supp';
+
+    var entry = {
+      id:         Utils.uid(),
+      ts:         Date.now(),
+      mealTs:     mealTs,
+      slot:       _pendingSuppSlot,
+      logType:    'individual',
+      groupLabel: null,
+      items:      snapshot   // snapshot at time of logging
+    };
+
+    State.pushLog('suppLogs', entry);
+    Storage.sched();
+
+    // Reset Path B state and save button label before closing
+    _pathBActive = false;
+    document.getElementById('suppmed-entry-save-btn').textContent = 'Log';
+
+    Components.closeSheet('sheet-suppmed-entry');
+    _renderSuppMedStrips();
+    ScreenToday.render();
+
+    var count = snapshot.length;
+    var label = count === 1
+      ? snapshot[0].name + ' logged'
+      : count + ' ' + typeWord + 's logged';
+
+    var entryId = entry.id;
+    Components.toast(label, function() {
+      State.removeLog('suppLogs', entryId);
+      Storage.sched();
+      _renderSuppMedStrips();
+      ScreenToday.render();
+    });
+  }
+
+  // Renders all three suppmed logged areas from state — handles both legacy + v24 group entries
   function _renderSuppMedStrips() {
     var s       = State.get();
     var logs    = s.logs.suppLogs || [];
@@ -14066,12 +14642,41 @@ var ScreenMeals = (function() {
       entries.sort(function(a, b) { return a.mealTs - b.mealTs; });
       var html = '';
       entries.forEach(function(e) {
-        var icon = e.itemType === 'med' ? '💉' : '💊';
-        html += '<div class="suppmed-log-item">';
-        html += '<span class="suppmed-log-icon">' + icon + '</span>';
-        html += '<span class="suppmed-log-name">' + Utils.esc(e.name) + '</span>';
-        html += '<span class="suppmed-log-time">' + Utils.esc(Utils.fmtTime(e.mealTs)) + '</span>';
-        html += '</div>';
+        var trashSvg = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+        if (e.logType === 'group' && Array.isArray(e.items)) {
+          // v24 group entry — show group label + item count + delete
+          var suppCount = e.items.filter(function(i) { return i.itemType === 'supp'; }).length;
+          var medCount  = e.items.filter(function(i) { return i.itemType === 'med';  }).length;
+          var parts = [];
+          if (suppCount > 0) parts.push(suppCount + ' supp' + (suppCount > 1 ? 's' : ''));
+          if (medCount  > 0) parts.push(medCount  + ' med'  + (medCount  > 1 ? 's' : ''));
+          html += '<div class="suppmed-log-item">';
+          html += '<span class="suppmed-log-icon">✓</span>';
+          html += '<span class="suppmed-log-name">' + Utils.esc(e.groupLabel || 'Group') + ' · ' + parts.join(', ') + '</span>';
+          html += '<span class="suppmed-log-time">' + Utils.esc(Utils.fmtTime(e.mealTs)) + '</span>';
+          html += '<button class="suppmed-log-delete" data-log-id="' + Utils.esc(e.id) + '" aria-label="Delete log entry">' + trashSvg + '</button>';
+          html += '</div>';
+        } else if (e.logType === 'individual' && Array.isArray(e.items)) {
+          // v24 individual entry — show item names or count + delete
+          var count = e.items.length;
+          var label = count === 1
+            ? e.items[0].name
+            : count + ' item' + (count > 1 ? 's' : '');
+          html += '<div class="suppmed-log-item">';
+          html += '<span class="suppmed-log-icon">✓</span>';
+          html += '<span class="suppmed-log-name">' + Utils.esc(label) + '</span>';
+          html += '<span class="suppmed-log-time">' + Utils.esc(Utils.fmtTime(e.mealTs)) + '</span>';
+          html += '<button class="suppmed-log-delete" data-log-id="' + Utils.esc(e.id) + '" aria-label="Delete log entry">' + trashSvg + '</button>';
+          html += '</div>';
+        } else {
+          // Legacy single-item entry — no delete (legacy data, not worth the complexity)
+          var icon = e.itemType === 'med' ? '💉' : '💊';
+          html += '<div class="suppmed-log-item">';
+          html += '<span class="suppmed-log-icon">' + icon + '</span>';
+          html += '<span class="suppmed-log-name">' + Utils.esc(e.name || '') + '</span>';
+          html += '<span class="suppmed-log-time">' + Utils.esc(Utils.fmtTime(e.mealTs)) + '</span>';
+          html += '</div>';
+        }
       });
       el.innerHTML = html; // [SAFE: Utils.esc()]
     });
@@ -14079,22 +14684,44 @@ var ScreenMeals = (function() {
 
   function _bindSuppMedSheet() {
     document.getElementById('suppmed-entry-close-btn').addEventListener('click', function() {
+      _pathBActive = false;
+      document.getElementById('suppmed-entry-save-btn').textContent = 'Log';
       Components.closeSheet('sheet-suppmed-entry');
     });
 
     document.getElementById('suppmed-entry-save-btn').addEventListener('click', _saveSuppMed);
 
-    // Item tap — toggle selected
-    document.getElementById('suppmed-inventory-list').addEventListener('click', function(e) {
-      var item = e.target.closest('.suppmed-inventory-item[data-item-id]');
-      if (!item) return;
-      var id = item.dataset.itemId;
-      if (_selectedItems[id]) {
-        delete _selectedItems[id];
-        item.classList.remove('selected');
-      } else {
-        _selectedItems[id] = true;
-        item.classList.add('selected');
+    // Group item tap — toggle skipped state (starts checked, tap = uncheck)
+    document.getElementById('suppmed-group-list').addEventListener('click', function(e) {
+      // Path B: individual item selection (starts unchecked, tap = select)
+      var invItem = e.target.closest('.suppmed-inventory-item[data-item-id]');
+      if (invItem) {
+        invItem.classList.toggle('selected');
+        return;
+      }
+
+      // Path A: group item toggle
+      var groupItem = e.target.closest('.suppmed-group-item[data-item-id]');
+      if (groupItem) {
+        groupItem.classList.toggle('skipped');
+        return;
+      }
+
+      // Path B trigger link (inside groupEl)
+      var pathBLink = e.target.closest('#suppmed-path-b-trigger');
+      if (pathBLink) {
+        _pathBActive = true;
+        _renderSuppMedSheet();
+        return;
+      }
+    });
+
+    // Path B trigger inside statusEl (fallback + already-logged states)
+    document.getElementById('suppmed-status-area').addEventListener('click', function(e) {
+      var pathBLink = e.target.closest('#suppmed-path-b-trigger');
+      if (pathBLink) {
+        _pathBActive = true;
+        _renderSuppMedSheet();
       }
     });
   }
@@ -14224,7 +14851,36 @@ var InvAC = (function() {
     _bindField('med');
   }
 
-  return { bindEvents };
+  // Wire autocomplete to a dynamically rendered edit form (tech debt 01 fix)
+  // Called from _renderInventory after innerHTML is set and _editingId is active
+  function bindEditForm(type, itemId) {
+    var formEl = document.querySelector('[data-edit-form="' + itemId + '"]');
+    if (!formEl) return;
+    var nameEl = formEl.querySelector('.inv-edit-name');
+    var doseEl = formEl.querySelector('.inv-edit-dose');
+    var dropEl = formEl.querySelector('[data-ac-edit-id="' + itemId + '"]');
+    if (!nameEl || !dropEl) return;
+
+    nameEl.addEventListener('focus', function() {
+      _active = { type: type, nameEl: nameEl, doseEl: doseEl, dropEl: dropEl };
+      _render(type, nameEl.value);
+    });
+    nameEl.addEventListener('input', function() {
+      _active = { type: type, nameEl: nameEl, doseEl: doseEl, dropEl: dropEl };
+      _render(type, this.value);
+    });
+    nameEl.addEventListener('blur', function() {
+      setTimeout(_close, 180);
+    });
+    dropEl.addEventListener('mousedown', function(e) { e.preventDefault(); });
+    dropEl.addEventListener('click', function(e) {
+      var item = e.target.closest('.inv-ac-item');
+      if (!item) return;
+      _select(type, item.dataset.name, item.dataset.sub);
+    });
+  }
+
+  return { bindEvents, bindEditForm };
 
 })();
 
