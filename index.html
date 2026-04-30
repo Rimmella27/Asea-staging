@@ -2213,7 +2213,7 @@ input, textarea { font-family: inherit; }
   color: var(--mt);
 }
 .inv-form-input:focus { border-color: var(--acc); }
-.inv-slot-row { display: flex; gap: 8px; margin-bottom: 12px; margin-top: 4px; }
+.inv-slot-row { display: flex; gap: 8px; margin-bottom: 4px; margin-top: 4px; }
 .inv-slot-pill {
   flex: 1;
   padding: 7px 4px;
@@ -2727,6 +2727,83 @@ input, textarea { font-family: inherit; }
 #ob-step-2 .form-input { padding: 9px 14px; }
 #ob-step-2 .ob-footer { padding-top: 10px; }
 .ob-footer { padding-top: 20px; }
+
+/* ── Onboarding supp/med combined step ── */
+.ob-sm-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 4px;
+}
+.ob-sm-section {
+  background: var(--bg2);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.ob-sm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.ob-sm-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mt);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.ob-sm-add-btn {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--acc);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.ob-sm-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 0;
+}
+.ob-sm-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg);
+  border-radius: 9px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--tx);
+  margin-top: 8px;
+}
+.ob-sm-chip-name { font-weight: 500; flex: 1; }
+.ob-sm-chip-dose { font-size: 12px; color: var(--mt); margin-left: 8px; }
+.ob-sm-chip-remove {
+  background: none; border: none; cursor: pointer;
+  color: var(--mt); font-size: 16px; padding: 0 0 0 10px;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+.ob-sm-form {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.ob-sm-form.open { display: flex; }
+.ob-slot-hint, .inv-slot-hint {
+  font-size: 12px;
+  color: var(--mt);
+  line-height: 1.5;
+  margin-top: -2px;
+  margin-bottom: 8px;
+}
 
 /* ══════════════════════════════════════════════
    UTILITY
@@ -5001,6 +5078,7 @@ input, textarea { font-family: inherit; }
             <button class="inv-slot-pill" data-slot="afternoon">Afternoon</button>
             <button class="inv-slot-pill" data-slot="evening">Evening</button>
           </div>
+          <div class="inv-slot-hint">When do you take it? Pick all that apply.</div>
           <div class="inv-form-actions">
             <button class="inv-cancel-btn" id="inv-supp-cancel-btn">Cancel</button>
             <button class="inv-save-btn" id="inv-supp-save-btn">Save</button>
@@ -5026,6 +5104,7 @@ input, textarea { font-family: inherit; }
             <button class="inv-slot-pill" data-slot="afternoon">Afternoon</button>
             <button class="inv-slot-pill" data-slot="evening">Evening</button>
           </div>
+          <div class="inv-slot-hint">When do you take it? Pick all that apply.</div>
           <div class="inv-form-actions">
             <button class="inv-cancel-btn" id="inv-med-cancel-btn">Cancel</button>
             <button class="inv-save-btn" id="inv-med-save-btn">Save</button>
@@ -5260,34 +5339,76 @@ input, textarea { font-family: inherit; }
         </div>
 
         <!-- Step 3: Supplements -->
+        <!-- Step 3+4 combined: Supplements & Medications -->
         <div class="ob-step" id="ob-step-3">
           <button class="ob-back-btn" data-ob-back aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-          <div class="ob-title">Do you take<br>supplements?</div>
-          <div class="ob-sub">We'll add them to your daily checklist so you can track timing and patterns.</div>
-          <div class="ob-fields" id="ob-supplements-list">
-            <button class="btn-primary" id="ob-add-supplement" style="background:var(--bg2);color:var(--acc);margin-top:0;">+ Add Supplement</button>
-            <div class="ob-skip-hint">It's OK to skip — you can add these later in the <strong>You</strong> tab.</div>
-          </div>
-          <div style="flex:1;"></div>
+          <div class="ob-title">What do<br>you take?</div>
+          <div class="ob-sub">Logging supplements and medications helps Asëa surface patterns from day one — before you've tracked a single meal.</div>
+          <div class="ob-sm-body">
+
+            <!-- Supplements section -->
+            <div class="ob-sm-section">
+              <div class="ob-sm-header">
+                <span class="ob-sm-label">Supplements</span>
+                <button class="ob-sm-add-btn" id="ob-add-supplement">+ Add</button>
+              </div>
+              <div class="ob-sm-chips" id="ob-supp-chips"></div>
+              <!-- Inline add form (hidden by default) -->
+              <div class="ob-sm-form" id="ob-supp-form">
+                <div class="inv-ac-wrap">
+                  <input class="inv-form-input" id="ob-supp-name-input" type="text" placeholder="Name or search…" maxlength="60" autocomplete="off">
+                  <div class="inv-ac-dropdown" id="ob-supp-ac-dropdown"></div>
+                </div>
+                <input class="inv-form-input inv-form-input--secondary" id="ob-supp-dose-input" type="text" placeholder="Dosage e.g. 1000 IU, 2 capsules (optional)" maxlength="40" autocomplete="off">
+                <div class="inv-slot-row">
+                  <button class="inv-slot-pill" data-slot="morning">Morning</button>
+                  <button class="inv-slot-pill" data-slot="afternoon">Afternoon</button>
+                  <button class="inv-slot-pill" data-slot="evening">Evening</button>
+                </div>
+                <div class="ob-slot-hint">When do you take it? Pick all that apply.</div>
+                <div class="inv-form-actions">
+                  <button class="inv-cancel-btn" id="ob-supp-cancel">Cancel</button>
+                  <button class="inv-save-btn" id="ob-supp-save">Save</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Medications section -->
+            <div class="ob-sm-section">
+              <div class="ob-sm-header">
+                <span class="ob-sm-label">Medications</span>
+                <button class="ob-sm-add-btn" id="ob-add-medication">+ Add</button>
+              </div>
+              <div class="ob-sm-chips" id="ob-med-chips"></div>
+              <!-- Inline add form (hidden by default) -->
+              <div class="ob-sm-form" id="ob-med-form">
+                <div class="inv-ac-wrap">
+                  <input class="inv-form-input" id="ob-med-name-input" type="text" placeholder="Name or search…" maxlength="60" autocomplete="off">
+                  <div class="inv-ac-dropdown" id="ob-med-ac-dropdown"></div>
+                </div>
+                <input class="inv-form-input inv-form-input--secondary" id="ob-med-dose-input" type="text" placeholder="Dosage e.g. 500mg, 1 tablet (optional)" maxlength="40" autocomplete="off">
+                <div class="inv-slot-row">
+                  <button class="inv-slot-pill" data-slot="morning">Morning</button>
+                  <button class="inv-slot-pill" data-slot="afternoon">Afternoon</button>
+                  <button class="inv-slot-pill" data-slot="evening">Evening</button>
+                </div>
+                <div class="ob-slot-hint">When do you take it? Pick all that apply.</div>
+                <div class="inv-form-actions">
+                  <button class="inv-cancel-btn" id="ob-med-cancel">Cancel</button>
+                  <button class="inv-save-btn" id="ob-med-save">Save</button>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /ob-sm-body -->
           <div class="ob-footer" style="display:flex;gap:10px;">
-            <button class="btn-primary" id="ob-supp-skip-btn" data-ob-next>Skip</button>
+            <button class="btn-primary" data-ob-next style="background:var(--bg2);color:var(--acc);">Skip</button>
+            <button class="btn-primary" data-ob-next>Next →</button>
           </div>
         </div>
 
-        <!-- Step 4: Medications -->
-        <div class="ob-step" id="ob-step-4">
-          <button class="ob-back-btn" data-ob-back aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-          <div class="ob-title">Do you take<br>medications?</div>
-          <div class="ob-sub">Logging medications helps Asëa understand your full picture.</div>
-          <div class="ob-fields" id="ob-medications-list">
-            <button class="btn-primary" id="ob-add-medication" style="background:var(--bg2);color:var(--acc);margin-top:0;">+ Add Medication</button>
-            <div class="ob-skip-hint">It's OK to skip — you can add these later in the <strong>You</strong> tab.</div>
-          </div>
-          <div style="flex:1;"></div>
-          <div class="ob-footer" style="display:flex;gap:10px;">
-            <button class="btn-primary" id="ob-med-skip-btn" data-ob-next>Skip</button>
-          </div>
-        </div>
+        <!-- Step 4: placeholder — step numbering preserved for _goTo() -->
+        <div class="ob-step" id="ob-step-4"></div>
 
         <!-- Step 5: Overview offer -->
         <!-- Step 5: Profile photo -->
@@ -5308,10 +5429,9 @@ input, textarea { font-family: inherit; }
             </div>
             <div class="ob-photo-hint">Tap to add a photo</div>
           </div>
-          <input type="file" id="ob-photo-input" accept="image/*" style="display:none;" aria-label="Choose profile photo">
           <div class="ob-footer" style="display:flex;gap:10px;">
             <button class="btn-primary" style="background:var(--bg2);color:var(--mt);" data-ob-next>Skip</button>
-            <label for="ob-photo-input" class="btn-primary" style="text-align:center;cursor:pointer;">Add Photo</label>
+            <button class="btn-primary" id="ob-add-photo-btn">Add Photo</button>
           </div>
         </div>
 
@@ -10189,6 +10309,7 @@ var ScreenYou = (function() {
         +   '</div>'
         +   '<input class="inv-form-input inv-form-input--secondary inv-edit-dose" type="text" value="' + Utils.esc(item.dose || '') + '" maxlength="40" autocomplete="off" placeholder="Dosage (optional)">'
         +   '<div class="inv-slot-row">' + editSlotHtml + '</div>'
+        +   '<div class="inv-slot-hint">When do you take it? Pick all that apply.</div>'
         +   '<div class="inv-form-actions">'
         +     '<button class="inv-cancel-btn" data-action="edit-cancel" data-id="' + Utils.esc(item.id) + '" data-type="' + type + '">Cancel</button>'
         +     '<button class="inv-save-btn"   data-action="edit-save"   data-id="' + Utils.esc(item.id) + '" data-type="' + type + '">Save</button>'
@@ -10696,7 +10817,33 @@ var ScreenYou = (function() {
     }
   }
 
-  return { render, bindEvents: _bindEvents, bindProfileEvents: _bindProfileEvents };
+  // saveItem: shared with Onboarding — single save path for supp/med adds
+  function saveItem(type, name, dose, slots) {
+    if (!name) return false;
+    var s = State.get();
+    var arr = type === 'supp' ? (s.supplements || []) : (s.medications || []);
+    var catalogue = type === 'supp' ? COMMON_SUPPS : COMMON_MEDS;
+    var catEntry  = catalogue.filter(function(c) { return c.name.toLowerCase() === name.toLowerCase(); })[0];
+    var nowTs = Date.now();
+    arr.push({
+      id:          Utils.uid(),
+      name:        name,
+      dose:        dose || '',
+      slots:       slots || [],
+      addedTs:     nowTs,
+      fx:          catEntry ? (catEntry.fx          || []) : [],
+      sideEffects: catEntry ? (catEntry.sideEffects || []) : [],
+      benefits:    catEntry ? (catEntry.benefits    || []) : [],
+      brandNames:  catEntry ? (catEntry.brandNames  || []) : [],
+      doseUnit:    catEntry ? (catEntry.doseUnit    || '')  : '',
+      changeLog:   [{ ts: nowTs, changeType: 'added', previousDose: null, newDose: dose || '', note: null }]
+    });
+    State.update(type === 'supp' ? 'supplements' : 'medications', arr);
+    Storage.sched();
+    return true;
+  }
+
+  return { render, bindEvents: _bindEvents, bindProfileEvents: _bindProfileEvents, saveItem };
 
 })();
 
@@ -11050,7 +11197,7 @@ var PhotoManager = (function() {
 var Onboarding = (function() {
 
   var _step = 1;
-  var _totalSteps = 7;
+  var _totalSteps = 7;  // 7 DOM steps; step 4 is empty placeholder skipped by _goTo()
   var _selectedSex = null;
   var _bound = false; // guard — bind events only once
 
@@ -11064,8 +11211,7 @@ var Onboarding = (function() {
 
   // Safe to call any time — resets step to 1 without re-binding events
   function reset() {
-    // Hide all steps, show step 1
-    for (var i = 1; i <= _totalSteps; i++) {
+    for (var i = 1; i <= 7; i++) {  // 7 = total DOM steps including placeholder
       var el = document.getElementById('ob-step-' + i);
       if (el) el.classList.remove('active');
     }
@@ -11074,9 +11220,11 @@ var Onboarding = (function() {
     var first = document.getElementById('ob-step-1');
     if (first) first.classList.add('active');
     _renderProgress();
-    // Clear any leftover mini-forms from previous preview
-    document.querySelectorAll('.ob-mini-form').forEach(function(f) { f.remove(); });
-    document.querySelectorAll('.ob-confirm-chip').forEach(function(c) { c.remove(); });
+    // Reset add forms
+    _closeObForm('supp');
+    _closeObForm('med');
+    _renderObChips('supp');
+    _renderObChips('med');
   }
 
   function _renderProgress() {
@@ -11090,12 +11238,139 @@ var Onboarding = (function() {
   }
 
   function _goTo(step) {
+    // Skip placeholder step 4 (empty div — merged into step 3)
+    if (step === 4) { step = _step < 4 ? 5 : 3; }
     var prev = document.getElementById('ob-step-' + _step);
     if (prev) prev.classList.remove('active');
     _step = step;
     var next = document.getElementById('ob-step-' + step);
     if (next) next.classList.add('active');
     _renderProgress();
+  }
+
+  // ── Supp/Med inline forms ────────────────────────────────────
+
+  function _openObForm(type) {
+    var formEl = document.getElementById('ob-' + type + '-form');
+    var nameEl = document.getElementById('ob-' + type + '-name-input');
+    var doseEl = document.getElementById('ob-' + type + '-dose-input');
+    if (!formEl) return;
+    if (nameEl) nameEl.value = '';
+    if (doseEl) doseEl.value = '';
+    formEl.querySelectorAll('.inv-slot-pill').forEach(function(p) { p.classList.remove('active'); });
+    formEl.classList.add('open');
+  }
+
+  function _closeObForm(type) {
+    var formEl = document.getElementById('ob-' + type + '-form');
+    if (formEl) formEl.classList.remove('open');
+  }
+
+  function _renderObChips(type) {
+    var chipsEl = document.getElementById('ob-' + type + '-chips');
+    if (!chipsEl) return;
+    var s = State.get();
+    var items = (type === 'supp' ? s.supplements : s.medications) || [];
+    if (!items.length) { chipsEl.innerHTML = ''; return; }
+    var html = '';
+    items.forEach(function(item) {
+      html += '<div class="ob-sm-chip">'
+        + '<span class="ob-sm-chip-name">' + Utils.esc(item.name) + '</span>'
+        + (item.dose ? '<span class="ob-sm-chip-dose">' + Utils.esc(item.dose) + '</span>' : '')
+        + '<button class="ob-sm-chip-remove" data-ob-remove-type="' + type + '" data-ob-remove-id="' + item.id + '" aria-label="Remove">×</button>'
+        + '</div>';
+    });
+    chipsEl.innerHTML = html;
+  }
+
+  function _saveObItem(type) {
+    var nameEl = document.getElementById('ob-' + type + '-name-input');
+    var doseEl = document.getElementById('ob-' + type + '-dose-input');
+    var formEl = document.getElementById('ob-' + type + '-form');
+    var name = Utils.cleanText(nameEl ? nameEl.value : '');
+    if (!name) { if (nameEl) nameEl.focus(); return; }
+    var dose = Utils.cleanText(doseEl ? doseEl.value : '');
+    var slots = [];
+    if (formEl) {
+      formEl.querySelectorAll('.inv-slot-pill.active').forEach(function(p) { slots.push(p.dataset.slot); });
+    }
+    var saved = ScreenYou.saveItem(type, name, dose, slots);
+    if (saved) {
+      _closeObForm(type);
+      _renderObChips(type);
+    }
+  }
+
+  function _bindObForms() {
+    // Wire InvAC to onboarding name inputs using the same pattern as _bindField
+    ['supp', 'med'].forEach(function(type) {
+      var nameEl = document.getElementById('ob-' + type + '-name-input');
+      var doseEl = document.getElementById('ob-' + type + '-dose-input');
+      var dropEl = document.getElementById('ob-' + type + '-ac-dropdown');
+      if (!nameEl || !dropEl) return;
+
+      nameEl.addEventListener('focus', function() {
+        InvAC._setActive(type, nameEl, doseEl, dropEl);
+        InvAC._renderDrop(type, nameEl.value);
+      });
+      nameEl.addEventListener('input', function() {
+        InvAC._setActive(type, nameEl, doseEl, dropEl);
+        InvAC._renderDrop(type, this.value);
+      });
+      nameEl.addEventListener('blur', function() {
+        setTimeout(function() { InvAC._closeDrop(); }, 180);
+      });
+      dropEl.addEventListener('mousedown', function(e) { e.preventDefault(); });
+      dropEl.addEventListener('click', function(e) {
+        var item = e.target.closest('.inv-ac-item');
+        if (!item) return;
+        InvAC._selectItem(type, item.dataset.name, item.dataset.sub);
+      });
+
+      // Slot pills in form
+      var formEl = document.getElementById('ob-' + type + '-form');
+      if (formEl) {
+        formEl.addEventListener('click', function(e) {
+          var pill = e.target.closest('.inv-slot-pill');
+          if (pill) pill.classList.toggle('active');
+        });
+      }
+    });
+
+    // Open/cancel/save buttons
+    var suppAdd = document.getElementById('ob-add-supplement');
+    if (suppAdd) suppAdd.addEventListener('click', function() { _openObForm('supp'); });
+
+    var medAdd = document.getElementById('ob-add-medication');
+    if (medAdd) medAdd.addEventListener('click', function() { _openObForm('med'); });
+
+    var suppCancel = document.getElementById('ob-supp-cancel');
+    if (suppCancel) suppCancel.addEventListener('click', function() { _closeObForm('supp'); });
+
+    var medCancel = document.getElementById('ob-med-cancel');
+    if (medCancel) medCancel.addEventListener('click', function() { _closeObForm('med'); });
+
+    var suppSave = document.getElementById('ob-supp-save');
+    if (suppSave) suppSave.addEventListener('click', function() { _saveObItem('supp'); });
+
+    var medSave = document.getElementById('ob-med-save');
+    if (medSave) medSave.addEventListener('click', function() { _saveObItem('med'); });
+
+    // Remove chips (delegated on step 3)
+    var step3 = document.getElementById('ob-step-3');
+    if (step3) {
+      step3.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-ob-remove-id]');
+        if (!btn) return;
+        var type = btn.dataset.obRemoveType;
+        var id = btn.dataset.obRemoveId;
+        var s = State.get();
+        var key = type === 'supp' ? 'supplements' : 'medications';
+        State.update(key, (s[key] || []).filter(function(i) { return i.id !== id; }));
+        Storage.sched();
+        _renderObChips(type);
+      });
+    }
   }
 
   function _bindEvents() {
@@ -11113,7 +11388,7 @@ var Onboarding = (function() {
       });
     });
 
-    // Auto-advance: ft → in only (most reliable, always 1 digit)
+    // Auto-advance: ft → in only
     var ftField = document.getElementById('ob-height-ft');
     if (ftField) {
       ftField.addEventListener('input', function() {
@@ -11138,12 +11413,11 @@ var Onboarding = (function() {
       });
     }
 
-    // Photo circle tap in onboarding → open source sheet
-    var obPhotoCircle = document.getElementById('ob-photo-circle');
-    if (obPhotoCircle) {
-      obPhotoCircle.addEventListener('click', function() {
+    // Add Photo button (footer) — same handler as circle tap
+    var obAddPhotoBtn = document.getElementById('ob-add-photo-btn');
+    if (obAddPhotoBtn) {
+      obAddPhotoBtn.addEventListener('click', function() {
         PhotoManager.openSourceSheet(function() {
-          // After crop: show photo in onboarding circle and advance
           var dataUrl = PhotoManager.load();
           var img = document.getElementById('ob-photo-img');
           var svg = document.getElementById('ob-photo-svg');
@@ -11159,20 +11433,23 @@ var Onboarding = (function() {
       });
     }
 
-    // Add supplement in onboarding — open You inventory sheet, auto-advance after
-    var obAddSupp = document.getElementById('ob-add-supplement');
-    if (obAddSupp) {
-      obAddSupp.addEventListener('click', function() {
-        // Open the supplement add form inline (reuse You screen approach via a simple prompt-style mini sheet)
-        _openObItemSheet('supp');
-      });
-    }
-
-    // Add medication in onboarding
-    var obAddMed = document.getElementById('ob-add-medication');
-    if (obAddMed) {
-      obAddMed.addEventListener('click', function() {
-        _openObItemSheet('med');
+    // Photo circle tap
+    var obPhotoCircle = document.getElementById('ob-photo-circle');
+    if (obPhotoCircle) {
+      obPhotoCircle.addEventListener('click', function() {
+        PhotoManager.openSourceSheet(function() {
+          var dataUrl = PhotoManager.load();
+          var img = document.getElementById('ob-photo-img');
+          var svg = document.getElementById('ob-photo-svg');
+          var circle = document.getElementById('ob-photo-circle');
+          if (img && dataUrl) {
+            img.src = dataUrl;
+            img.style.display = 'block';
+            if (svg) svg.style.display = 'none';
+            if (circle) circle.classList.add('has-photo');
+          }
+          _goTo(6);
+        });
       });
     }
 
@@ -11181,49 +11458,9 @@ var Onboarding = (function() {
     if (finishBtn) {
       finishBtn.addEventListener('click', _finish);
     }
-  }
 
-  // Mini inline add for supp/med during onboarding
-  function _openObItemSheet(type) {
-    var listId = type === 'supp' ? 'ob-supplements-list' : 'ob-medications-list';
-    var list = document.getElementById(listId);
-    if (!list) return;
-
-    // Remove any existing mini-form
-    var existing = list.querySelector('.ob-mini-form');
-    if (existing) { existing.remove(); return; }
-
-    var label = type === 'supp' ? 'Supplement name' : 'Medication name';
-    var form = document.createElement('div');
-    form.className = 'ob-mini-form';
-    form.style.cssText = 'display:flex;gap:8px;margin-top:12px;align-items:center;';
-    form.innerHTML = '<input type="text" class="you-edit-input" placeholder="' + label + '" style="flex:1;font-size:14px;" autocomplete="off">'
-      + '<button class="btn-primary" style="padding:10px 16px;font-size:14px;">Add</button>';
-
-    list.appendChild(form);
-
-    var input = form.querySelector('input');
-    var saveBtn = form.querySelector('button');
-
-    // Don't auto-focus on mobile (CANON rule)
-    saveBtn.addEventListener('click', function() {
-      var name = input.value.trim();
-      if (!name) return;
-      var entry = { id: Utils.uid(), name: name, dose: '', slots: [], addedTs: Date.now(), fx: [] };
-      var stateKey = type === 'supp' ? 'supplements' : 'medications';
-      var items = State.get()[stateKey] || [];
-      items.push(entry);
-      State.update(stateKey, items);
-      Storage.sched();
-      form.remove();
-      // Show confirmation chip
-      var chip = document.createElement('div');
-      chip.style.cssText = 'font-size:13px;color:var(--acc);margin-top:8px;text-align:center;';
-      chip.textContent = '✓ ' + name + ' added';
-      list.appendChild(chip);
-      // Auto-advance to next step after short delay
-      setTimeout(function() { _goTo(_step + 1); }, 700);
-    });
+    // Wire supp/med inline forms
+    _bindObForms();
   }
 
   function _finish() {
@@ -15131,7 +15368,13 @@ var InvAC = (function() {
     });
   }
 
-  return { bindEvents, bindEditForm };
+  return { bindEvents, bindEditForm,
+    // Used by Onboarding to wire its own name inputs to the same AC logic
+    _setActive:  function(type, nameEl, doseEl, dropEl) { _active = { type: type, nameEl: nameEl, doseEl: doseEl, dropEl: dropEl }; },
+    _renderDrop: _render,
+    _closeDrop:  _close,
+    _selectItem: _select
+  };
 
 })();
 
