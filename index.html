@@ -6355,7 +6355,8 @@ input, textarea { font-family: inherit; }
       <!-- Backdate row — shown only on long-press -->
       <div id="oz-picker-time-row" style="display:none;margin-bottom:12px;">
         <label class="entry-label" style="font-size:12px;color:var(--mt);margin-bottom:4px;display:block;">TIME LOGGED</label>
-        <input type="time" id="oz-picker-time-input" class="form-input" style="width:100%;box-sizing:border-box;">
+        <input type="time" id="oz-picker-time-input" class="form-input" style="width:100%;box-sizing:border-box;margin-bottom:10px;">
+        <button class="btn-primary" id="oz-picker-backdate-log-btn">Log</button>
       </div>
       <button class="btn-ghost" id="oz-picker-cancel">Cancel</button>
     </div>
@@ -6637,7 +6638,8 @@ input, textarea { font-family: inherit; }
       <!-- Backdate row — shown only on long-press -->
       <div id="fab-oz-time-row" style="display:none;margin-bottom:12px;">
         <label class="entry-label" style="font-size:12px;color:var(--mt);margin-bottom:4px;display:block;">TIME LOGGED</label>
-        <input type="time" id="fab-oz-time-input" class="form-input" style="width:100%;box-sizing:border-box;">
+        <input type="time" id="fab-oz-time-input" class="form-input" style="width:100%;box-sizing:border-box;margin-bottom:10px;">
+        <button class="btn-primary" id="fab-oz-backdate-log-btn">Log</button>
       </div>
     </div>
   </div>
@@ -8900,6 +8902,7 @@ var ScreenHydration = (function() {
   var _pendingDrinkId  = null; // drink being picked in oz-picker
   var _pendingBackdate = false; // true when long-press triggered backdate mode
   var _lpTimer         = null;  // long-press timer handle
+  var _pendingOz       = null;  // oz captured at long-press time
 
   // ── Helpers ──────────────────────────────────────────────
 
@@ -9357,6 +9360,7 @@ var ScreenHydration = (function() {
       _lpTimer = setTimeout(function() {
         _lpTimer = null;
         _pendingBackdate = true;
+        _pendingOz = parseFloat(btn.dataset.oz);
         Utils.haptic('medium');
         var now = new Date();
         var hh = String(now.getHours()).padStart(2, '0');
@@ -9406,7 +9410,28 @@ var ScreenHydration = (function() {
       Components.closeSheet();
       _pendingDrinkId  = null;
       _pendingBackdate = false;
+      _pendingOz       = null;
       document.getElementById('oz-picker-time-row').style.display = 'none';
+    });
+
+    // Backdate log button
+    document.getElementById('oz-picker-backdate-log-btn').addEventListener('click', function() {
+      if (!_pendingDrinkId || !_pendingOz) return;
+      var tsOverride = null;
+      if (ozTimeInput.value) {
+        var parts = ozTimeInput.value.split(':');
+        var d = new Date();
+        d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+        tsOverride = d.getTime();
+      }
+      var drinkId = _pendingDrinkId;
+      var oz      = _pendingOz;
+      _pendingDrinkId  = null;
+      _pendingBackdate = false;
+      _pendingOz       = null;
+      ozTimeRow.style.display = 'none';
+      Components.closeSheet();
+      _logDrink(drinkId, oz, tsOverride);
     });
 
     // Library button — navigate to Drink Library screen
@@ -12553,6 +12578,7 @@ var FabDrinkSheet = (function() {
   var _pendingDrinkId  = null;
   var _pendingBackdate = false;
   var _lpTimer         = null;
+  var _pendingOz       = null;
   function _resolveDrink(id) {
     var s = State.get();
     var custom = (s.customDrinks || []).find(function(d) { return d.id === id; });
@@ -12645,14 +12671,37 @@ var FabDrinkSheet = (function() {
   }
 
   function bindEvents() {
+    document.getElementById('fab-drink-back-btn').addEventListener('click', function() {
+      _pendingBackdate = false;
+      _pendingOz       = null;
+      document.getElementById('fab-oz-time-row').style.display = 'none';
+      _showGrid();
+    });
+
     document.getElementById('fab-drink-close-btn').addEventListener('click', function() {
+      _pendingBackdate = false;
+      _pendingOz       = null;
       Components.closeSheet();
     });
 
-    document.getElementById('fab-drink-back-btn').addEventListener('click', function() {
+    // FAB backdate log button
+    document.getElementById('fab-oz-backdate-log-btn').addEventListener('click', function() {
+      if (!_pendingDrinkId || !_pendingOz) return;
+      var tsOverride = null;
+      if (fabTimeInput.value) {
+        var parts = fabTimeInput.value.split(':');
+        var d = new Date();
+        d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+        tsOverride = d.getTime();
+      }
+      var drinkId = _pendingDrinkId;
+      var oz      = _pendingOz;
+      _pendingDrinkId  = null;
       _pendingBackdate = false;
-      document.getElementById('fab-oz-time-row').style.display = 'none';
-      _showGrid();
+      _pendingOz       = null;
+      fabTimeRow.style.display = 'none';
+      Components.closeSheet();
+      _logDrink(drinkId, oz, tsOverride);
     });
 
     // Drink card tap
@@ -12683,6 +12732,7 @@ var FabDrinkSheet = (function() {
       _lpTimer = setTimeout(function() {
         _lpTimer = null;
         _pendingBackdate = true;
+        _pendingOz = parseFloat(btn.dataset.oz);
         Utils.haptic('medium');
         var now = new Date();
         var hh = String(now.getHours()).padStart(2, '0');
