@@ -1192,19 +1192,27 @@ input, textarea { font-family: inherit; }
 /* Expandable supplog timeline items */
 .timeline-item--expandable { cursor: pointer; }
 .timeline-item--expandable:active { opacity: 0.7; }
-.timeline-expand-hint {
-  font-size: 11px; color: var(--acc); margin-top: 2px; font-weight: 500;
+.timeline-title-row {
+  display: flex; align-items: center; justify-content: space-between;
 }
+.timeline-expand-chevron {
+  font-size: 16px; color: var(--acc); margin-left: 8px;
+  flex-shrink: 0; transition: transform 0.15s ease;
+  display: inline-block; line-height: 1;
+}
+.timeline-expand-chevron--open { transform: rotate(90deg); }
 .timeline-supp-detail {
-  margin-top: 6px; padding-top: 6px;
+  margin-top: 6px; padding-top: 6px; padding-left: 10px;
   border-top: 1px solid var(--bd);
 }
 .timeline-supp-detail-row {
-  display: flex; align-items: baseline; gap: 6px;
-  font-size: 12px; color: var(--mt); padding: 2px 0;
+  display: flex; align-items: baseline;
+  justify-content: space-between;
+  font-size: 12px; padding: 2px 0;
 }
 .timeline-supp-detail-name { font-weight: 500; color: var(--tx); }
-.timeline-supp-detail-dose { color: var(--mt); }
+.timeline-supp-detail-cat  { font-size: 11px; color: var(--mt); font-weight: 400; flex: 1; padding-left: 6px; }
+.timeline-supp-detail-dose { color: var(--mt); text-align: right; }
 
 /* Insight strip */
 .insight-strip {
@@ -6339,6 +6347,11 @@ input, textarea { font-family: inherit; }
         <span class="hyd-picker-title" id="oz-picker-title">Water</span>
       </div>
       <div class="hyd-picker-grid" id="oz-picker-grid"></div>
+      <!-- Backdate row — shown only on long-press -->
+      <div id="oz-picker-time-row" style="display:none;margin-bottom:12px;">
+        <label class="entry-label" style="font-size:12px;color:var(--mt);margin-bottom:4px;display:block;">TIME LOGGED</label>
+        <input type="time" id="oz-picker-time-input" class="form-input" style="width:100%;box-sizing:border-box;">
+      </div>
       <button class="btn-ghost" id="oz-picker-cancel">Cancel</button>
     </div>
   </div>
@@ -6615,6 +6628,11 @@ input, textarea { font-family: inherit; }
         <span class="fab-drink-picker-title" id="fab-oz-title">Water</span>
       </div>
       <div class="hyd-picker-grid" id="fab-oz-grid"></div>
+      <!-- Backdate row — shown only on long-press -->
+      <div id="fab-oz-time-row" style="display:none;margin-bottom:12px;">
+        <label class="entry-label" style="font-size:12px;color:var(--mt);margin-bottom:4px;display:block;">TIME LOGGED</label>
+        <input type="time" id="fab-oz-time-input" class="form-input" style="width:100%;box-sizing:border-box;">
+      </div>
     </div>
   </div>
 </div>
@@ -8483,7 +8501,9 @@ var ScreenToday = (function() {
       } else {
         title = count === 1 ? l.items[0].name : count + ' items logged';
       }
-      items.push({ ts: l.ts, icon: icon, title: title, sub: '', color: 'ti-supp', suppLogId: l.id, suppItems: l.items });
+      // Use mealTs (user-entered time) for display and sort — not ts (save time)
+      var displayTs = l.mealTs || l.ts;
+      items.push({ ts: displayTs, icon: icon, title: title, sub: '', color: 'ti-supp', suppLogId: l.id, suppItems: l.items });
     });
 
     items.sort(function(a, b) { return a.ts - b.ts; });
@@ -8512,20 +8532,25 @@ var ScreenToday = (function() {
       html += '<div class="timeline-dot"></div>';
       html += '<div class="timeline-time">' + Utils.esc(Utils.fmtTime(item.ts)) + '</div>';
       html += '<div class="timeline-content">';
-      html += '<div class="timeline-title">' + item.icon + ' ' + Utils.esc(item.title) + '</div>';
-      if (item.sub) html += '<div class="timeline-sub">' + item.sub + '</div>'; // [SAFE: pre-escaped above]
       if (isExpandable) {
-        html += '<div class="timeline-expand-hint">' + (isExpanded ? '▲ Hide details' : '▼ Show details') + '</div>';
-        if (isExpanded) {
-          html += '<div class="timeline-supp-detail">';
-          item.suppItems.forEach(function(si) {
-            html += '<div class="timeline-supp-detail-row">';
-            html += '<span class="timeline-supp-detail-name">' + Utils.esc(si.name) + '</span>';
-            if (si.dose) html += '<span class="timeline-supp-detail-dose">' + Utils.esc(si.dose) + '</span>';
-            html += '</div>';
-          });
+        html += '<div class="timeline-title-row">';
+        html += '<div class="timeline-title">' + item.icon + ' ' + Utils.esc(item.title) + '</div>';
+        html += '<span class="timeline-expand-chevron' + (isExpanded ? ' timeline-expand-chevron--open' : '') + '">›</span>';
+        html += '</div>';
+      } else {
+        html += '<div class="timeline-title">' + item.icon + ' ' + Utils.esc(item.title) + '</div>';
+      }
+      if (item.sub) html += '<div class="timeline-sub">' + item.sub + '</div>'; // [SAFE: pre-escaped above]
+      if (isExpandable && isExpanded) {
+        html += '<div class="timeline-supp-detail">';
+        item.suppItems.forEach(function(si) {
+          html += '<div class="timeline-supp-detail-row">';
+          html += '<span class="timeline-supp-detail-name">' + Utils.esc(si.name) + '</span>';
+          if (si.category) html += '<span class="timeline-supp-detail-cat">' + Utils.esc(si.category) + '</span>';
+          if (si.dose) html += '<span class="timeline-supp-detail-dose">' + Utils.esc(si.dose) + '</span>';
           html += '</div>';
-        }
+        });
+        html += '</div>';
       }
       html += '</div></div>';
     });
@@ -8866,7 +8891,9 @@ var ScreenTrack = (function() {
 ══════════════════════════════════════════════════════════════ */
 var ScreenHydration = (function() {
 
-  var _pendingDrinkId = null; // drink being picked in oz-picker
+  var _pendingDrinkId  = null; // drink being picked in oz-picker
+  var _pendingBackdate = false; // true when long-press triggered backdate mode
+  var _lpTimer         = null;  // long-press timer handle
 
   // ── Helpers ──────────────────────────────────────────────
 
@@ -9118,8 +9145,8 @@ var ScreenHydration = (function() {
     Components.openSheet('sheet-oz-picker');
   }
 
-  function _logDrink(drinkId, oz) {
-    var entry = { id: Utils.uid(), ts: Date.now(), oz: oz, type: drinkId };
+  function _logDrink(drinkId, oz, tsOverride) {
+    var entry = { id: Utils.uid(), ts: tsOverride || Date.now(), oz: oz, type: drinkId };
     State.pushLog('hydration', entry);
     Storage.sched();
     render();
@@ -9313,21 +9340,62 @@ var ScreenHydration = (function() {
       }
     });
 
-    // Oz picker grid — tap size to log
-    document.getElementById('oz-picker-grid').addEventListener('click', function(e) {
+    // Oz picker grid — long-press to backdate, tap to log now
+    var ozGrid = document.getElementById('oz-picker-grid');
+    var ozTimeRow = document.getElementById('oz-picker-time-row');
+    var ozTimeInput = document.getElementById('oz-picker-time-input');
+
+    ozGrid.addEventListener('touchstart', function(e) {
+      var btn = e.target.closest('.hyd-picker-oz-btn[data-oz]');
+      if (!btn) return;
+      _lpTimer = setTimeout(function() {
+        _lpTimer = null;
+        _pendingBackdate = true;
+        Utils.haptic('medium');
+        // Set time input to now, show row
+        var now = new Date();
+        var hh = String(now.getHours()).padStart(2, '0');
+        var mm = String(now.getMinutes()).padStart(2, '0');
+        ozTimeInput.value = hh + ':' + mm;
+        ozTimeRow.style.display = '';
+      }, 500);
+    }, { passive: true });
+
+    ozGrid.addEventListener('touchend', function() {
+      if (_lpTimer) { clearTimeout(_lpTimer); _lpTimer = null; }
+    });
+    ozGrid.addEventListener('touchmove', function() {
+      if (_lpTimer) { clearTimeout(_lpTimer); _lpTimer = null; }
+    });
+
+    ozGrid.addEventListener('click', function(e) {
       var btn = e.target.closest('.hyd-picker-oz-btn[data-oz]');
       if (!btn || !_pendingDrinkId) return;
       var oz = parseFloat(btn.dataset.oz);
-      var drinkId = _pendingDrinkId; // capture before clearing
-      _pendingDrinkId = null;
+      var drinkId = _pendingDrinkId;
+
+      // Resolve timestamp
+      var tsOverride = null;
+      if (_pendingBackdate && ozTimeInput.value) {
+        var parts = ozTimeInput.value.split(':');
+        var d = new Date();
+        d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+        tsOverride = d.getTime();
+      }
+
+      _pendingDrinkId  = null;
+      _pendingBackdate = false;
+      ozTimeRow.style.display = 'none';
       Components.closeSheet();
-      _logDrink(drinkId, oz);
+      _logDrink(drinkId, oz, tsOverride);
     });
 
     // Oz picker cancel
     document.getElementById('oz-picker-cancel').addEventListener('click', function() {
       Components.closeSheet();
-      _pendingDrinkId = null;
+      _pendingDrinkId  = null;
+      _pendingBackdate = false;
+      document.getElementById('oz-picker-time-row').style.display = 'none';
     });
 
     // Library button — navigate to Drink Library screen
@@ -12471,9 +12539,9 @@ var ScreenBowel = (function() {
 ══════════════════════════════════════════════════════════════ */
 var FabDrinkSheet = (function() {
 
-  var _pendingDrinkId = null;
-
-  // Resolve a drink by ID — checks customDrinks first, then CONFIG.drinks
+  var _pendingDrinkId  = null;
+  var _pendingBackdate = false;
+  var _lpTimer         = null;
   function _resolveDrink(id) {
     var s = State.get();
     var custom = (s.customDrinks || []).find(function(d) { return d.id === id; });
@@ -12541,8 +12609,8 @@ var FabDrinkSheet = (function() {
     Components.openSheet('sheet-fab-drink');
   }
 
-  function _logDrink(drinkId, oz) {
-    var entry = { id: Utils.uid(), ts: Date.now(), oz: oz, type: drinkId };
+  function _logDrink(drinkId, oz, tsOverride) {
+    var entry = { id: Utils.uid(), ts: tsOverride || Date.now(), oz: oz, type: drinkId };
     State.pushLog('hydration', entry);
     Storage.sched();
     ScreenToday.render();
@@ -12571,6 +12639,8 @@ var FabDrinkSheet = (function() {
     });
 
     document.getElementById('fab-drink-back-btn').addEventListener('click', function() {
+      _pendingBackdate = false;
+      document.getElementById('fab-oz-time-row').style.display = 'none';
       _showGrid();
     });
 
@@ -12591,15 +12661,52 @@ var FabDrinkSheet = (function() {
       }
     });
 
-    // Oz grid tap — log and close
-    document.getElementById('fab-oz-grid').addEventListener('click', function(e) {
+    // Oz grid — long-press to backdate, tap to log now
+    var fabOzGrid     = document.getElementById('fab-oz-grid');
+    var fabTimeRow    = document.getElementById('fab-oz-time-row');
+    var fabTimeInput  = document.getElementById('fab-oz-time-input');
+
+    fabOzGrid.addEventListener('touchstart', function(e) {
+      var btn = e.target.closest('.hyd-picker-oz-btn[data-oz]');
+      if (!btn) return;
+      _lpTimer = setTimeout(function() {
+        _lpTimer = null;
+        _pendingBackdate = true;
+        Utils.haptic('medium');
+        var now = new Date();
+        var hh = String(now.getHours()).padStart(2, '0');
+        var mm = String(now.getMinutes()).padStart(2, '0');
+        fabTimeInput.value = hh + ':' + mm;
+        fabTimeRow.style.display = '';
+      }, 500);
+    }, { passive: true });
+
+    fabOzGrid.addEventListener('touchend', function() {
+      if (_lpTimer) { clearTimeout(_lpTimer); _lpTimer = null; }
+    });
+    fabOzGrid.addEventListener('touchmove', function() {
+      if (_lpTimer) { clearTimeout(_lpTimer); _lpTimer = null; }
+    });
+
+    fabOzGrid.addEventListener('click', function(e) {
       var btn = e.target.closest('.hyd-picker-oz-btn[data-oz]');
       if (!btn || !_pendingDrinkId) return;
       var oz = parseFloat(btn.dataset.oz);
       var drinkId = _pendingDrinkId;
-      _pendingDrinkId = null;
+
+      var tsOverride = null;
+      if (_pendingBackdate && fabTimeInput.value) {
+        var parts = fabTimeInput.value.split(':');
+        var d = new Date();
+        d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+        tsOverride = d.getTime();
+      }
+
+      _pendingDrinkId  = null;
+      _pendingBackdate = false;
+      fabTimeRow.style.display = 'none';
       Components.closeSheet();
-      _logDrink(drinkId, oz);
+      _logDrink(drinkId, oz, tsOverride);
     });
 
     // Browse library — close sheet, go to hydration, then library
@@ -14361,12 +14468,15 @@ var ScreenMeals = (function() {
 
   // ── Helper: compute group items for a slot + type from inventory ────────
   function _computeGroup(slot, itemType) {
-    var s    = State.get();
-    var list = itemType === 'med' ? (s.medications || []) : (s.supplements || []);
+    var s         = State.get();
+    var list      = itemType === 'med' ? (s.medications || []) : (s.supplements || []);
+    var catalogue = itemType === 'med' ? COMMON_MEDS : COMMON_SUPPS;
     return list.filter(function(item) {
       return item && item.name && Array.isArray(item.slots) && item.slots.indexOf(slot) !== -1;
     }).map(function(item) {
-      return { id: item.id, name: item.name, dose: item.dose || '', itemType: itemType };
+      var catEntry = catalogue.filter(function(c) { return c.name.toLowerCase() === item.name.toLowerCase(); })[0];
+      var category = catEntry ? (catEntry.cat || '') : '';
+      return { id: item.id, name: item.name, dose: item.dose || '', itemType: itemType, category: category };
     });
   }
 
@@ -14487,7 +14597,8 @@ var ScreenMeals = (function() {
       html += '<div class="suppmed-group-item" data-item-id="' + Utils.esc(item.id) + '"' +
               ' data-item-name="' + Utils.esc(item.name) + '"' +
               ' data-item-dose="' + Utils.esc(item.dose) + '"' +
-              ' data-item-type="' + Utils.esc(item.itemType) + '">';
+              ' data-item-type="' + Utils.esc(item.itemType) + '"' +
+              ' data-item-cat="' + Utils.esc(item.category || '') + '">';
       html += '<div class="suppmed-group-item-left">';
       html += '<span class="suppmed-group-item-icon">' + icon + '</span>';
       html += '<div>';
@@ -14538,11 +14649,15 @@ var ScreenMeals = (function() {
       return;
     }
 
+    var catalogue = itemType === 'med' ? COMMON_MEDS : COMMON_SUPPS;
     list.forEach(function(item) {
+      var catEntry = catalogue.filter(function(c) { return c.name.toLowerCase() === item.name.toLowerCase(); })[0];
+      var category = catEntry ? (catEntry.cat || '') : '';
       html += '<div class="suppmed-inventory-item" data-item-id="' + Utils.esc(item.id) + '"' +
               ' data-item-name="' + Utils.esc(item.name) + '"' +
               ' data-item-dose="' + Utils.esc(item.dose || '') + '"' +
-              ' data-item-type="' + Utils.esc(itemType) + '">';
+              ' data-item-type="' + Utils.esc(itemType) + '"' +
+              ' data-item-cat="' + Utils.esc(category) + '">';
       html += '<div class="suppmed-item-left">';
       html += '<span class="suppmed-item-icon">' + icon + '</span>';
       html += '<div>';
@@ -14585,7 +14700,8 @@ var ScreenMeals = (function() {
           itemId:   el.dataset.itemId,
           name:     el.dataset.itemName,
           itemType: el.dataset.itemType,
-          dose:     el.dataset.itemDose || ''
+          dose:     el.dataset.itemDose || '',
+          category: el.dataset.itemCat  || ''
         });
       }
     });
@@ -14639,7 +14755,8 @@ var ScreenMeals = (function() {
         itemId:   el.dataset.itemId,
         name:     el.dataset.itemName,
         itemType: el.dataset.itemType,
-        dose:     el.dataset.itemDose || ''
+        dose:     el.dataset.itemDose || '',
+        category: el.dataset.itemCat  || ''
       });
     });
 
@@ -14815,9 +14932,14 @@ var InvAC = (function() {
 
     var q = query.trim().toLowerCase();
 
-    // Filter catalogue
+    // Filter catalogue — match on name, brandNames[], or category
     var matched = catalogue.filter(function(item) {
-      return item.name.toLowerCase().indexOf(q) !== -1;
+      if (item.name.toLowerCase().indexOf(q) !== -1) return true;
+      if (item.cat && item.cat.toLowerCase().indexOf(q) !== -1) return true;
+      if (Array.isArray(item.brandNames)) {
+        return item.brandNames.some(function(b) { return b.toLowerCase().indexOf(q) !== -1; });
+      }
+      return false;
     });
 
     // Add user's custom items that match and aren't already in catalogue
@@ -14847,8 +14969,8 @@ var InvAC = (function() {
 
     var html = '';
     results.forEach(function(item) {
-      var sub = type === 'supp' ? (item.dose || '') : (item.hint || '');
-      html += '<div class="inv-ac-item" data-name="' + Utils.esc(item.name) + '" data-sub="' + Utils.esc(sub) + '">'
+      var sub = item.cat || (type === 'supp' ? (item.dose || '') : (item.hint || ''));
+      html += '<div class="inv-ac-item" data-name="' + Utils.esc(item.name) + '" data-sub="' + Utils.esc(type === 'supp' ? (item.dose || '') : (item.hint || '')) + '">'
         + '<div class="inv-ac-item-left">'
         +   '<div class="inv-ac-item-name">' + Utils.esc(item.name) + '</div>'
         +   (sub ? '<div class="inv-ac-item-sub">' + Utils.esc(sub) + '</div>' : '')
