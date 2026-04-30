@@ -1389,7 +1389,7 @@ input, textarea { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 20px;
+  padding: 14px 20px;
   background: var(--sf);
   border-bottom: 1px solid var(--bd);
   cursor: pointer;
@@ -1429,6 +1429,15 @@ input, textarea { font-family: inherit; }
   color: var(--mt);
   font-size: 20px;
 }
+.track-group-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--mt);
+  padding: 20px 20px 8px;
+}
+.track-group-label:first-child { padding-top: 0; }
 
 /* Track icon backgrounds */
 .ti-hydration { background: rgba(58,127,193,0.12); }
@@ -1437,6 +1446,7 @@ input, textarea { font-family: inherit; }
 .ti-bp        { background: rgba(193,74,74,0.12); }
 .ti-glucose   { background: rgba(74,155,127,0.12); }
 .ti-weight    { background: rgba(92,110,74,0.12); }
+.ti-symptom   { background: rgba(201,123,42,0.12); }
 
 /* Dark theme: stronger alpha so pills read against dark surfaces */
 [data-theme="dark"] .ti-hydration { background: rgba(58,127,193,0.22); }
@@ -1445,6 +1455,7 @@ input, textarea { font-family: inherit; }
 [data-theme="dark"] .ti-bp        { background: rgba(193,74,74,0.22); }
 [data-theme="dark"] .ti-glucose   { background: rgba(74,155,127,0.22); }
 [data-theme="dark"] .ti-weight    { background: rgba(92,110,74,0.22); }
+[data-theme="dark"] .ti-symptom   { background: rgba(201,123,42,0.22); }
 
 /* ══════════════════════════════════════════════
    INSIGHTS SCREEN
@@ -3112,6 +3123,70 @@ input, textarea { font-family: inherit; }
   padding: 10px 12px; margin: 8px 0 4px;
 }
 
+/* ── Symptom sheet ── */
+.sym-chip-grid {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  padding: 4px 0 8px;
+}
+.sym-chip {
+  padding: 7px 14px; border-radius: 99px;
+  border: 1.5px solid var(--bd); background: var(--sf);
+  font-size: 13px; font-weight: 500; color: var(--tx);
+  cursor: pointer; transition: all 0.12s ease;
+}
+.sym-chip.selected {
+  background: var(--accp); border-color: var(--acc); color: var(--acc);
+}
+.sym-chip:active { transform: scale(0.95); }
+.sym-severity-row {
+  display: flex; gap: 8px; padding: 4px 0 8px;
+}
+.sym-sev-btn {
+  flex: 1; padding: 10px 4px; border-radius: 12px;
+  border: 1.5px solid var(--bd); background: var(--sf);
+  font-size: 13px; font-weight: 500; color: var(--tx);
+  text-align: center; cursor: pointer; transition: all 0.12s ease;
+}
+.sym-sev-btn .sym-sev-label { font-size: 11px; color: var(--mt); margin-top: 2px; }
+.sym-sev-btn.selected {
+  background: var(--accp); border-color: var(--acc); color: var(--acc);
+}
+.sym-sev-btn.selected .sym-sev-label { color: var(--acc); }
+.sym-sev-btn:active { transform: scale(0.97); }
+.sym-note-input {
+  width: 100%; box-sizing: border-box;
+  border: 1.5px solid var(--bd); border-radius: 12px;
+  background: var(--sf); color: var(--tx);
+  font-size: 14px; padding: 10px 14px;
+  font-family: inherit; resize: none; outline: none;
+}
+.sym-note-input:focus { border-color: var(--acc); }
+.sym-save-btn {
+  width: 100%; padding: 14px; border-radius: 14px;
+  background: var(--acc); color: #fff;
+  font-size: 15px; font-weight: 600;
+  border: none; cursor: pointer; margin-top: 4px;
+}
+.sym-save-btn:active { opacity: 0.85; }
+.sym-time-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 0 4px;
+}
+.sym-time-label {
+  font-size: 13px; color: var(--mt); flex-shrink: 0;
+}
+.sym-time-input {
+  border: 1.5px solid var(--bd); border-radius: 10px;
+  background: var(--sf); color: var(--tx);
+  font-size: 14px; padding: 7px 12px;
+  font-family: inherit; outline: none;
+}
+.sym-section-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--mt); margin-bottom: 6px; margin-top: 14px;
+}
+.sym-section-label:first-child { margin-top: 0; }
+
 /* ── Splash screen ── */
 #asea-splash {
   position: fixed; inset: 0; z-index: 9999;
@@ -4778,68 +4853,85 @@ input, textarea { font-family: inherit; }
         </div>
       </div>
 
-      <div class="track-list card" style="margin:0 20px;">
-        <div class="track-row" data-action="hydration" role="button" tabindex="0" aria-label="Log hydration">
-          <div class="track-row-left">
-            <div class="track-row-icon ti-hydration">💧</div>
-            <div>
-              <div class="track-row-title">Hydration</div>
-              <div class="track-row-sub" id="track-hydration-sub">No logs today</div>
+      <div style="margin:0 20px; padding-top:20px;">
+        <div class="track-group-label">My Day</div>
+        <div class="track-list card" style="margin:0;">
+          <div class="track-row" data-action="hydration" role="button" tabindex="0" aria-label="Log hydration">
+            <div class="track-row-left">
+              <div class="track-row-icon ti-hydration">💧</div>
+              <div>
+                <div class="track-row-title">Hydration</div>
+                <div class="track-row-sub" id="track-hydration-sub">No logs today</div>
+              </div>
             </div>
+            <span class="track-row-arrow">›</span>
           </div>
-          <span class="track-row-arrow">›</span>
-        </div>
-        <div class="track-row" data-action="meal" role="button" tabindex="0" aria-label="Log meal">
-          <div class="track-row-left">
-            <div class="track-row-icon ti-meal">🍽️</div>
-            <div>
-              <div class="track-row-title">Meals</div>
-              <div class="track-row-sub" id="track-meal-sub">No meals logged</div>
+          <div class="track-row" data-action="meal" role="button" tabindex="0" aria-label="Log meal">
+            <div class="track-row-left">
+              <div class="track-row-icon ti-meal">🍽️</div>
+              <div>
+                <div class="track-row-title">Meals</div>
+                <div class="track-row-sub" id="track-meal-sub">No meals logged</div>
+              </div>
             </div>
+            <span class="track-row-arrow">›</span>
           </div>
-          <span class="track-row-arrow">›</span>
-        </div>
-        <div class="track-row" data-action="bowel" role="button" tabindex="0" aria-label="Log bowel movement">
-          <div class="track-row-left">
-            <div class="track-row-icon ti-bowel">🌿</div>
-            <div>
-              <div class="track-row-title">Bowel</div>
-              <div class="track-row-sub" id="track-bowel-sub">No logs today</div>
+          <div class="track-row" data-action="bowel" role="button" tabindex="0" aria-label="Log bowel movement">
+            <div class="track-row-left">
+              <div class="track-row-icon ti-bowel">🌿</div>
+              <div>
+                <div class="track-row-title">Bowel</div>
+                <div class="track-row-sub" id="track-bowel-sub">No logs today</div>
+              </div>
             </div>
+            <span class="track-row-arrow">›</span>
           </div>
-          <span class="track-row-arrow">›</span>
-        </div>
-        <div class="track-row" data-action="weight" role="button" tabindex="0" aria-label="Log weight">
-          <div class="track-row-left">
-            <div class="track-row-icon ti-weight">⚖️</div>
-            <div>
-              <div class="track-row-title">Weight</div>
-              <div class="track-row-sub" id="track-weight-sub">No readings today</div>
+          <div class="track-row" data-action="symptom" role="button" tabindex="0" aria-label="Log symptoms">
+            <div class="track-row-left">
+              <div class="track-row-icon ti-symptom">🩹</div>
+              <div>
+                <div class="track-row-title">Symptoms</div>
+                <div class="track-row-sub" id="track-symptom-sub">No symptoms logged</div>
+              </div>
             </div>
+            <span class="track-row-arrow">›</span>
           </div>
-          <span class="track-row-arrow">›</span>
         </div>
-        <div class="track-row" data-action="bp" role="button" tabindex="0" aria-label="Log blood pressure">
-          <div class="track-row-left">
-            <div class="track-row-icon ti-bp">❤️</div>
-            <div>
-              <div class="track-row-title">Blood Pressure</div>
-              <div class="track-row-sub" id="track-bp-sub">No readings today</div>
+
+        <div class="track-group-label">My Numbers</div>
+        <div class="track-list card" style="margin:0;">
+          <div class="track-row" data-action="weight" role="button" tabindex="0" aria-label="Log weight">
+            <div class="track-row-left">
+              <div class="track-row-icon ti-weight">⚖️</div>
+              <div>
+                <div class="track-row-title">Weight</div>
+                <div class="track-row-sub" id="track-weight-sub">No readings today</div>
+              </div>
             </div>
+            <span class="track-row-arrow">›</span>
           </div>
-          <span class="track-row-arrow">›</span>
-        </div>
-        <div class="track-row" data-action="glucose" role="button" tabindex="0" aria-label="Log glucose">
-          <div class="track-row-left">
-            <div class="track-row-icon ti-glucose">📊</div>
-            <div>
-              <div class="track-row-title">Glucose</div>
-              <div class="track-row-sub" id="track-glucose-sub">No readings today</div>
+          <div class="track-row" data-action="bp" role="button" tabindex="0" aria-label="Log blood pressure">
+            <div class="track-row-left">
+              <div class="track-row-icon ti-bp">❤️</div>
+              <div>
+                <div class="track-row-title">Blood Pressure</div>
+                <div class="track-row-sub" id="track-bp-sub">No readings today</div>
+              </div>
             </div>
+            <span class="track-row-arrow">›</span>
           </div>
-          <span class="track-row-arrow">›</span>
+          <div class="track-row" data-action="glucose" role="button" tabindex="0" aria-label="Log glucose">
+            <div class="track-row-left">
+              <div class="track-row-icon ti-glucose">📊</div>
+              <div>
+                <div class="track-row-title">Glucose</div>
+                <div class="track-row-sub" id="track-glucose-sub">No readings today</div>
+              </div>
+            </div>
+            <span class="track-row-arrow">›</span>
+          </div>
         </div>
-      </div>
+      </div><!-- /track-groups -->
       <div style="height:100px;"></div>
     </div><!-- /screen-track -->
 
@@ -6837,6 +6929,52 @@ input, textarea { font-family: inherit; }
   </div>
 </div>
 
+<!-- Symptom sheet -->
+<div class="sheet" id="sheet-symptom" role="dialog" aria-modal="true" aria-label="Log symptoms">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">How are you feeling?</div>
+  <div class="sheet-body" style="padding:0 20px 20px;">
+    <div class="sym-section-label">Symptoms</div>
+    <div class="sym-chip-grid" id="sym-chip-grid">
+      <button class="sym-chip" data-sym="headache">Headache</button>
+      <button class="sym-chip" data-sym="migraine">Migraine</button>
+      <button class="sym-chip" data-sym="fatigue">Fatigue</button>
+      <button class="sym-chip" data-sym="energy_crash">Energy crash</button>
+      <button class="sym-chip" data-sym="brain_fog">Brain fog</button>
+      <button class="sym-chip" data-sym="mood_anxiety">Mood / anxiety</button>
+      <button class="sym-chip" data-sym="joint_pain">Joint pain</button>
+      <button class="sym-chip" data-sym="inflammation">Inflammation</button>
+      <button class="sym-chip" data-sym="bloating">Bloating</button>
+      <button class="sym-chip" data-sym="nausea">Nausea</button>
+      <button class="sym-chip" data-sym="skin">Skin (rash / itch)</button>
+      <button class="sym-chip" data-sym="sleep_quality">Sleep quality</button>
+      <button class="sym-chip" data-sym="dizziness">Dizziness</button>
+    </div>
+    <div class="sym-section-label">Severity</div>
+    <div class="sym-severity-row" id="sym-severity-row">
+      <button class="sym-sev-btn" data-sev="1">
+        <div>Mild</div>
+        <div class="sym-sev-label">Noticeable</div>
+      </button>
+      <button class="sym-sev-btn" data-sev="2">
+        <div>Moderate</div>
+        <div class="sym-sev-label">Affecting my day</div>
+      </button>
+      <button class="sym-sev-btn" data-sev="3">
+        <div>Severe</div>
+        <div class="sym-sev-label">Hard to function</div>
+      </button>
+    </div>
+    <div class="sym-section-label">Note <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mt);font-size:11px;">(optional)</span></div>
+    <textarea class="sym-note-input" id="sym-note-input" rows="2" placeholder="Any context worth remembering…"></textarea>
+    <div class="sym-time-row">
+      <span class="sym-time-label">Time</span>
+      <input type="time" id="sym-time-input" class="sym-time-input" aria-label="Time of symptom">
+    </div>
+    <button class="sym-save-btn" id="sym-save-btn">Save</button>
+  </div>
+</div>
+
 <!-- Bowel sheet -->
 <div class="sheet" id="sheet-bowel" role="dialog" aria-modal="true" aria-label="Log bowel movement">
   <div class="sheet-handle"></div>
@@ -7290,7 +7428,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v24-13',
+  version:            'v25-03',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -7896,6 +8034,7 @@ var State = (function() {
       bp:        [],  // { id, ts, sys, dia, hr, timeOfDay, crisis }
       glucose:   [],  // { id, ts, val, context }
       weight:    [],  // { id, ts, val, unit:'lbs'|'kg', timeOfDay:'morning'|'afternoon'|'evening' }
+      symptoms:  [],  // { id, ts, symptoms:string[], severity:1|2|3, note:string }
     },
     theme: 'light',
     units: 'imperial',
@@ -8618,6 +8757,16 @@ var ScreenToday = (function() {
       var todLabel = { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' };
       items.push({ ts: l.ts, icon: '⚖️', title: l.val + wtUnit, sub: (todLabel[l.timeOfDay] || '') + ' weight', color: 'ti-weight' });
     });
+    // Symptom logs
+    var _SYM_LABELS = { headache:'Headache', migraine:'Migraine', fatigue:'Fatigue', energy_crash:'Energy crash', brain_fog:'Brain fog', mood_anxiety:'Mood / anxiety', joint_pain:'Joint pain', inflammation:'Inflammation', bloating:'Bloating', nausea:'Nausea', skin:'Skin (rash / itch)', sleep_quality:'Sleep quality', dizziness:'Dizziness' };
+    var _SEV_LABELS = { 1:'Mild', 2:'Moderate', 3:'Severe' };
+    (s.logs.symptoms || []).filter(function(l) { return l.ts >= today; }).forEach(function(l) {
+      var syms = (l.symptoms || []).map(function(k) { return _SYM_LABELS[k] || k; });
+      var title = syms.slice(0, 2).join(', ') + (syms.length > 2 ? ' +' + (syms.length - 2) : '');
+      var sub   = _SEV_LABELS[l.severity] || '';
+      if (l.note) sub += (sub ? ' · ' : '') + l.note;
+      items.push({ ts: l.ts, icon: '🩹', title: title, sub: sub, color: 'ti-symptom' });
+    });
     // suppLogs — group and individual entries
     (s.logs.suppLogs || []).filter(function(l) { return l.ts >= today; }).forEach(function(l) {
       if (!Array.isArray(l.items) || l.items.length === 0) return;
@@ -8855,8 +9004,8 @@ var ScreenToday = (function() {
       return;
     }
     var top = insights[0];
-    // Truncate to ~80 chars so it reads as a teaser
-    var truncated = top.text.length > 80 ? top.text.slice(0, 78).trim() + '…' : top.text;
+    // Truncate to ~120 chars so it reads as a teaser
+    var truncated = top.text.length > 120 ? top.text.slice(0, 118).trim() + '…' : top.text;
     textEl.textContent = top.icon + ' ' + truncated;
     strip.style.display = '';
   }
@@ -8902,6 +9051,11 @@ var ScreenToday = (function() {
     if (streak >= 7) return "You've been logging consistently for " + streak + " days. That's a real pattern.";
     if (streak >= 3) return "You've logged something for " + streak + " days in a row.";
 
+    // SM07 — supp/med routine streak (reinforcement)
+    var suppStreak = _calcSuppStreak(s);
+    if (suppStreak >= 5) return suppStreak + '-day supplement routine \u2713 Keep it consistent.';
+    if (suppStreak >= 3) return suppStreak + '-day supplement routine \u2713';
+
     // Busy day acknowledgement
     if (todayItems.length >= 6) return "You've logged a lot today — good data.";
 
@@ -8912,7 +9066,8 @@ var ScreenToday = (function() {
   // Count consecutive days (including today) with at least 1 log entry
   function _calcStreak(s) {
     var allLogs = [].concat(
-      s.logs.hydration, s.logs.meals, s.logs.bowel, s.logs.bp, s.logs.glucose
+      s.logs.hydration, s.logs.meals, s.logs.bowel, s.logs.bp, s.logs.glucose,
+      s.logs.suppLogs || []
     );
     var streak = 0;
     var d = new Date();
@@ -8920,6 +9075,23 @@ var ScreenToday = (function() {
       var start = new Date(d.getFullYear(), d.getMonth(), d.getDate() - i).getTime();
       var end   = start + 864e5;
       var hasLog = allLogs.some(function(l) { return l.ts >= start && l.ts < end; });
+      if (!hasLog) break;
+      streak++;
+    }
+    return streak;
+  }
+
+  // SM07 — count consecutive days with at least 1 suppLog entry
+  // Uses suppLogs (not inventory) so it tracks actual logging behaviour.
+  function _calcSuppStreak(s) {
+    var suppLogs = s.logs.suppLogs || [];
+    if (!suppLogs.length) return 0;
+    var streak = 0;
+    var d = new Date();
+    for (var i = 0; i < 30; i++) {
+      var start = new Date(d.getFullYear(), d.getMonth(), d.getDate() - i).getTime();
+      var end   = start + 864e5;
+      var hasLog = suppLogs.some(function(l) { return l.ts >= start && l.ts < end; });
       if (!hasLog) break;
       streak++;
     }
@@ -9007,6 +9179,9 @@ var ScreenTrack = (function() {
         wEl.textContent = (todLabel[lastW.timeOfDay] || '') + ' · ' + lastW.val + wtUnit;
       } else { wEl.textContent = 'No readings today'; }
     }
+
+    var symEl = document.getElementById('track-symptom-sub');
+    if (symEl) symEl.textContent = ScreenSymptom.getTodaySub();
   }
 
   return { render };
@@ -9978,6 +10153,12 @@ var ScreenInsights = (function() {
     if (ins.id === 'D8' || ins.id === 'G6' || ins.id === 'G7' || ins.id === 'BP5') return _CATS.positive;
     var prefix = ins.id.replace(/\d+$/, '');
     if (prefix === 'FQ') return _CATS.positive;  // Food Quality rules are always positive reinforcement
+    if (prefix === 'SM') {
+      // SM05 positive pairs (fat-soluble vitamins + fat) render as positive
+      if (ins.id === 'SM05' && ins._sm05Positive) return _CATS.positive;
+      return _CATS.bp; // Supp/Med rules — use BP blue (health-adjacent)
+    }
+    if (prefix === 'HT') return _CATS.digestion; // Hydration timing — digestion category
     if (prefix === 'G')  return _CATS.glucose;
     if (prefix === 'BP') return _CATS.bp;
     if (prefix === 'E')  return _CATS.energy;
@@ -12019,6 +12200,127 @@ var InsightEngine = (function() {
       // FMD booklet (MCT oils as therapeutic fat category).
     },
 
+    // ── SUPPLEMENT/MED RULES (SM-series) ─────────────────────
+    // SM01/SM04 — now unblocked: symptom tracker built in v25-00.
+
+    {
+      id: 'SM01', priority: 3, windowDays: 14,
+      inputTag: null, outputType: 'trend', outputKey: 'side_effect',
+      windowH: null, threshold: 3, icon: '💊',
+      text: '', // built dynamically in _checkTrend — item name + symptom vary
+      // Rationale: Supp/med logged consistently (3+ days) and a symptom from
+      // its sideEffects[] appears in logs.symptoms[] within 48h window.
+      // Matches fx[] tags to symptom keys. Text names item and symptom.
+      // Observational only — never implies causation.
+    },
+
+    {
+      id: 'SM04', priority: 2, windowDays: 14,
+      inputTag: null, outputType: 'trend', outputKey: 'missed_dose_symptom',
+      windowH: null, threshold: 2, icon: '⚠️',
+      text: '', // built dynamically — slot label + symptom name vary
+      // Rationale: Slot normally logged 5+ of 7 days in past 2 weeks,
+      // then absent 2+ consecutive days, then a symptom appears.
+      // Uses logs.symptoms[] for symptom detection post-gap.
+      // Guards: minimum 2 weeks of prior logging history required.
+    },
+
+    {
+      id: 'SM03', priority: 3, windowDays: 42,
+      inputTag: null, outputType: 'trend', outputKey: 'dose_change_bp',
+      windowH: null, threshold: 3, icon: '💊',
+      text: '', // built dynamically in _checkTrend — name and direction vary per user
+      // Rationale: Dose changes to BP medications (e.g. Amlodipine, Lisinopril)
+      // should produce measurable change in systolic readings within 21 days.
+      // Rule reads changeLog[] on meds, finds most recent dose_change entry,
+      // compares average systolic BP in 21 days before vs 21 days after.
+      // Requires 3+ BP readings in each window to fire.
+      // Positive or neutral observation — never alarmist.
+    },
+
+    {
+      id: 'SM02', priority: 2, windowDays: 14,
+      inputTag: null, outputType: 'trend', outputKey: 'new_item_symptom',
+      windowH: null, threshold: 2, icon: '💊',
+      text: '', // built dynamically in _checkTrend — item name + symptom vary
+      // Rationale: New supp or med introduced in past 14 days. Checks whether
+      // any BM symptoms appeared after addedTs that weren't present before.
+      // Uses bowel symptom log as proxy until full symptom tracker is built.
+      // Text built dynamically with item name, days ago, and symptom.
+    },
+
+    {
+      id: 'SM05', priority: 2, windowDays: 14,
+      inputTag: null, outputType: 'trend', outputKey: 'interaction',
+      windowH: null, threshold: 2, icon: '⚠️',
+      text: '', // built dynamically — pair names vary per user
+      // Rationale: Known absorption interaction pairs logged within the same
+      // slot window. Uses lookup table — not AI inference. Positive pairs
+      // (fat-soluble vitamins + fat) are flagged as helpful, not warnings.
+      // Text built dynamically with the two item names.
+    },
+
+    {
+      id: 'SM06', priority: 1, windowDays: 14,
+      inputTag: null, outputType: 'trend', outputKey: 'timing_vary',
+      windowH: null, threshold: 3, icon: '🕐',
+      text: '', // built dynamically — item name + slot counts vary
+      // Rationale: Some supplements (Iron, thyroid meds, fat-soluble vitamins)
+      // absorb meaningfully better at consistent times. Rule surfaces when an
+      // item appears across 3+ different slots over 14 days — not accusatory,
+      // just an awareness nudge. Fires only for items with 5+ total logs.
+    },
+
+    {
+      id: 'SM08', priority: 2, windowDays: 30,
+      inputTag: null, outputType: 'trend', outputKey: 'glucose_lower',
+      windowH: null, threshold: 3, icon: '📉',
+      text: '', // built dynamically — supp name varies
+      // Rationale: Berberine, Magnesium, Chromium, Inositol, and ALA are
+      // evidence-backed for insulin sensitivity support. Rule fires when one
+      // of these (identified by fx tag 'insulin_sensitivity') is logged 10+
+      // days and glucose readings trend lower in that window.
+      // Positive observation only — never implies the supp is the cause.
+      // Source: Yin J et al., Metabolism 2008 (Berberine); Guerrero-Romero F
+      // et al., Arch Med Res 2011 (Magnesium); Anderson RA, J Am Coll Nutr
+      // 1998 (Chromium); Genazzani AD et al., Gynecol Endocrinol 2008 (Inositol).
+    },
+
+    // ── HYDRATION TIMING RULES (HT-series) ───────────────────
+    // These rules use timestamp data already captured on hydration logs.
+    // No schema changes required. Both use 14-day window.
+
+    {
+      id: 'HT1', priority: 1, windowDays: 14,
+      inputTag: null, outputType: 'trend', outputKey: 'late_start',
+      windowH: null, threshold: 5, icon: '🌅',
+      text: 'You haven\'t logged any fluids before 10am on several recent days. Starting hydration earlier helps your body reach its daily goal more naturally — and supports kidney function and energy levels through the morning.',
+      tip: 'Try a glass of water within 30 minutes of waking. It\'s one of the smallest habits with a noticeable effect.',
+      // Rationale: Morning dehydration (overnight fast ~8h) is physiologically
+      // significant. Early fluid intake restores blood volume, supports kidney
+      // filtration, and primes gut motility. Front-loading hydration is
+      // associated with better daily total achievement.
+      // Rule fires when 5+ of last 14 days have zero hydration logs before 10am,
+      // AND the user is not already consistently hitting their daily goal
+      // (no fire if avg oz >= 80% of goal — they're managing fine regardless).
+    },
+
+    {
+      id: 'HT2', priority: 1, windowDays: 14,
+      inputTag: null, outputType: 'trend', outputKey: 'evening_load',
+      windowH: null, threshold: 3, icon: '🌙',
+      text: 'On several recent days, most of your fluids were logged after 6pm. Evening fluid loading can disrupt sleep and make it harder for your body to process hydration effectively through the day.',
+      tip: 'Aim to reach 80% of your daily goal before dinner. It\'s easier to do consistently than it sounds.',
+      // Rationale: Circadian physiology — kidneys have reduced filtration
+      // efficiency in the evening hours. Evening front-loading of fluids
+      // increases nocturia risk (disrupting sleep) and doesn\'t provide the
+      // daytime cellular hydration benefit. Spreading intake across waking
+      // hours is the evidence-based recommendation.
+      // Rule fires when 3+ of last 14 days had >60% of daily oz logged after 18:00.
+      // Only fires if the user has at least 3 days with meaningful hydration
+      // data (>8 oz total) to avoid firing on sparse logging days.
+    },
+
   ];
 
   // ── Early insight: fx[] side-effect map ────────────────────
@@ -12163,13 +12465,14 @@ var InsightEngine = (function() {
         type:        'pattern',
         id:          rule.id,
         icon:        rule.icon,
-        text:        rule.text,
+        text:        rule._sm08DynText || rule._sm06DynText || rule._sm05DynText || rule._sm04DynText || rule._sm01DynText || rule._sm02DynText || rule._sm03DynText || rule.text,
         tip:         rule.tip || null,
         subLabel:    strength.charAt(0).toUpperCase() + strength.slice(1) + ' pattern',
         strength:    strength,
         priority:    rule.priority,
         count:       count,
         windowDays:  windowLabel,
+        _sm05Positive: rule._sm05Positive || false,
       });
     });
 
@@ -12443,6 +12746,507 @@ var InsightEngine = (function() {
       return (s.logs.meals || []).filter(function(m) {
         return m.mealTs >= cutoff && m.tags && m.tags.indexOf('probiotic') !== -1;
       }).length;
+    }
+
+    // SM03: dose change on a BP-relevant medication → BP trend comparison
+    // Reads changeLog[] on meds, finds most recent dose_change entry,
+    // compares average systolic 21 days before vs 21 days after.
+    // Requires 3+ BP readings in each window. Fires as observation only.
+    if (rule.id === 'SM03') {
+      var meds = s.medications || [];
+      var DAY21 = 21 * 24 * CONFIG.HOUR;
+      var bestResult = null;
+
+      meds.forEach(function(med) {
+        var cl = (med.changeLog || []).filter(function(e) { return e.changeType === 'dose_change'; });
+        if (!cl.length) return;
+        // Most recent dose change
+        var latest = cl.reduce(function(a, b) { return b.ts > a.ts ? b : a; });
+        var changeTs = latest.ts;
+        var beforeFrom = changeTs - DAY21;
+        var afterTo    = changeTs + DAY21;
+        var now        = Date.now();
+        // Need at least 7 days post-change data
+        if (now - changeTs < 7 * 24 * CONFIG.HOUR) return;
+
+        var bpBefore = (s.logs.bp || []).filter(function(b) {
+          return b.ts >= beforeFrom && b.ts < changeTs;
+        });
+        var bpAfter = (s.logs.bp || []).filter(function(b) {
+          return b.ts > changeTs && b.ts <= afterTo;
+        });
+        if (bpBefore.length < 3 || bpAfter.length < 3) return;
+
+        var avgBefore = bpBefore.reduce(function(sum, b) { return sum + (parseInt(b.sys, 10) || 0); }, 0) / bpBefore.length;
+        var avgAfter  = bpAfter.reduce(function(sum, b)  { return sum + (parseInt(b.sys, 10) || 0); }, 0) / bpAfter.length;
+        var diff = Math.round(avgBefore - avgAfter); // positive = lower after = improvement
+
+        // Only surface if meaningful change (≥5 mmHg difference)
+        if (Math.abs(diff) < 5) return;
+
+        var direction = diff > 0 ? 'lower' : 'higher';
+        var daysAgo   = Math.round((now - changeTs) / (24 * CONFIG.HOUR));
+        bestResult = {
+          count:  Math.min(bpBefore.length, bpAfter.length),
+          _sm03DynText: 'Your ' + Utils.esc(med.name) + ' dose changed ' + daysAgo + ' days ago. Your blood pressure readings have trended ' + direction + ' since — worth noting for your next appointment.'
+        };
+      });
+
+      if (bestResult) {
+        // Stash dynamic text for renderer to pick up
+        rule._sm03DynText = bestResult._sm03DynText;
+        return bestResult.count;
+      }
+      return 0;
+    }
+
+    // SM02: new item introduced → BM symptoms appeared after addedTs
+    // Uses bowel symptom log as proxy until full symptom tracker is built.
+    // Fires when a new item (added ≤14 days ago) is followed by 2+ bowel
+    // symptoms that did not appear in the 14 days BEFORE it was added.
+    if (rule.id === 'SM02') {
+      var inventory02 = (s.supplements || []).concat(s.medications || []);
+      var now02 = Date.now();
+      var WINDOW02 = 14 * 24 * CONFIG.HOUR;
+      var bestSM02 = null;
+
+      inventory02.forEach(function(item) {
+        if (!item.addedTs) return;
+        var age = now02 - item.addedTs;
+        if (age > WINDOW02 || age < 0) return; // only items added in past 14 days
+
+        var beforeFrom = item.addedTs - WINDOW02;
+        var symsBefore = new Set ? new Set() : {};
+        var symsAfter  = [];
+
+        // Collect symptom keys seen BEFORE item was added
+        (s.logs.bowel || []).forEach(function(b) {
+          if (b.ts < beforeFrom || b.ts >= item.addedTs) return;
+          (b.symptoms || []).forEach(function(sym) {
+            if (Set) symsBefore.add(sym); else symsBefore[sym] = true;
+          });
+        });
+        // Also collect from dedicated symptom tracker (v25+)
+        (s.logs.symptoms || []).forEach(function(sl) {
+          if (sl.ts < beforeFrom || sl.ts >= item.addedTs) return;
+          (sl.symptoms || []).forEach(function(sym) {
+            if (Set) symsBefore.add(sym); else symsBefore[sym] = true;
+          });
+        });
+
+        // Collect symptom occurrences AFTER item was added (not seen before)
+        (s.logs.bowel || []).forEach(function(b) {
+          if (b.ts < item.addedTs || b.ts > now02) return;
+          (b.symptoms || []).forEach(function(sym) {
+            var seenBefore = Set ? symsBefore.has(sym) : symsBefore[sym];
+            if (!seenBefore) symsAfter.push(sym);
+          });
+        });
+        // Also from dedicated symptom tracker (v25+)
+        (s.logs.symptoms || []).forEach(function(sl) {
+          if (sl.ts < item.addedTs || sl.ts > now02) return;
+          (sl.symptoms || []).forEach(function(sym) {
+            var seenBefore = Set ? symsBefore.has(sym) : symsBefore[sym];
+            if (!seenBefore) symsAfter.push(sym);
+          });
+        });
+
+        if (symsAfter.length < rule.threshold) return;
+
+        // Pick most frequent new symptom
+        var freq02 = {};
+        symsAfter.forEach(function(s) { freq02[s] = (freq02[s] || 0) + 1; });
+        var topSym = Object.keys(freq02).reduce(function(a, b) { return freq02[b] > freq02[a] ? b : a; });
+        var daysAgo02 = Math.round(age / (24 * CONFIG.HOUR));
+        var timePhrase = daysAgo02 <= 1 ? 'recently' : daysAgo02 + ' days ago';
+
+        if (!bestSM02 || symsAfter.length > bestSM02.count) {
+          bestSM02 = {
+            count: symsAfter.length,
+            _dynText: 'You started ' + item.name + ' ' + timePhrase + '. You\'ve noted ' + topSym + ' ' + freq02[topSym] + ' time' + (freq02[topSym] > 1 ? 's' : '') + ' since — worth keeping an eye on.'
+          };
+        }
+      });
+
+      if (bestSM02) {
+        rule._sm02DynText = bestSM02._dynText;
+        return bestSM02.count;
+      }
+      return 0;
+    }
+
+    // SM05: known interaction pair both logged in same slot window (±4h)
+    // Lookup table of pairs: [itemA, itemB, message, isPositive]
+    // Positive pairs (fat + fat-soluble vitamins) get tip framing, not warning.
+    if (rule.id === 'SM05') {
+      var PAIRS = [
+        { a: 'calcium',   b: 'iron',      positive: false,
+          text: 'Calcium and Iron are often taken at separate times — calcium can reduce how well iron absorbs.' },
+        { a: 'calcium',   b: 'magnesium', positive: false,
+          text: 'Calcium and Magnesium compete for absorption. Taking them a few hours apart may improve how well each works.' },
+        { a: 'grapefruit',b: 'statin',    positive: false,
+          text: 'Grapefruit can affect how some medications are processed, including statins — worth mentioning to your doctor.' },
+        { a: 'grapefruit',b: 'amlodipine',positive: false,
+          text: 'Grapefruit can affect how Amlodipine is processed — worth mentioning to your doctor.' },
+        { a: 'vitamin_a', b: 'fat',       positive: true,
+          text: 'Vitamin A absorbs best alongside dietary fat — looks like you\'re pairing them well.' },
+        { a: 'vitamin_d', b: 'fat',       positive: true,
+          text: 'Vitamin D absorbs best with fat in the meal — you\'re logging them together, which is ideal.' },
+        { a: 'vitamin_k', b: 'fat',       positive: true,
+          text: 'Vitamin K is fat-soluble — logging it alongside a meal with fat helps absorption.' },
+        { a: 'vitamin_e', b: 'fat',       positive: true,
+          text: 'Vitamin E absorbs best with dietary fat — good timing on that combination.' },
+      ];
+
+      // Build name→key lookup from inventory (lowercase, simplified)
+      var inv05 = (s.supplements || []).concat(s.medications || []);
+      function _nameKey(n) { return (n || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+
+      var KEYMAP = {
+        'calcium': ['calcium'],
+        'iron': ['iron', 'ferrous'],
+        'magnesium': ['magnesium'],
+        'grapefruit': ['grapefruit'],
+        'statin': ['atorvastatin', 'rosuvastatin', 'simvastatin', 'lovastatin', 'pravastatin', 'lipitor', 'crestor'],
+        'amlodipine': ['amlodipine', 'norvasc'],
+        'vitamin_a': ['vitamina', 'retinol', 'liverpowder', 'codliveroil'],
+        'vitamin_d': ['vitamind', 'vitamind3', 'cholecalciferol', 'codliveroil'],
+        'vitamin_k': ['vitamink', 'vitamink2', 'menaquinone'],
+        'vitamin_e': ['vitamine', 'tocopherol'],
+        'fat': ['fish oil', 'fishoil', 'codliveroil', 'mctoil', 'coconutoil', 'butter', 'avocado'],
+      };
+
+      function _itemMatchesKey(item, key) {
+        var k = _nameKey(item.name);
+        return (KEYMAP[key] || []).some(function(kw) { return k.indexOf(_nameKey(kw)) !== -1; });
+      }
+
+      var matchedPairs = [];
+      var cutoff05 = Date.now() - rule.windowDays * 24 * CONFIG.HOUR;
+
+      PAIRS.forEach(function(pair) {
+        // Find inventory items matching each side of the pair
+        var aItems = inv05.filter(function(i) { return _itemMatchesKey(i, pair.a); });
+        var bItems = inv05.filter(function(i) { return _itemMatchesKey(i, pair.b); });
+        if (!aItems.length || !bItems.length) return;
+
+        // Check if both appear in suppLogs within 4h of each other
+        var aIds = aItems.map(function(i) { return i.id; });
+        var bIds = bItems.map(function(i) { return i.id; });
+        var WINDOW = 4 * CONFIG.HOUR;
+        var coCount = 0;
+
+        (s.logs.suppLogs || []).filter(function(l) { return l.ts >= cutoff05; }).forEach(function(log) {
+          var logItems = log.items || [];
+          var hasA = logItems.some(function(li) { return aIds.indexOf(li.itemId) !== -1; });
+          var hasB = logItems.some(function(li) { return bIds.indexOf(li.itemId) !== -1; });
+          if (hasA && hasB) coCount++;
+        });
+
+        // Also check meals for fat tag (positive pairs)
+        if (pair.b === 'fat' || pair.a === 'fat') {
+          var fatMeals = (s.logs.meals || []).filter(function(m) {
+            return m.mealTs >= cutoff05 && m.tags && (m.tags.indexOf('high_fat') !== -1 || m.tags.indexOf('fat') !== -1);
+          });
+          var suppItemsWithA = aItems.length ? aItems : bItems;
+          suppItemsWithA.forEach(function(item) {
+            (s.logs.suppLogs || []).filter(function(l) { return l.ts >= cutoff05; }).forEach(function(log) {
+              var hasItem = (log.items || []).some(function(li) { return li.itemId === item.id; });
+              if (!hasItem) return;
+              var coMeal = fatMeals.some(function(m) { return Math.abs(m.mealTs - log.ts) < WINDOW; });
+              if (coMeal) coCount++;
+            });
+          });
+        }
+
+        if (coCount >= rule.threshold) {
+          matchedPairs.push({ count: coCount, text: pair.text, positive: pair.positive });
+        }
+      });
+
+      if (!matchedPairs.length) return 0;
+      // Surface highest-count pair
+      matchedPairs.sort(function(a, b) { return b.count - a.count; });
+      rule._sm05DynText = matchedPairs[0].text;
+      rule._sm05Positive = matchedPairs[0].positive;
+      return matchedPairs[0].count;
+    }
+
+    // SM06: item logged across 3+ different slots over 14 days
+    // Only fires for items with 5+ total logs (meaningful sample).
+    // Tone: curious, not accusatory. Just an awareness nudge.
+    if (rule.id === 'SM06') {
+      var cutoff06 = Date.now() - rule.windowDays * 24 * CONFIG.HOUR;
+      var itemSlots = {}; // itemId → { name, slots: {morning:N, afternoon:N, evening:N}, total:N }
+
+      (s.logs.suppLogs || []).filter(function(l) { return l.ts >= cutoff06; }).forEach(function(log) {
+        var slot = log.slot;
+        if (!slot) return;
+        (log.items || []).forEach(function(li) {
+          if (!itemSlots[li.itemId]) itemSlots[li.itemId] = { name: li.name, slots: {}, total: 0 };
+          itemSlots[li.itemId].slots[slot] = (itemSlots[li.itemId].slots[slot] || 0) + 1;
+          itemSlots[li.itemId].total++;
+        });
+      });
+
+      var candidates06 = [];
+      Object.keys(itemSlots).forEach(function(id) {
+        var entry = itemSlots[id];
+        if (entry.total < 5) return; // need meaningful sample
+        var slotKeys = Object.keys(entry.slots).filter(function(k) { return entry.slots[k] > 0; });
+        if (slotKeys.length < 2) return; // only flag if appearing in 2+ different slots
+        candidates06.push({ name: entry.name, slots: entry.slots, total: entry.total });
+      });
+
+      if (!candidates06.length) return 0;
+      // Pick item with most slot variety
+      candidates06.sort(function(a, b) {
+        return Object.keys(b.slots).length - Object.keys(a.slots).length;
+      });
+      var top06 = candidates06[0];
+      var slotParts = Object.keys(top06.slots).map(function(k) {
+        return top06.slots[k] + ' ' + k + (top06.slots[k] > 1 ? 's' : '');
+      });
+      rule._sm06DynText = 'You\'ve been logging ' + top06.name + ' at different times — ' + slotParts.join(', ') + '. Consistency with timing can help your body make the most of it.';
+      return candidates06.length; // count = number of items with this pattern
+    }
+
+    // SM08: insulin-sensitivity supps logged 10+ days + glucose trending lower
+    // Covers Berberine, Magnesium, Chromium, Inositol, ALA (fx: insulin_sensitivity).
+    if (rule.id === 'SM08') {
+      var cutoff08 = Date.now() - rule.windowDays * 24 * CONFIG.HOUR;
+      var inv08 = (s.supplements || []).concat(s.medications || []);
+
+      // Find items tagged insulin_sensitivity in inventory
+      var isSupps = inv08.filter(function(item) {
+        return (item.fx || item.sideEffects || []).indexOf('insulin_sensitivity') !== -1
+          || (item.benefits || []).indexOf('insulin_sensitivity') !== -1;
+      });
+      if (!isSupps.length) return 0;
+
+      // Count distinct days any insulin_sensitivity supp was logged
+      var isSuppIds = isSupps.map(function(i) { return i.id; });
+      var loggedDays = {};
+      (s.logs.suppLogs || []).filter(function(l) { return l.ts >= cutoff08; }).forEach(function(log) {
+        var hasIS = (log.items || []).some(function(li) { return isSuppIds.indexOf(li.itemId) !== -1; });
+        if (!hasIS) return;
+        var dayKey = new Date(log.ts).toDateString();
+        loggedDays[dayKey] = true;
+      });
+      var dayCount = Object.keys(loggedDays).length;
+      if (dayCount < 10) return 0;
+
+      // Check glucose trend — need 3+ readings, trending lower
+      var glucLogs = (s.logs.glucose || []).filter(function(g) { return g.ts >= cutoff08; });
+      if (glucLogs.length < 3) return 0;
+      glucLogs.sort(function(a, b) { return a.ts - b.ts; });
+      var firstHalf = glucLogs.slice(0, Math.floor(glucLogs.length / 2));
+      var secondHalf = glucLogs.slice(Math.floor(glucLogs.length / 2));
+      var avgFirst  = firstHalf.reduce(function(s, g) { return s + (parseFloat(g.val) || 0); }, 0) / firstHalf.length;
+      var avgSecond = secondHalf.reduce(function(s, g) { return s + (parseFloat(g.val) || 0); }, 0) / secondHalf.length;
+      if (avgSecond >= avgFirst) return 0; // not trending lower
+
+      // Build dynamic text with the specific supp name(s)
+      var suppNames = isSupps.map(function(i) { return i.name; });
+      var nameStr = suppNames.length === 1 ? suppNames[0]
+        : suppNames.slice(0, -1).join(', ') + ' and ' + suppNames[suppNames.length - 1];
+      rule._sm08DynText = 'Your glucose readings have trended lower over the past ' + rule.windowDays + ' days — you\'ve also been consistent with ' + nameStr + '. Worth noting for your next appointment.';
+      return dayCount;
+    }
+
+    // SM01: supp/med logged 3+ days AND a matching symptom (from fx[]) appears
+    // in logs.symptoms[] within 48h of a supp log entry.
+    // FX → symptom key mapping mirrors the _FX_LABELS and CHIP_LABELS.
+    if (rule.id === 'SM01') {
+      var FX_TO_SYM = {
+        loose_stool:     'bloating',   // closest available chip
+        nausea:          'nausea',
+        cramping:        'bloating',
+        bloating:        'bloating',
+        constipation:    'bloating',
+        fatigue:         'fatigue',
+        headache:        'headache',
+        dizziness:       'dizziness',
+        sleep_effect:    'sleep_quality',
+        bp_effect:       null,          // no symptom chip — skip
+        glucose_effect:  null,
+        reflux:          'nausea',
+        urgency:         'bloating',
+        appetite_change: null
+      };
+      var WINDOW48 = 48 * CONFIG.HOUR;
+      var inventory01 = (s.supplements || []).concat(s.medications || []);
+      var symLogs01   = (s.logs.symptoms || []).filter(function(l) { return l.ts >= cutoff; });
+      var bestSM01    = null;
+
+      inventory01.forEach(function(item) {
+        var fx = item.fx || item.sideEffects || [];
+        if (!fx.length) return;
+
+        // Count how many days this item was logged in the window
+        var suppDays01 = {};
+        (s.logs.suppLogs || []).forEach(function(sl) {
+          if (sl.ts < cutoff) return;
+          var items = sl.items || [];
+          items.forEach(function(si) {
+            if (si.itemId === item.id || si.name === item.name) {
+              var dk = new Date(sl.ts).toDateString();
+              suppDays01[dk] = true;
+            }
+          });
+        });
+        if (Object.keys(suppDays01).length < rule.threshold) return;
+
+        // For each fx, check if matching symptom appears within 48h of a supp log
+        fx.forEach(function(fxTag) {
+          var symKey = FX_TO_SYM[fxTag];
+          if (!symKey) return;
+
+          var matchCount = 0;
+          symLogs01.forEach(function(sl) {
+            if (!(sl.symptoms || []).indexOf(symKey) > -1) return;
+            // Check if any suppLog for this item was within 48h before this symptom
+            var matched = (s.logs.suppLogs || []).some(function(supL) {
+              if (supL.ts < cutoff) return false;
+              var delta = sl.ts - supL.ts;
+              if (delta < 0 || delta > WINDOW48) return false;
+              return (supL.items || []).some(function(si) {
+                return si.itemId === item.id || si.name === item.name;
+              });
+            });
+            if (matched) matchCount++;
+          });
+
+          if (matchCount >= rule.threshold) {
+            if (!bestSM01 || matchCount > bestSM01.count) {
+              var symLabels01 = { headache:'headaches', migraine:'migraines', fatigue:'fatigue', nausea:'nausea', bloating:'bloating or digestive changes', dizziness:'dizziness', sleep_quality:'changes in sleep' };
+              bestSM01 = {
+                count: matchCount,
+                _dynText: 'You\'ve been logging ' + item.name + ' and have noted ' + (symLabels01[symKey] || symKey) + ' ' + matchCount + ' time' + (matchCount > 1 ? 's' : '') + ' in a similar window. ' + item.name + ' is sometimes associated with this — worth mentioning to your doctor.'
+              };
+            }
+          }
+        });
+      });
+
+      if (bestSM01) {
+        rule._sm01DynText = bestSM01._dynText;
+        return bestSM01.count;
+      }
+      return 0;
+    }
+
+    // SM04: slot normally logged 5+ of 7 days in past 2 weeks,
+    // then absent 2+ consecutive days, then a symptom appears in logs.symptoms[].
+    if (rule.id === 'SM04') {
+      var slots04 = ['morning', 'afternoon', 'evening'];
+      var suppLogs04 = (s.logs.suppLogs || []).filter(function(l) { return l.ts >= cutoff; });
+      var symLogs04  = (s.logs.symptoms || []).filter(function(l) { return l.ts >= cutoff; });
+      var bestSM04   = null;
+
+      slots04.forEach(function(slot) {
+        // Build day-keyed presence map for this slot
+        var slotDayMap = {};
+        suppLogs04.forEach(function(sl) {
+          if (sl.slot !== slot) return;
+          var dk = new Date(sl.ts).toDateString();
+          slotDayMap[dk] = (slotDayMap[dk] || 0) + 1;
+        });
+
+        var dayKeys = Object.keys(slotDayMap).sort();
+        if (dayKeys.length < 5) return; // need 5+ days of prior logging
+
+        // Find last 7 days of day coverage
+        var lastSevenDays = [];
+        for (var di = 0; di < 7; di++) {
+          var d04 = new Date(Date.now() - di * 24 * CONFIG.HOUR);
+          lastSevenDays.push(d04.toDateString());
+        }
+        var loggedInLast7 = lastSevenDays.filter(function(dk) { return slotDayMap[dk]; }).length;
+        if (loggedInLast7 >= 5) return; // still logging normally — no gap
+
+        // Find gap start: first day in last 7 where slot is missing
+        var gapStart = null;
+        for (var gi = 6; gi >= 0; gi--) {
+          var gd = new Date(Date.now() - gi * 24 * CONFIG.HOUR);
+          var gdk = gd.toDateString();
+          if (!slotDayMap[gdk]) { gapStart = gd.getTime(); break; }
+        }
+        if (!gapStart) return;
+
+        // Count consecutive missing days from gapStart
+        var consecutiveMissing = 0;
+        for (var ci = 0; ci < 7; ci++) {
+          var cd = new Date(gapStart + ci * 24 * CONFIG.HOUR);
+          if (!slotDayMap[cd.toDateString()]) consecutiveMissing++;
+          else break;
+        }
+        if (consecutiveMissing < 2) return;
+
+        // Check if any symptom was logged after the gap started
+        var symsAfterGap = symLogs04.filter(function(sl) { return sl.ts >= gapStart; });
+        if (symsAfterGap.length === 0) return;
+
+        var slotLabel = { morning: 'morning', afternoon: 'afternoon', evening: 'evening' };
+        var topSym04 = symsAfterGap[0].symptoms[0] || 'a symptom';
+        var symLabel04 = { headache:'headaches', migraine:'migraines', fatigue:'fatigue', nausea:'nausea', bloating:'bloating', dizziness:'dizziness', sleep_quality:'changes in sleep', brain_fog:'brain fog', energy_crash:'low energy', mood_anxiety:'mood changes' };
+
+        if (!bestSM04 || symsAfterGap.length > bestSM04.count) {
+          bestSM04 = {
+            count: symsAfterGap.length,
+            _dynText: 'You missed your ' + slotLabel[slot] + ' routine ' + consecutiveMissing + ' day' + (consecutiveMissing > 1 ? 's' : '') + ' this week and noted ' + (symLabel04[topSym04] || topSym04) + '. Worth keeping track of.'
+          };
+        }
+      });
+
+      if (bestSM04) {
+        rule._sm04DynText = bestSM04._dynText;
+        return bestSM04.count;
+      }
+      return 0;
+    }
+
+    // HT1: no fluids before 10am on 5+ of last 14 days
+    // Suppressed if user is already hitting ≥80% of daily goal on average
+    // (they're managing their hydration fine despite the late start).
+    if (rule.id === 'HT1') {
+      var goalHT1  = s.goals.hydrationOz || 64;
+      var dayMap   = {};
+      (s.logs.hydration || []).forEach(function(log) {
+        if (log.ts < cutoff) return;
+        var d    = new Date(log.ts);
+        var key  = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+        if (!dayMap[key]) dayMap[key] = { beforeTen: 0, total: 0 };
+        dayMap[key].total += (log.oz || 0);
+        if (d.getHours() < 10) dayMap[key].beforeTen += (log.oz || 0);
+      });
+      var days = Object.values ? Object.values(dayMap) : Object.keys(dayMap).map(function(k) { return dayMap[k]; });
+      if (days.length < 5) return 0;
+      // Suppression: if avg daily total ≥80% of goal, don't nag
+      var avgTotal = days.reduce(function(sum, d) { return sum + d.total; }, 0) / days.length;
+      if (avgTotal >= goalHT1 * 0.8) return 0;
+      // Count days with zero fluids before 10am AND at least some logging (not just empty days)
+      var lateStartDays = days.filter(function(d) { return d.total > 4 && d.beforeTen === 0; }).length;
+      return lateStartDays;
+    }
+
+    // HT2: >60% of daily oz logged after 6pm on 3+ of last 14 days
+    // Only fires when the day has meaningful hydration data (>8 oz total).
+    if (rule.id === 'HT2') {
+      var dayMapHT2 = {};
+      (s.logs.hydration || []).forEach(function(log) {
+        if (log.ts < cutoff) return;
+        var d    = new Date(log.ts);
+        var key  = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+        if (!dayMapHT2[key]) dayMapHT2[key] = { evening: 0, total: 0 };
+        dayMapHT2[key].total += (log.oz || 0);
+        if (d.getHours() >= 18) dayMapHT2[key].evening += (log.oz || 0);
+      });
+      var daysHT2 = Object.keys(dayMapHT2).map(function(k) { return dayMapHT2[k]; });
+      var eveningLoadDays = daysHT2.filter(function(d) {
+        return d.total >= 8 && d.evening / d.total > 0.60;
+      }).length;
+      return eveningLoadDays;
     }
 
     return 0;
@@ -12807,9 +13611,152 @@ var ScreenBowel = (function() {
 })();
 
 /* ══════════════════════════════════════════════════════════════
-   SECTION 15b — FAB DRINK SHEET
-   future: components/fab-drink-sheet.js
+   SECTION 15a2 — SCREEN: SYMPTOMS
+   future: screens/symptoms.js
 ══════════════════════════════════════════════════════════════ */
+var ScreenSymptom = (function() {
+
+  var CHIP_LABELS = {
+    headache:     'Headache',
+    migraine:     'Migraine',
+    fatigue:      'Fatigue',
+    energy_crash: 'Energy crash',
+    brain_fog:    'Brain fog',
+    mood_anxiety: 'Mood / anxiety',
+    joint_pain:   'Joint pain',
+    inflammation: 'Inflammation',
+    bloating:     'Bloating',
+    nausea:       'Nausea',
+    skin:         'Skin (rash / itch)',
+    sleep_quality:'Sleep quality',
+    dizziness:    'Dizziness'
+  };
+
+  // ── Reset sheet to blank state ─────────────────────────────
+  function resetSheet() {
+    document.querySelectorAll('#sym-chip-grid .sym-chip').forEach(function(c) {
+      c.classList.remove('selected');
+    });
+    document.querySelectorAll('#sym-severity-row .sym-sev-btn').forEach(function(b) {
+      b.classList.remove('selected');
+    });
+    var note = document.getElementById('sym-note-input');
+    if (note) note.value = '';
+    // Auto-fill current time
+    var timeEl = document.getElementById('sym-time-input');
+    if (timeEl) {
+      var now = new Date();
+      var hh = String(now.getHours()).padStart(2, '0');
+      var mm = String(now.getMinutes()).padStart(2, '0');
+      timeEl.value = hh + ':' + mm;
+    }
+  }
+
+  // ── Open sheet (called from track row + future FAB) ────────
+  function openSheet() {
+    resetSheet();
+    Components.openSheet('sheet-symptom');
+  }
+
+  // ── Bind chip toggles and severity select ─────────────────
+  function bindEvents() {
+    // Chip multi-select
+    var grid = document.getElementById('sym-chip-grid');
+    if (grid) {
+      grid.addEventListener('click', function(e) {
+        var chip = e.target.closest('.sym-chip[data-sym]');
+        if (!chip) return;
+        Utils.haptic('light');
+        chip.classList.toggle('selected');
+      });
+    }
+
+    // Severity single-select
+    var sevRow = document.getElementById('sym-severity-row');
+    if (sevRow) {
+      sevRow.addEventListener('click', function(e) {
+        var btn = e.target.closest('.sym-sev-btn[data-sev]');
+        if (!btn) return;
+        Utils.haptic('light');
+        var already = btn.classList.contains('selected');
+        sevRow.querySelectorAll('.sym-sev-btn').forEach(function(b) {
+          b.classList.remove('selected');
+        });
+        if (!already) btn.classList.add('selected');
+      });
+    }
+
+    // Save
+    var saveBtn = document.getElementById('sym-save-btn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function() {
+        var selected = [];
+        document.querySelectorAll('#sym-chip-grid .sym-chip.selected').forEach(function(c) {
+          selected.push(c.dataset.sym);
+        });
+        if (selected.length === 0) {
+          Components.toast('Select at least one symptom');
+          return;
+        }
+        var sevEl = document.querySelector('#sym-severity-row .sym-sev-btn.selected');
+        var severity = sevEl ? parseInt(sevEl.dataset.sev, 10) : 1;
+        var note = (document.getElementById('sym-note-input').value || '').trim();
+
+        // Compute ts from time input — use today's date + entered time
+        var timeVal = (document.getElementById('sym-time-input') || {}).value || '';
+        var ts = Date.now();
+        if (timeVal && /^\d{2}:\d{2}$/.test(timeVal)) {
+          var parts = timeVal.split(':');
+          var d = new Date();
+          d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+          ts = d.getTime();
+        }
+
+        var entry = {
+          id: Utils.uid(),
+          ts: ts,
+          symptoms: selected,
+          severity: severity,
+          note: note
+        };
+
+        State.pushLog('symptoms', entry);
+        Storage.sched();
+        Components.closeSheet();
+        ScreenToday.render();
+        ScreenTrack.render();
+
+        var labels = selected.map(function(k) { return CHIP_LABELS[k] || k; }).join(', ');
+        Components.toast('Symptoms logged: ' + labels, function() {
+          State.removeLog('symptoms', entry.id);
+          Storage.sched();
+          ScreenToday.render();
+          ScreenTrack.render();
+        });
+      });
+    }
+  }
+
+  // ── Render TRACK card sub-text ─────────────────────────────
+  // Called by ScreenTrack.render() after adding symptom count logic there
+  function getTodaySub() {
+    var s = State.get();
+    var today = Utils.dayStart();
+    var logs = (s.logs.symptoms || []).filter(function(l) { return l.ts >= today; });
+    if (!logs.length) return 'No symptoms logged';
+    var count = logs.length;
+    // Collect all unique symptoms logged today
+    var all = [];
+    logs.forEach(function(l) { all = all.concat(l.symptoms || []); });
+    var unique = all.filter(function(v, i, a) { return a.indexOf(v) === i; });
+    var labelStr = unique.slice(0, 2).map(function(k) { return CHIP_LABELS[k] || k; }).join(', ');
+    if (unique.length > 2) labelStr += ' +' + (unique.length - 2);
+    return count + ' log' + (count > 1 ? 's' : '') + ' · ' + labelStr;
+  }
+
+  return { openSheet: openSheet, bindEvents: bindEvents, getTodaySub: getTodaySub };
+
+})();
 var FabDrinkSheet = (function() {
 
   var _pendingDrinkId  = null;
@@ -17116,6 +18063,9 @@ var App = (function() {
 
   /* ── Sheet saves ── */
   function _bindSheets() {
+    // Symptom sheet
+    ScreenSymptom.bindEvents();
+
     // Meal FAB sheet — wired through ScreenMeals
     ScreenMeals.bindFabSheet();
 
@@ -17279,9 +18229,10 @@ var App = (function() {
 
   /* ── Track rows → sheets or sub-screens ── */
   function _bindTrackRows() {
-    var list = document.querySelector('.track-list');
-    if (!list) return;
-    list.addEventListener('click', function(e) {
+    // Bind on screen-track to cover both "My Day" and "My Numbers" cards
+    var screen = document.getElementById('screen-track');
+    if (!screen) return;
+    screen.addEventListener('click', function(e) {
       var row = e.target.closest('.track-row[data-action]');
       if (!row) return;
       var action = row.dataset.action;
@@ -17291,6 +18242,7 @@ var App = (function() {
       if (action === 'bp')        { Router.go('bp');        return; }
       if (action === 'glucose')   { Router.go('glucose');   return; }
       if (action === 'weight')    { Router.go('weight');    return; }
+      if (action === 'symptom')   { ScreenSymptom.openSheet(); return; }
       _handleAction(action);
     });
   }
