@@ -4398,7 +4398,7 @@ input, textarea { font-family: inherit; }
   font-size: 22px; font-weight: 400; color: var(--tx);
 }
 .hyd-picker-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(3, 1fr);
   gap: 10px; margin-bottom: 16px;
 }
 .hyd-picker-oz-btn {
@@ -4411,6 +4411,10 @@ input, textarea { font-family: inherit; }
   transition: background 0.1s, border-color 0.1s, transform 0.1s;
 }
 .hyd-picker-oz-btn:active { transform: scale(0.94); background: var(--accp); border-color: var(--acc); }
+.hyd-longpress-hint {
+  text-align: center; font-size: 12px; color: var(--acc);
+  margin: 0 0 10px; opacity: 0.85; font-weight: 500;
+}
 
 /* Ghost cancel button */
 .btn-ghost {
@@ -6346,6 +6350,7 @@ input, textarea { font-family: inherit; }
         <span id="oz-picker-emoji" style="font-size:28px;">💧</span>
         <span class="hyd-picker-title" id="oz-picker-title">Water</span>
       </div>
+      <div class="hyd-longpress-hint">Long press any amount to log at a different time</div>
       <div class="hyd-picker-grid" id="oz-picker-grid"></div>
       <!-- Backdate row — shown only on long-press -->
       <div id="oz-picker-time-row" style="display:none;margin-bottom:12px;">
@@ -6627,6 +6632,7 @@ input, textarea { font-family: inherit; }
         <span id="fab-oz-emoji" style="font-size:26px;">💧</span>
         <span class="fab-drink-picker-title" id="fab-oz-title">Water</span>
       </div>
+      <div class="hyd-longpress-hint">Long press any amount to log at a different time</div>
       <div class="hyd-picker-grid" id="fab-oz-grid"></div>
       <!-- Backdate row — shown only on long-press -->
       <div id="fab-oz-time-row" style="display:none;margin-bottom:12px;">
@@ -9135,7 +9141,7 @@ var ScreenHydration = (function() {
 
     var grid = document.getElementById('oz-picker-grid');
     if (grid) {
-      var sizes = [4, 6, 8, 10, 12, 16, 20, 24, 32];
+      var sizes = [4, 8, 12, 16, 24, 32];
       var html = '';
       sizes.forEach(function(oz) {
         html += '<button class="hyd-picker-oz-btn" data-oz="' + oz + '">' + oz + 'oz</button>';
@@ -9352,7 +9358,6 @@ var ScreenHydration = (function() {
         _lpTimer = null;
         _pendingBackdate = true;
         Utils.haptic('medium');
-        // Set time input to now, show row
         var now = new Date();
         var hh = String(now.getHours()).padStart(2, '0');
         var mm = String(now.getMinutes()).padStart(2, '0');
@@ -9371,10 +9376,16 @@ var ScreenHydration = (function() {
     ozGrid.addEventListener('click', function(e) {
       var btn = e.target.closest('.hyd-picker-oz-btn[data-oz]');
       if (!btn || !_pendingDrinkId) return;
+      // If backdate mode was just activated by long-press, don't log yet —
+      // user needs to confirm time then tap again. Only log if already in
+      // backdate mode with a time set, OR if not in backdate mode at all.
+      if (_pendingBackdate && ozTimeRow.style.display === '') {
+        // Long-press just opened time row — suppress this click
+        return;
+      }
       var oz = parseFloat(btn.dataset.oz);
       var drinkId = _pendingDrinkId;
 
-      // Resolve timestamp
       var tsOverride = null;
       if (_pendingBackdate && ozTimeInput.value) {
         var parts = ozTimeInput.value.split(':');
@@ -12597,7 +12608,7 @@ var FabDrinkSheet = (function() {
     document.getElementById('fab-oz-emoji').textContent = d.emoji;
     document.getElementById('fab-oz-title').textContent = d.label;
     var grid = document.getElementById('fab-oz-grid');
-    var sizes = [4, 6, 8, 10, 12, 16, 20, 24, 32];
+    var sizes = [4, 8, 12, 16, 24, 32];
     var html = '';
     sizes.forEach(function(oz) {
       html += '<button class="hyd-picker-oz-btn" data-oz="' + oz + '">' + oz + 'oz</button>';
@@ -12691,6 +12702,10 @@ var FabDrinkSheet = (function() {
     fabOzGrid.addEventListener('click', function(e) {
       var btn = e.target.closest('.hyd-picker-oz-btn[data-oz]');
       if (!btn || !_pendingDrinkId) return;
+      // Suppress click if long-press just opened the time row
+      if (_pendingBackdate && fabTimeRow.style.display === '') {
+        return;
+      }
       var oz = parseFloat(btn.dataset.oz);
       var drinkId = _pendingDrinkId;
 
@@ -15114,6 +15129,9 @@ var HealthReport = (function() {
     var bpLogs = (s.logs.bp        || []).filter(function(l){ return l.ts >= cut; });
     var gLogs  = (s.logs.glucose   || []).filter(function(l){ return l.ts >= cut; });
     var mLogs  = (s.logs.meals     || []).filter(function(l){ return l.ts >= cut; });
+    var sLogs  = (s.logs.suppLogs  || []).filter(function(l){ return l.ts >= cut; })
+                  .filter(function(l){ return Array.isArray(l.items) && l.items.length > 0; })
+                  .slice().sort(function(a,b){ return (a.mealTs||a.ts) - (b.mealTs||b.ts); });
 
     var days = _rangeDays || Math.ceil((Date.now() - (function(){
       var all = hLogs.concat(bLogs,bpLogs,gLogs,mLogs);
@@ -15178,7 +15196,8 @@ var HealthReport = (function() {
       drinkCounts, bristolCounts, symCounts,
       avgSys, avgDia, bpReadings,
       avgGluc, glucCtxAvgs,
-      topFoods
+      topFoods,
+      sLogs
     };
   }
 
@@ -15512,6 +15531,24 @@ var HealthReport = (function() {
     } else {
       _infoBox('No meal data in selected range.');
     }
+
+    // ── Supplements & Medications ──
+    _checkY(20);
+    _sectionHeader('Supplements & Medications Log');
+    if (!d.sLogs.length) {
+      _infoBox('No supplement or medication entries in selected range.');
+    } else {
+      _subHeader('Log Entries (' + d.rangeLabel + ')');
+      var logRows = d.sLogs.map(function(l){
+        var dt = _fmtDate(l.mealTs || l.ts);
+        var slot = l.slot ? (l.slot.charAt(0).toUpperCase() + l.slot.slice(1)) : '—';
+        var names = l.items.map(function(i){ return i.name; }).join(', ');
+        if (names.length > 60) names = names.slice(0, 57) + '…';
+        return [dt, slot, names];
+      });
+      _table(['Date','Slot','Items'], logRows, [32, 28, 122]);
+    }
+    _y += 4;
 
     // ── Notes for clinician ──
     _sectionHeader('Notes for Clinician');
