@@ -1206,13 +1206,14 @@ input, textarea { font-family: inherit; }
   border-top: 1px solid var(--bd);
 }
 .timeline-supp-detail-row {
-  display: flex; align-items: baseline;
+  display: flex; align-items: flex-start;
   justify-content: space-between;
-  font-size: 12px; padding: 2px 0;
+  font-size: 12px; padding: 3px 0; gap: 8px;
 }
+.timeline-supp-detail-left { display: flex; flex-direction: column; flex: 1; min-width: 0; }
 .timeline-supp-detail-name { font-weight: 500; color: var(--tx); }
-.timeline-supp-detail-cat  { font-size: 11px; color: var(--mt); font-weight: 400; flex: 1; padding-left: 6px; }
-.timeline-supp-detail-dose { color: var(--mt); text-align: right; }
+.timeline-supp-detail-cat  { font-size: 10px; color: var(--mt); font-weight: 400; padding-left: 8px; margin-top: 1px; }
+.timeline-supp-detail-dose { color: var(--mt); text-align: right; white-space: nowrap; flex-shrink: 0; }
 
 /* Insight strip */
 .insight-strip {
@@ -7472,7 +7473,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v25-05',
+  version:            'v25-06',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -8874,8 +8875,10 @@ var ScreenToday = (function() {
         html += '<div class="timeline-supp-detail">';
         item.suppItems.forEach(function(si) {
           html += '<div class="timeline-supp-detail-row">';
+          html += '<div class="timeline-supp-detail-left">';
           html += '<span class="timeline-supp-detail-name">' + Utils.esc(si.name) + '</span>';
-          if (si.category) html += '<span class="timeline-supp-detail-cat">' + Utils.esc(si.category) + '</span>';
+          if (si.category) html += '<div class="timeline-supp-detail-cat">' + Utils.esc(si.category) + '</div>';
+          html += '</div>';
           if (si.dose) html += '<span class="timeline-supp-detail-dose">' + Utils.esc(si.dose) + '</span>';
           html += '</div>';
         });
@@ -16705,6 +16708,22 @@ var HealthReport = (function() {
       _table(['Supplement','Dosage','Category','Schedule'],suppRows,[68,28,56,30]);
     } else { _infoBox('No supplements on file.'); }
 
+    // Notes for Clinician — bottom of page 1, visually separated
+    _y += 6;
+    _checkY(28);
+    _doc.setDrawColor(220,228,236);
+    _doc.line(_ML, _y, _ML+_BODY_W, _y);
+    _y += 5;
+    _doc.setFontSize(7); _doc.setTextColor(_C.mt);
+    _doc.setFont('helvetica','bold');
+    _doc.text('NOTES FOR CLINICIAN', _ML, _y);
+    _doc.setFont('helvetica','normal');
+    _y += 4;
+    _doc.setFontSize(7.5);
+    _doc.text('Self-reported data from the Asëa health pattern app. Stored locally — no external processing.', _ML, _y); _y += 4;
+    _doc.text('Represents observations and patterns, not clinical measurements or diagnoses.', _ML, _y); _y += 4;
+    _doc.text('Intended to support clinical conversation, not replace examination. Not a medical device.', _ML, _y);
+
     _pageFooter();
   }
 
@@ -16761,8 +16780,8 @@ var HealthReport = (function() {
     _newPage();
     _sectionHeader('Food, Hydration & Symptom Diary (' + d.rangeLabel + ')');
     _doc.setFontSize(7.5); _doc.setTextColor(_C.mt);
-    _doc.text('Organized by date, most recent first. Snacks shown chronologically between meals. Right column: symptoms logged that day.', _ML, _y);
-    _y += 7;
+    _doc.text('Organized by date, most recent first. Snacks shown chronologically between meals.', _ML, _y);
+    _y += 6;
 
     function _dayKey(ts) { var d2=new Date(ts); return d2.getFullYear()+'-'+(d2.getMonth()+1)+'-'+d2.getDate(); }
     function _fmtHHMM(ts) { var d2=new Date(ts); var h=d2.getHours(); var m=String(d2.getMinutes()).padStart(2,'0'); var ap=h>=12?'PM':'AM'; h=h%12||12; return h+':'+m+' '+ap; }
@@ -16776,10 +16795,14 @@ var HealthReport = (function() {
       dayMap[dk].entries.push({ts:l.ts,label:slotLabel,text:l.text||'',isSnack:l.type==='snack'});
     });
 
+    // Condense fluids: group by type, count + total oz
     d.hLogs.forEach(function(l){
       var dk=_dayKey(l.ts); _ensureDay(dk,l.ts);
       var cfg=CONFIG.drinks.filter(function(dr){return dr.id===l.type;})[0];
-      dayMap[dk].fluids.push((cfg?cfg.label:l.type)+' ('+Math.round(l.oz)+' oz)');
+      var lbl=cfg?cfg.label:l.type;
+      var existing=dayMap[dk].fluids.filter(function(f){ return f.label===lbl; })[0];
+      if(existing){ existing.count++; existing.totalOz+=l.oz; }
+      else dayMap[dk].fluids.push({label:lbl,count:1,totalOz:l.oz});
     });
 
     d.sLogs.forEach(function(l){
@@ -16794,44 +16817,53 @@ var HealthReport = (function() {
       var dk=_dayKey(l.ts); _ensureDay(dk,l.ts);
       var syms=(l.symptoms||[]).map(function(k){return _SL[k]||k;}).join(', ');
       var sev=_SVL[l.severity]||'';
-      dayMap[dk].symptoms.push(_fmtHHMM(l.ts)+'  '+syms+(sev?' ['+sev+']':'')+(l.note?' — '+l.note:''));
+      dayMap[dk].symptoms.push(_fmtHHMM(l.ts)+'  '+syms+(sev?' ['+sev+']':'')+(l.note?' - '+l.note:''));
     });
 
     var dayKeys=Object.keys(dayMap).sort(function(a,b){return dayMap[b].ts-dayMap[a].ts;});
     if(!dayKeys.length){ _infoBox('No data logged in selected range.'); return; }
 
     var LW=_BODY_W*0.6; var RW=_BODY_W*0.38; var GAP=_BODY_W-LW-RW;
+    var divX=_ML+LW+GAP/2;
+
+    // Column headers
+    _doc.setFillColor(_C.bd);
+    _doc.rect(_ML,_y,_BODY_W,6,'F');
+    _doc.setFontSize(8); _doc.setTextColor(_C.navy); _doc.setFont('helvetica','bold');
+    _doc.text('Daily Food & Fluids',_ML+2,_y+4.2);
+    _doc.text('Symptoms',divX+2,_y+4.2);
+    _doc.setFont('helvetica','normal');
+    _y+=7;
 
     dayKeys.forEach(function(dk){
       var day=dayMap[dk];
       var dLabel=(function(){ var d2=new Date(day.ts); return d2.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}); })();
-
-      // Sort entries chronologically
       day.entries.sort(function(a,b){return a.ts-b.ts;});
 
-      // Build left col: deduplicate non-snack slot labels
       var leftLines=[];
       var seenSlots={};
       day.entries.forEach(function(e){
-        if(e.isSnack){
-          leftLines.push(e.label+':  '+e.text);
-        } else {
-          if(!seenSlots[e.label]){ seenSlots[e.label]=true; leftLines.push(e.label+':  '+e.text); }
-          else { leftLines.push('    '+e.text); }
-        }
+        if(e.isSnack){ leftLines.push(e.label+':  '+e.text); }
+        else { if(!seenSlots[e.label]){ seenSlots[e.label]=true; leftLines.push(e.label+':  '+e.text); } else { leftLines.push('    '+e.text); } }
       });
-      if(day.fluids.length) leftLines.push('Fluids:  '+day.fluids.join('  ·  '));
+
+      if(day.fluids.length){
+        var fluidStr=day.fluids.map(function(f){
+          var oz=Math.round(f.totalOz)+' oz';
+          return f.count>1?f.label+' x'+f.count+' ('+oz+')':f.label+' ('+oz+')';
+        }).join('  .  ');
+        leftLines.push('Fluids:  '+fluidStr);
+      }
       if(day.supps.length) day.supps.forEach(function(s){ leftLines.push('Rx/Supp:  '+s); });
       if(!leftLines.length) leftLines.push('No entries');
       var rightLines=day.symptoms.length?day.symptoms:['None'];
 
-      // Estimate height
-      var lH=0; leftLines.forEach(function(l){ lH+=_doc.splitTextToSize(l,LW-2).length*4.5; });
-      var rH=0; rightLines.forEach(function(l){ rH+=_doc.splitTextToSize(l,RW-2).length*4.5; });
-      var blockH=Math.max(lH,rH)+14;
+      var lH=0; leftLines.forEach(function(l){ lH+=_doc.splitTextToSize(l,LW-4).length*4.5; });
+      var rH=0; rightLines.forEach(function(l){ rH+=_doc.splitTextToSize(l,RW-4).length*4.5; });
+      var blockH=Math.max(lH,rH)+11;
       _checkY(blockH);
 
-      // Date header
+      // Date header bar
       _doc.setFillColor(237,240,244);
       _doc.rect(_ML,_y,_BODY_W,6,'F');
       _doc.setFontSize(8.5); _doc.setTextColor(_C.navy); _doc.setFont('helvetica','bold');
@@ -16839,34 +16871,28 @@ var HealthReport = (function() {
       _doc.setFont('helvetica','normal');
       _y+=7;
 
-      // Column divider
-      var divX=_ML+LW+GAP/2;
-      var divYstart=_y;
-      var divYend=_y+Math.max(lH,rH)+2;
-
-      // Left col
       var yL=_y;
       _doc.setFontSize(7.5); _doc.setTextColor(_C.tx);
       leftLines.forEach(function(line){
-        _doc.splitTextToSize(line,LW-2).forEach(function(wl){ _doc.text(wl,_ML+1,yL); yL+=4.5; });
+        _doc.splitTextToSize(line,LW-4).forEach(function(wl){ _doc.text(wl,_ML+1,yL); yL+=4.5; });
       });
 
-      // Right col
       var yR=_y;
       _doc.setFontSize(7.5); _doc.setTextColor(_C.mt);
       rightLines.forEach(function(line){
-        _doc.splitTextToSize(line,RW-2).forEach(function(wl){ _doc.text(wl,divX+2,yR); yR+=4.5; });
+        _doc.splitTextToSize(line,RW-4).forEach(function(wl){ _doc.text(wl,divX+2,yR); yR+=4.5; });
       });
 
-      // Draw divider after content so height is known
-      _doc.setDrawColor(_C.bd);
-      _doc.line(divX,divYstart,divX,Math.max(yL,yR)+1);
+      // Mid-grey vertical divider
+      _doc.setDrawColor(155,165,175);
+      _doc.line(divX,_y-1,divX,Math.max(yL,yR)+1);
 
       _y=Math.max(yL,yR)+4;
+      // Light horizontal row separator
+      _doc.setDrawColor(220,226,232);
       _doc.line(_ML,_y-1,_ML+_BODY_W,_y-1);
     });
   }
-
   function _buildPage4(d) {
     _newPage();
 
@@ -16896,20 +16922,8 @@ var HealthReport = (function() {
       _table(['Drink Type','Count','% of Logs'],dkRows,[80,50,52]);
     }
     _y += 4;
-
-    _sectionHeader('Notes for Clinician');
-    _checkY(30);
-    _doc.setFillColor(249,251,253);
-    _doc.roundedRect(_ML,_y,_BODY_W,35,2,2,'F');
-    _doc.setFontSize(8); _doc.setTextColor(_C.mt);
-    _doc.text('This report was generated from self-reported health tracking data logged by the patient',_ML+3,_y+6);
-    _doc.text('using the Asëa personal health pattern app. All data is stored locally on the patient\'s',_ML+3,_y+11);
-    _doc.text('device and has not been processed by any external system.',_ML+3,_y+16);
-    _doc.text('Data represents observations and patterns — not clinical measurements or diagnoses.',_ML+3,_y+22);
-    _doc.text('Trends shown here are intended to support clinical conversation, not replace examination.',_ML+3,_y+28);
-    _y += 40;
     _doc.setFontSize(7.5); _doc.setTextColor(_C.mt);
-    _doc.text('Asëa — Personal Health Pattern Tracker. Not a medical device. Not for diagnostic use.',_ML,_y);
+    _doc.text('Asea — Personal Health Pattern Tracker. Not a medical device. Not for diagnostic use.',_ML,_y);
   }
 
   // ── Public API ────────────────────────────────────────────
@@ -16939,12 +16953,12 @@ var HealthReport = (function() {
         _buildPage4(d);
 
         var s = State.get();
-        var pName = ((s.profile.weight ? '' : '') + 'HealthReport').replace(/\s+/g,'');
         var today = new Date();
         var ds = today.getFullYear().toString()
           + String(today.getMonth()+1).padStart(2,'0')
           + String(today.getDate()).padStart(2,'0');
-        var fname = 'Asea Health Report - ' + ds + '.pdf';
+        var namePart = (s.profile.fullName || '').trim().replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+        var fname = 'Asea_Health_Report' + (namePart ? '_' + namePart : '') + '_' + ds + '.pdf';
         // Blob + anchor = reliable filename on all browsers including Edge
         var blob = _doc.output('blob');
         var url  = URL.createObjectURL(blob);
