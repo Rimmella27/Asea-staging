@@ -1389,7 +1389,7 @@ input, textarea { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px;
+  padding: 11px 20px;
   background: var(--sf);
   border-bottom: 1px solid var(--bd);
   cursor: pointer;
@@ -1430,12 +1430,12 @@ input, textarea { font-family: inherit; }
   font-size: 20px;
 }
 .track-group-label {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--mt);
-  padding: 20px 20px 8px;
+  color: var(--acc);
+  padding: 14px 20px 6px;
 }
 .track-group-label:first-child { padding-top: 0; }
 
@@ -3133,6 +3133,7 @@ input, textarea { font-family: inherit; }
   border: 1.5px solid var(--bd); background: var(--sf);
   font-size: 13px; font-weight: 500; color: var(--tx);
   cursor: pointer; transition: all 0.12s ease;
+  min-width: 90px; text-align: center;
 }
 .sym-chip.selected {
   background: var(--accp); border-color: var(--acc); color: var(--acc);
@@ -4853,7 +4854,7 @@ input, textarea { font-family: inherit; }
         </div>
       </div>
 
-      <div style="margin:0 20px; padding-top:20px;">
+      <div style="margin:0 20px; padding-top:16px;">
         <div class="track-group-label">My Day</div>
         <div class="track-list card" style="margin:0;">
           <div class="track-row" data-action="hydration" role="button" tabindex="0" aria-label="Log hydration">
@@ -4932,7 +4933,7 @@ input, textarea { font-family: inherit; }
           </div>
         </div>
       </div><!-- /track-groups -->
-      <div style="height:100px;"></div>
+      <div style="height:80px;"></div>
     </div><!-- /screen-track -->
 
     <!-- ── INSIGHTS ── -->
@@ -7428,7 +7429,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v25-03',
+  version:            'v25-04',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
