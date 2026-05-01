@@ -7473,7 +7473,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v25-06',
+  version:            'v25-07',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -16795,7 +16795,6 @@ var HealthReport = (function() {
       dayMap[dk].entries.push({ts:l.ts,label:slotLabel,text:l.text||'',isSnack:l.type==='snack'});
     });
 
-    // Condense fluids: group by type, count + total oz
     d.hLogs.forEach(function(l){
       var dk=_dayKey(l.ts); _ensureDay(dk,l.ts);
       var cfg=CONFIG.drinks.filter(function(dr){return dr.id===l.type;})[0];
@@ -16808,7 +16807,9 @@ var HealthReport = (function() {
     d.sLogs.forEach(function(l){
       var dk=_dayKey(l.mealTs||l.ts); _ensureDay(dk,l.mealTs||l.ts);
       var slot=l.slot?(l.slot.charAt(0).toUpperCase()+l.slot.slice(1)):'';
-      dayMap[dk].supps.push((slot?slot+': ':'')+l.items.map(function(i){return i.name;}).join(', '));
+      l.items.forEach(function(i){
+        dayMap[dk].supps.push('Rx/Supp:  '+i.name+(slot?' ('+slot+')':''));
+      });
     });
 
     var _SL={'headache':'Headache','migraine':'Migraine','fatigue':'Fatigue','energy_crash':'Energy crash','brain_fog':'Brain fog','mood_anxiety':'Mood/anxiety','joint_pain':'Joint pain','inflammation':'Inflammation','bloating':'Bloating','nausea':'Nausea','skin':'Skin rash/itch','sleep_quality':'Sleep quality','dizziness':'Dizziness'};
@@ -16817,23 +16818,26 @@ var HealthReport = (function() {
       var dk=_dayKey(l.ts); _ensureDay(dk,l.ts);
       var syms=(l.symptoms||[]).map(function(k){return _SL[k]||k;}).join(', ');
       var sev=_SVL[l.severity]||'';
-      dayMap[dk].symptoms.push(_fmtHHMM(l.ts)+'  '+syms+(sev?' ['+sev+']':'')+(l.note?' - '+l.note:''));
+      dayMap[dk].symptoms.push(_fmtHHMM(l.ts)+'  '+syms+(sev?' ['+sev+']':'')+(l.note?' — '+l.note:''));
     });
 
     var dayKeys=Object.keys(dayMap).sort(function(a,b){return dayMap[b].ts-dayMap[a].ts;});
     if(!dayKeys.length){ _infoBox('No data logged in selected range.'); return; }
 
-    var LW=_BODY_W*0.6; var RW=_BODY_W*0.38; var GAP=_BODY_W-LW-RW;
+    var LW=_BODY_W*0.60; var RW=_BODY_W*0.38; var GAP=_BODY_W-LW-RW;
     var divX=_ML+LW+GAP/2;
+    var GG0=160,GG1=168,GG2=178;
 
     // Column headers
-    _doc.setFillColor(_C.bd);
-    _doc.rect(_ML,_y,_BODY_W,6,'F');
-    _doc.setFontSize(8); _doc.setTextColor(_C.navy); _doc.setFont('helvetica','bold');
-    _doc.text('Daily Food & Fluids',_ML+2,_y+4.2);
-    _doc.text('Symptoms',divX+2,_y+4.2);
+    _doc.setFillColor(220,226,234);
+    _doc.rect(_ML,_y,_BODY_W,7,'F');
+    _doc.setDrawColor(GG0,GG1,GG2);
+    _doc.rect(_ML,_y,_BODY_W,7,'S');
+    _doc.setFontSize(8.5); _doc.setTextColor(_C.navy); _doc.setFont('helvetica','bold');
+    _doc.text('Daily Food & Fluids',_ML+3,_y+5);
+    _doc.text('Symptoms',divX+3,_y+5);
     _doc.setFont('helvetica','normal');
-    _y+=7;
+    _y+=8;
 
     dayKeys.forEach(function(dk){
       var day=dayMap[dk];
@@ -16843,54 +16847,72 @@ var HealthReport = (function() {
       var leftLines=[];
       var seenSlots={};
       day.entries.forEach(function(e){
-        if(e.isSnack){ leftLines.push(e.label+':  '+e.text); }
-        else { if(!seenSlots[e.label]){ seenSlots[e.label]=true; leftLines.push(e.label+':  '+e.text); } else { leftLines.push('    '+e.text); } }
+        if(e.isSnack){
+          leftLines.push({txt:e.label+':  '+e.text,indent:false});
+        } else {
+          if(!seenSlots[e.label]){
+            seenSlots[e.label]=true;
+            leftLines.push({txt:e.label+':  '+e.text,indent:false});
+          } else {
+            leftLines.push({txt:'•  '+e.text,indent:true});
+          }
+        }
       });
 
       if(day.fluids.length){
         var fluidStr=day.fluids.map(function(f){
           var oz=Math.round(f.totalOz)+' oz';
-          return f.count>1?f.label+' x'+f.count+' ('+oz+')':f.label+' ('+oz+')';
-        }).join('  .  ');
-        leftLines.push('Fluids:  '+fluidStr);
+          return f.count>1?f.label+' ×'+f.count+' ('+oz+')':f.label+' ('+oz+')';
+        }).join('  ·  ');
+        leftLines.push({txt:'Fluids:  '+fluidStr,indent:false});
       }
-      if(day.supps.length) day.supps.forEach(function(s){ leftLines.push('Rx/Supp:  '+s); });
-      if(!leftLines.length) leftLines.push('No entries');
+      if(day.supps.length) day.supps.forEach(function(s){ leftLines.push({txt:s,indent:false}); });
+      if(!leftLines.length) leftLines.push({txt:'No entries',indent:false});
       var rightLines=day.symptoms.length?day.symptoms:['None'];
 
-      var lH=0; leftLines.forEach(function(l){ lH+=_doc.splitTextToSize(l,LW-4).length*4.5; });
-      var rH=0; rightLines.forEach(function(l){ rH+=_doc.splitTextToSize(l,RW-4).length*4.5; });
-      var blockH=Math.max(lH,rH)+11;
+      var lH=0;
+      leftLines.forEach(function(l){ lH+=_doc.splitTextToSize(l.txt,LW-6).length*4.5; });
+      var rH=0;
+      rightLines.forEach(function(l){ rH+=_doc.splitTextToSize(l,RW-6).length*4.5; });
+      var blockH=6+6+Math.max(lH,rH)+6;
       _checkY(blockH);
 
       // Date header bar
-      _doc.setFillColor(237,240,244);
+      _doc.setFillColor(228,233,240);
       _doc.rect(_ML,_y,_BODY_W,6,'F');
+      _doc.setDrawColor(GG0,GG1,GG2);
+      _doc.rect(_ML,_y,_BODY_W,6,'S');
       _doc.setFontSize(8.5); _doc.setTextColor(_C.navy); _doc.setFont('helvetica','bold');
-      _doc.text(dLabel,_ML+2,_y+4.2);
+      _doc.text(dLabel,_ML+3,_y+4.3);
       _doc.setFont('helvetica','normal');
-      _y+=7;
+      _y+=6;
 
-      var yL=_y;
+      var contentY=_y+4;
+
+      var yL=contentY;
       _doc.setFontSize(7.5); _doc.setTextColor(_C.tx);
       leftLines.forEach(function(line){
-        _doc.splitTextToSize(line,LW-4).forEach(function(wl){ _doc.text(wl,_ML+1,yL); yL+=4.5; });
+        var xOff=line.indent?_ML+5:_ML+2;
+        _doc.splitTextToSize(line.txt,LW-6).forEach(function(wl,wi){
+          _doc.text(wl,wi===0?xOff:_ML+5,yL);
+          yL+=4.5;
+        });
       });
 
-      var yR=_y;
+      var yR=contentY;
       _doc.setFontSize(7.5); _doc.setTextColor(_C.mt);
       rightLines.forEach(function(line){
-        _doc.splitTextToSize(line,RW-4).forEach(function(wl){ _doc.text(wl,divX+2,yR); yR+=4.5; });
+        _doc.splitTextToSize(line,RW-6).forEach(function(wl){
+          _doc.text(wl,divX+3,yR);
+          yR+=4.5;
+        });
       });
 
-      // Mid-grey vertical divider
-      _doc.setDrawColor(155,165,175);
-      _doc.line(divX,_y-1,divX,Math.max(yL,yR)+1);
-
-      _y=Math.max(yL,yR)+4;
-      // Light horizontal row separator
-      _doc.setDrawColor(220,226,232);
-      _doc.line(_ML,_y-1,_ML+_BODY_W,_y-1);
+      var cellBottom=Math.max(yL,yR)+4;
+      _doc.setDrawColor(GG0,GG1,GG2);
+      _doc.rect(_ML,_y,_BODY_W,cellBottom-_y,'S');
+      _doc.line(divX,_y,divX,cellBottom);
+      _y=cellBottom;
     });
   }
   function _buildPage4(d) {
