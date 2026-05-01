@@ -2164,6 +2164,7 @@ input, textarea { font-family: inherit; }
 .inv-item-main-row { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
 .inv-item-name { font-size: 13px; font-weight: 500; color: var(--tx); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .inv-item-dose { font-size: 11px; color: var(--mt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.inv-item-cat  { font-size: 11px; color: var(--acc); opacity: 0.75; margin-top: 1px; }
 /* Inline slot toggles on saved rows */
 .inv-item-slot-row { display: flex; flex-wrap: nowrap; gap: 4px; margin-top: 3px; }
 .inv-item-slot-pill {
@@ -5009,6 +5010,38 @@ input, textarea { font-family: inherit; }
       <div class="you-section">
         <div class="you-section-title">Profile</div>
         <div id="you-profile-list">
+          <div class="you-row you-row--editable" data-field="fullName">
+            <span class="you-row-label">Full Name</span>
+            <div class="you-row-right">
+              <span class="you-row-value" id="you-full-name">—</span>
+              <span class="you-row-edit-hint">Edit</span>
+            </div>
+          </div>
+          <div class="you-edit-form" id="you-edit-fullName">
+            <div class="you-edit-row">
+              <input class="you-edit-input" id="you-input-fullName" type="text" maxlength="80" placeholder="Your full name">
+            </div>
+            <div class="you-edit-actions">
+              <button class="inv-cancel-btn" data-field-cancel="fullName">Cancel</button>
+              <button class="inv-save-btn"   data-field-save="fullName">Save</button>
+            </div>
+          </div>
+          <div class="you-row you-row--editable" data-field="preferredName">
+            <span class="you-row-label">Preferred Name</span>
+            <div class="you-row-right">
+              <span class="you-row-value" id="you-preferred-name">—</span>
+              <span class="you-row-edit-hint">Edit</span>
+            </div>
+          </div>
+          <div class="you-edit-form" id="you-edit-preferredName">
+            <div class="you-edit-row">
+              <input class="you-edit-input" id="you-input-preferredName" type="text" maxlength="40" placeholder="e.g. Rob">
+            </div>
+            <div class="you-edit-actions">
+              <button class="inv-cancel-btn" data-field-cancel="preferredName">Cancel</button>
+              <button class="inv-save-btn"   data-field-save="preferredName">Save</button>
+            </div>
+          </div>
           <div class="you-row you-row--editable" data-field="weight">
             <span class="you-row-label">Weight</span>
             <div class="you-row-right">
@@ -5384,6 +5417,16 @@ input, textarea { font-family: inherit; }
           <div class="ob-title">Tell us a little<br>about yourself</div>
           <div class="ob-sub">This helps personalize your experience. You can update these anytime in You.</div>
           <div class="ob-fields">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input class="form-input" id="ob-full-name" type="text" placeholder="Your full name" autocomplete="off" maxlength="80">
+              <div style="font-size:11px;color:var(--mt);margin-top:4px;line-height:1.4;">Asëa can generate a health report to share with your doctor — your name ensures it's clearly identified as yours.</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Preferred Name <span style="font-weight:400;color:var(--mt);">(optional)</span></label>
+              <input class="form-input" id="ob-preferred-name" type="text" placeholder="e.g. Rob" autocomplete="off" maxlength="40">
+              <div style="font-size:11px;color:var(--mt);margin-top:4px;line-height:1.4;">What should Asëa call you?</div>
+            </div>
             <div class="form-group">
               <label class="form-label">Weight</label>
               <input class="form-input" id="ob-weight" type="number" inputmode="decimal" placeholder="lbs" autocomplete="off">
@@ -7429,7 +7472,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v25-04',
+  version:            'v25-05',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -8010,6 +8053,8 @@ var State = (function() {
   var _defaults = {
     onboardingComplete: false,
     profile: {
+      fullName: '',             // used in health report PDF
+      preferredName: '',        // used in UI greetings and reminders
       weight: null,
       height: null,
       age: null,
@@ -8088,6 +8133,12 @@ var State = (function() {
       if (!Array.isArray(item.changeLog))    item.changeLog   = [];
       if (!Array.isArray(item.brandNames))   item.brandNames  = [];
       if (item.doseUnit === undefined)       item.doseUnit    = '';
+      // v25-05: back-fill cat from catalogue for items added before this version
+      if (!item.cat) {
+        var _allCat = COMMON_SUPPS.concat(COMMON_MEDS);
+        var _match  = _allCat.filter(function(c){ return c.name.toLowerCase() === (item.name||'').toLowerCase(); })[0];
+        item.cat = _match ? (_match.cat || '') : '';
+      }
       return item;
     });
   }
@@ -10370,6 +10421,8 @@ var ScreenYou = (function() {
     _setText('you-height',  p.height  || '—');
     _setText('you-age',     p.age     ? p.age + ' yrs'   : '—');
     _setText('you-sex',     p.sex     ? _capitalize(p.sex) : '—');
+    _setText('you-full-name',      p.fullName      || '—');
+    _setText('you-preferred-name', p.preferredName || '—');
     _setText('you-hydration-goal', (s.goals.hydrationOz || CONFIG.hydrationGoalOz) + ' oz');
     // Wake times — single summary row: "6:35 / 8:30" or "6:35 AM" if only one set
     // Migration: if legacy wakeTime set but new fields aren't, copy to weekday
@@ -10477,6 +10530,7 @@ var ScreenYou = (function() {
         +       '<span class="inv-item-name">' + Utils.esc(item.name) + '</span>'
         +       (item.dose ? '<span class="inv-item-dose">' + Utils.esc(item.dose) + '</span>' : '')
         +     '</div>'
+        +     (item.cat ? '<div class="inv-item-cat">' + Utils.esc(item.cat) + '</div>' : '')
         +     '<div class="inv-item-slot-row">' + slotRowHtml + '</div>'
         +   '</div>'
         +   '<div class="inv-item-actions">'
@@ -10551,6 +10605,7 @@ var ScreenYou = (function() {
     var benefits     = catEntry ? (catEntry.benefits     || []) : [];
     var brandNames   = catEntry ? (catEntry.brandNames   || []) : [];
     var doseUnit     = catEntry ? (catEntry.doseUnit     || '')  : '';
+    var cat          = catEntry ? (catEntry.cat          || '')  : '';
     var nowTs = Date.now();
 
     arr.push({
@@ -10559,6 +10614,7 @@ var ScreenYou = (function() {
       dose: dose,
       slots: slots,
       addedTs: nowTs,
+      cat: cat,
       fx: fx,
       sideEffects: sideEffects,
       benefits: benefits,
@@ -10829,7 +10885,6 @@ var ScreenYou = (function() {
       var cc = document.getElementById('you-goals-chars');
       var tipPanel2 = document.getElementById('you-goals-guidance');
       var tipBtn2   = document.getElementById('you-goals-tip-toggle');
-      // Always reset to peeked state on open
       if (tipPanel2) tipPanel2.classList.remove('open');
       if (tipBtn2)   tipBtn2.textContent = '… Show tips';
       var val = s.profile.healthGoals || '';
@@ -10840,6 +10895,12 @@ var ScreenYou = (function() {
         });
       }
       if (cc) cc.textContent = val.length;
+    } else if (field === 'fullName') {
+      var inp = document.getElementById('you-input-fullName');
+      if (inp) inp.value = s.profile.fullName || '';
+    } else if (field === 'preferredName') {
+      var inp = document.getElementById('you-input-preferredName');
+      if (inp) inp.value = s.profile.preferredName || '';
     }
   }
 
@@ -10882,6 +10943,12 @@ var ScreenYou = (function() {
       var ta = document.getElementById('you-input-healthGoals');
       var text = Utils.cleanText(ta ? ta.value : '');
       State.update('profile.healthGoals', text);
+    } else if (field === 'fullName') {
+      var val = (document.getElementById('you-input-fullName').value || '').trim();
+      State.update('profile.fullName', val);
+    } else if (field === 'preferredName') {
+      var val = (document.getElementById('you-input-preferredName').value || '').trim();
+      State.update('profile.preferredName', val);
     }
 
     Storage.sched();
@@ -11646,6 +11713,8 @@ var Onboarding = (function() {
   }
 
   function _finish() {
+    var fullName      = (document.getElementById('ob-full-name').value || '').trim();
+    var preferredName = (document.getElementById('ob-preferred-name').value || '').trim();
     var weight = Utils.parseNum(document.getElementById('ob-weight').value, 1, 999);
     var ft = Utils.parseNum(document.getElementById('ob-height-ft').value, 1, 8);
     var inches = Utils.parseNum(document.getElementById('ob-height-in').value, 0, 11);
@@ -11656,6 +11725,8 @@ var Onboarding = (function() {
     var wakeTimeWeekday = wakeWeekdayEl ? wakeWeekdayEl.value.trim() : '';
     var wakeTimeWeekend = wakeWeekendEl ? wakeWeekendEl.value.trim() : '';
 
+    if (fullName)      State.update('profile.fullName',      fullName);
+    if (preferredName) State.update('profile.preferredName', preferredName);
     State.update('profile.weight', weight);
     State.update('profile.height', heightStr);
     State.update('profile.age',    age);
@@ -16370,6 +16441,7 @@ var HealthReport = (function() {
     var bpLogs = (s.logs.bp        || []).filter(function(l){ return l.ts >= cut; });
     var gLogs  = (s.logs.glucose   || []).filter(function(l){ return l.ts >= cut; });
     var mLogs  = (s.logs.meals     || []).filter(function(l){ return l.ts >= cut; });
+    var symLogs= (s.logs.symptoms  || []).filter(function(l){ return l.ts >= cut; });
     var sLogs  = (s.logs.suppLogs  || []).filter(function(l){ return l.ts >= cut; })
                   .filter(function(l){ return Array.isArray(l.items) && l.items.length > 0; })
                   .slice().sort(function(a,b){ return (a.mealTs||a.ts) - (b.mealTs||b.ts); });
@@ -16380,32 +16452,28 @@ var HealthReport = (function() {
       return Math.min.apply(null, all.map(function(l){return l.ts;}));
     }())) / CONFIG.DAY) || 1;
 
-    // Hydration
     var totalOz = hLogs.reduce(function(a,l){return a+l.oz;},0);
     var avgOzDay = totalOz / days;
     var drinkCounts = {};
     hLogs.forEach(function(l){ drinkCounts[l.type] = (drinkCounts[l.type]||0)+1; });
 
-    // Bowel
     var bristolMap = {1:'Hard',2:'Firm',3:'Normal',4:'Normal',5:'Loose',6:'Loose',7:'Watery'};
     var bristolCounts = {Hard:0,Firm:0,Normal:0,Loose:0,Watery:0};
     bLogs.forEach(function(l){
       var lbl = bristolMap[l.bristolType] || 'Normal';
       bristolCounts[lbl] = (bristolCounts[lbl]||0)+1;
     });
-    var symCounts = {};
-    bLogs.forEach(function(l){
-      (l.symptoms||[]).forEach(function(sy){ symCounts[sy]=(symCounts[sy]||0)+1; });
-    });
+    // BM avg: only divide by days that have at least one log
+    var bmDaySet = {};
+    bLogs.forEach(function(l){ bmDaySet[new Date(l.ts).toDateString()] = true; });
+    var bmDaysLogged = Object.keys(bmDaySet).length || 1;
 
-    // BP
     var avgSys = bpLogs.length ? Math.round(_avg(bpLogs,function(l){return l.sys;})) : null;
     var avgDia = bpLogs.length ? Math.round(_avg(bpLogs,function(l){return l.dia;})) : null;
     var bpReadings = bpLogs.slice(-14).map(function(l){
-      return { date: _fmtDate(l.ts), val: l.sys+'/'+l.dia };
+      return { date: _fmtDate(l.ts), val: l.sys+'/'+l.dia+' mmHg', hr: l.hr ? l.hr + ' bpm' : '—' };
     });
 
-    // Glucose
     var avgGluc = gLogs.length ? Math.round(_avg(gLogs,function(l){return l.val;})) : null;
     var glucByCtx = {};
     gLogs.forEach(function(l){
@@ -16414,16 +16482,15 @@ var HealthReport = (function() {
     });
     var glucCtxAvgs = Object.keys(glucByCtx).map(function(ctx){
       var vals = glucByCtx[ctx];
-      return { ctx: ctx, avg: Math.round(vals.reduce(function(a,v){return a+v;},0)/vals.length) };
+      return { ctx: ctx, avg: Math.round(vals.reduce(function(a,v){return a+v;},0)/vals.length), n: vals.length };
     });
 
-    // Meals — top foods
     var foodCounts = {};
     mLogs.filter(function(l){return l.type==='food';}).forEach(function(l){
       var key = (l.text||'').toLowerCase().trim();
       if (key) foodCounts[key] = (foodCounts[key]||0)+1;
     });
-    var topFoods = Object.keys(foodCounts).sort(function(a,b){return foodCounts[b]-foodCounts[a];}).slice(0,10);
+    var topFoods = Object.keys(foodCounts).sort(function(a,b){return foodCounts[b]-foodCounts[a];}).slice(0,12);
 
     return {
       profile: p, goals: s.goals,
@@ -16432,13 +16499,12 @@ var HealthReport = (function() {
       days: days, rangeLabel: _rangeLabel(),
       dateFrom: cut > 0 ? _fmtDate(cut) : 'First entry',
       dateTo: _fmtDate(Date.now()),
-      hLogs, bLogs, bpLogs, gLogs, mLogs,
+      hLogs, bLogs, bpLogs, gLogs, mLogs, symLogs,
       totalOz: Math.round(totalOz), avgOzDay: Math.round(avgOzDay),
-      drinkCounts, bristolCounts, symCounts,
+      drinkCounts, bristolCounts, bmDaysLogged,
       avgSys, avgDia, bpReadings,
-      avgGluc, glucCtxAvgs,
-      topFoods,
-      sLogs
+      avgGluc, glucByCtx, glucCtxAvgs,
+      topFoods, sLogs
     };
   }
 
@@ -16568,7 +16634,6 @@ var HealthReport = (function() {
   // ── Page builders ─────────────────────────────────────────
 
   function _buildPage1(d) {
-    // ── Title bar ──
     _doc.setFillColor(_C.navy);
     _doc.rect(0, 0, _W, 28, 'F');
     _doc.setFontSize(18); _doc.setTextColor(_C.white);
@@ -16580,20 +16645,18 @@ var HealthReport = (function() {
     _doc.text('Generated: ' + _fmtDate(Date.now()) + '  •  Period: ' + d.rangeLabel + ' (' + d.dateFrom + ' – ' + d.dateTo + ')', _ML, 25.5);
     _y = 35;
 
-    // ── Patient info ──
     _sectionHeader('Patient Information');
     var p = d.profile;
     _twoCol([
-      { label:'Name:', value: 'Report Owner' },
-      { label:'Age:', value: p.age ? p.age + ' yrs' : '—' },
+      { label:'Name:',           value: p.fullName || 'Not provided' },
+      { label:'Age:',            value: p.age ? p.age + ' yrs' : '—' },
       { label:'Biological Sex:', value: p.sex ? (p.sex.charAt(0).toUpperCase()+p.sex.slice(1)) : '—' },
-      { label:'Weight:', value: p.weight ? p.weight + ' lbs' : '—' },
-      { label:'Height:', value: p.height || '—' },
+      { label:'Weight:',         value: p.weight ? p.weight + ' lbs' : '—' },
+      { label:'Height:',         value: p.height || '—' },
       { label:'Hydration Goal:', value: (d.goals.hydrationOz || 64) + ' oz/day' },
     ]);
     _y += 2;
 
-    // ── Patient goals box — shown if set ──
     if (d.healthGoals) {
       _checkY(16);
       _doc.setFillColor(237,241,246);
@@ -16612,200 +16675,241 @@ var HealthReport = (function() {
       _y += 17;
     }
 
-    // ── At-a-glance summary ──
+    // At-a-glance: one number per metric, no detail duplication below
     _sectionHeader('At-a-Glance Summary (' + d.rangeLabel + ')');
-    _row('Hydration — Average Daily', d.avgOzDay ? d.avgOzDay + ' oz/day' : '—', true);
-    _row('Hydration — Total Logged', d.totalOz ? d.totalOz + ' oz' : '—');
-    _row('Bowel Movements — Total', d.bLogs.length ? d.bLogs.length + ' logged' : '—', true);
-    _row('Bowel Movements — Avg / Day', d.bLogs.length ? (d.bLogs.length/d.days).toFixed(1) + '/day' : '—');
-    _row('Blood Pressure — Avg', (d.avgSys && d.avgDia) ? d.avgSys+'/'+d.avgDia+' mmHg' : '—', true);
-    _row('Blood Pressure — Readings', d.bpLogs.length ? d.bpLogs.length + ' readings' : '—');
-    _row('Glucose — Average', d.avgGluc ? d.avgGluc + ' mg/dL' : '—', true);
-    _row('Glucose — Readings', d.gLogs.length ? d.gLogs.length + ' readings' : '—');
-    _row('Meals / Snacks Logged', d.mLogs.length ? d.mLogs.length + ' entries' : '—');
-    _y += 3;
+    _row('Hydration — Avg Daily',    d.avgOzDay ? d.avgOzDay + ' oz/day  (Goal: ' + (d.goals.hydrationOz||64) + ' oz)' : '—', true);
+    _row('Bowel Movements',          d.bLogs.length ? d.bLogs.length + ' logged  ·  ' + (d.bLogs.length/d.bmDaysLogged).toFixed(1) + '/logged day' : '—', true);
+    _row('Blood Pressure — Avg',     (d.avgSys && d.avgDia) ? d.avgSys+'/'+d.avgDia+' mmHg  ('+d.bpLogs.length+' readings)' : '—', true);
+    _row('Blood Glucose — Avg',      d.avgGluc ? d.avgGluc + ' mg/dL  ('+d.gLogs.length+' readings)' : '—', true);
+    _row('Meals & Snacks Logged',    d.mLogs.length ? d.mLogs.length + ' entries' : '—');
+    _row('Symptoms Logged',          d.symLogs.length ? d.symLogs.length + ' entries' : '—');
+    _y += 4;
 
-    // ── Medications ──
-    _sectionHeader('Current Medications');
+    // Active medications — labelled to differentiate from food diary inline refs
+    _sectionHeader('Active Medications — At Time of Report');
     if (d.medications.length) {
       var medRows = d.medications.map(function(m){
-        var slots = m.slots && m.slots.length ? m.slots.map(function(s){return s.charAt(0).toUpperCase()+s.slice(1);}).join(', ') : '—';
-        return [m.name, m.dose || '—', slots];
+        var slots = m.slots && m.slots.length ? m.slots.map(function(sl){return sl.charAt(0).toUpperCase()+sl.slice(1);}).join(', ') : '—';
+        return [m.name, m.dose||'—', m.cat||'—', slots];
       });
-      _table(['Medication','Dosage','Schedule'],[].concat(medRows),[90,50,42]);
-    } else {
-      _infoBox('No medications on file.');
-    }
+      _table(['Medication','Dosage','Category','Schedule'],medRows,[68,28,56,30]);
+    } else { _infoBox('No medications on file.'); }
 
-    // ── Supplements ──
-    _sectionHeader('Current Supplements');
+    // Active supplements
+    _sectionHeader('Active Supplements — At Time of Report');
     if (d.supplements.length) {
       var suppRows = d.supplements.map(function(s){
         var slots = s.slots && s.slots.length ? s.slots.map(function(sl){return sl.charAt(0).toUpperCase()+sl.slice(1);}).join(', ') : '—';
-        return [s.name, s.dose || '—', slots];
+        return [s.name, s.dose||'—', s.cat||'—', slots];
       });
-      _table(['Supplement','Dosage','Schedule'],[].concat(suppRows),[90,50,42]);
-    } else {
-      _infoBox('No supplements on file.');
-    }
+      _table(['Supplement','Dosage','Category','Schedule'],suppRows,[68,28,56,30]);
+    } else { _infoBox('No supplements on file.'); }
 
     _pageFooter();
   }
 
   function _buildPage2(d) {
     _newPage();
-    // ── Hydration ──
-    _sectionHeader('Hydration Detail');
-    _row('Total oz logged', d.totalOz + ' oz');
-    _row('Average per day', d.avgOzDay + ' oz');
-    _row('Daily goal', (d.goals.hydrationOz || 64) + ' oz');
-    _row('Goal achievement', d.avgOzDay && d.goals.hydrationOz
-      ? Math.round((d.avgOzDay / d.goals.hydrationOz) * 100) + '%' : '—', true);
-    _y += 2;
 
-    if (Object.keys(d.drinkCounts).length) {
-      _subHeader('Drink Type Breakdown');
-      var drinkRows = Object.keys(d.drinkCounts).map(function(k){
-        var cfg = CONFIG.drinks.filter(function(dr){return dr.id===k;})[0];
-        var lbl = cfg ? cfg.label : k;
-        var pct = Math.round((d.drinkCounts[k] / d.hLogs.length) * 100);
-        return [lbl, d.drinkCounts[k] + ' servings', pct + '%'];
-      }).sort(function(a,b){ return parseInt(b[1])-parseInt(a[1]); });
-      _table(['Drink Type','Count','% of Logs'],[].concat(drinkRows),[80,50,52]);
-    }
-
-    // ── Digestive Health ──
-    _sectionHeader('Digestive Health');
-    _row('Total BM entries', d.bLogs.length);
-    _row('Average frequency', d.bLogs.length ? (d.bLogs.length/d.days).toFixed(1) + '/day' : '—', true);
-    _infoBox('Reference: Normal bowel frequency is typically 3×/week to 3×/day.');
-    _y += 2;
-
-    _subHeader('Stool Consistency (Bristol Scale)');
-    var bTypes = Object.keys(d.bristolCounts).filter(function(k){return d.bristolCounts[k]>0;});
-    if (bTypes.length) {
-      var bRows = bTypes.map(function(k){
-        var pct = d.bLogs.length ? Math.round((d.bristolCounts[k]/d.bLogs.length)*100) : 0;
-        return [k, d.bristolCounts[k], pct+'%'];
-      });
-      _table(['Type','Count','%'],[].concat(bRows),[70,45,67]);
-    } else {
-      _infoBox('No bowel data in selected range.');
-    }
-
-    var syms = Object.keys(d.symCounts);
-    if (syms.length) {
-      _subHeader('Reported Symptoms');
-      var symRows = syms.sort(function(a,b){return d.symCounts[b]-d.symCounts[a];}).map(function(s){
-        return [s.charAt(0).toUpperCase()+s.slice(1), d.symCounts[s] + ' occurrences'];
-      });
-      _table(['Symptom','Frequency'],[].concat(symRows),[110,72]);
-    }
-  }
-
-  function _buildPage3(d) {
-    _newPage();
-    // ── Blood Pressure ──
-    _sectionHeader('Blood Pressure');
+    _sectionHeader('Blood Pressure Detail');
     if (d.avgSys && d.avgDia) {
       _row('Average', d.avgSys+'/'+d.avgDia+' mmHg', true);
       _row('Total readings', d.bpLogs.length);
       _row('Highest systolic', Math.max.apply(null,d.bpLogs.map(function(l){return l.sys;})) + ' mmHg');
       _row('Lowest systolic',  Math.min.apply(null,d.bpLogs.map(function(l){return l.sys;})) + ' mmHg');
-      _infoBox('Reference ranges: Normal <120/80  |  Elevated 120-129/<80  |  High ≥130/80 mmHg');
+      _infoBox('Reference ranges: Normal <120/80  |  Elevated 120-129/<80  |  High \u2265130/80 mmHg');
       _y += 2;
-
       if (d.bpReadings.length) {
-        _subHeader('Recent Readings (up to 14)');
-        var bpRows = d.bpReadings.map(function(r){ return [r.date, r.val+' mmHg']; });
-        _table(['Date','Reading'],[].concat(bpRows),[90,92]);
+        _subHeader('Readings (up to last 14)');
+        _table(['Date','Reading','Heart Rate'],d.bpReadings.map(function(r){return [r.date,r.val,r.hr];}),[55,75,52]);
       }
-    } else {
-      _infoBox('No blood pressure data in selected range.');
-    }
+    } else { _infoBox('No blood pressure data in selected range.'); }
+    _y += 4;
 
-    // ── Glucose ──
-    _sectionHeader('Blood Glucose');
+    _sectionHeader('Blood Glucose Detail');
     if (d.avgGluc) {
       _row('Average', d.avgGluc + ' mg/dL', true);
       _row('Total readings', d.gLogs.length);
       _row('Highest reading', Math.max.apply(null,d.gLogs.map(function(l){return l.val;})) + ' mg/dL');
       _row('Lowest reading',  Math.min.apply(null,d.gLogs.map(function(l){return l.val;})) + ' mg/dL');
-      _infoBox('Reference: Fasting normal 70-99  |  Pre-diabetic 100-125  |  Diabetic ≥126 mg/dL');
+      _infoBox('Reference: Fasting normal 70-99  |  Pre-diabetic 100-125  |  Diabetic \u2265126 mg/dL');
       _y += 2;
-
       if (d.glucCtxAvgs.length) {
         _subHeader('Average by Context');
-        var gRows = d.glucCtxAvgs.map(function(g){
-          return [g.ctx.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();}),
-                  g.avg+' mg/dL',
-                  d.glucByCtx ? (d.glucByCtx[g.ctx]||[]).length+' readings' : '—'];
-        });
-        _table(['Context','Avg Glucose','Readings'],[].concat(gRows),[80,55,47]);
+        _table(['Context','Avg Glucose','Readings'],d.glucCtxAvgs.map(function(g){
+          return [g.ctx.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();}),g.avg+' mg/dL',g.n+' readings'];
+        }),[80,55,47]);
       }
-    } else {
-      _infoBox('No glucose data in selected range.');
-    }
+    } else { _infoBox('No glucose data in selected range.'); }
+    _y += 4;
+
+    _sectionHeader('Digestive Health');
+    _row('Total BM entries', d.bLogs.length);
+    _row('Avg per logged day', d.bLogs.length ? (d.bLogs.length/d.bmDaysLogged).toFixed(1)+'/day' : '—', true);
+    _infoBox('Reference: Normal bowel frequency is typically 3\u00d7/week to 3\u00d7/day. Average shown is per day with at least one entry.');
+    _y += 2;
+    var bTypes = Object.keys(d.bristolCounts).filter(function(k){return d.bristolCounts[k]>0;});
+    if (bTypes.length) {
+      _subHeader('Stool Consistency (Bristol Scale)');
+      _table(['Type','Count','%'],bTypes.map(function(k){
+        return [k,d.bristolCounts[k],d.bLogs.length?Math.round((d.bristolCounts[k]/d.bLogs.length)*100)+'%':'—'];
+      }),[70,45,67]);
+    } else { _infoBox('No bowel data in selected range.'); }
+  }
+
+  function _buildPage3(d) {
+    _newPage();
+    _sectionHeader('Food, Hydration & Symptom Diary (' + d.rangeLabel + ')');
+    _doc.setFontSize(7.5); _doc.setTextColor(_C.mt);
+    _doc.text('Organized by date, most recent first. Snacks shown chronologically between meals. Right column: symptoms logged that day.', _ML, _y);
+    _y += 7;
+
+    function _dayKey(ts) { var d2=new Date(ts); return d2.getFullYear()+'-'+(d2.getMonth()+1)+'-'+d2.getDate(); }
+    function _fmtHHMM(ts) { var d2=new Date(ts); var h=d2.getHours(); var m=String(d2.getMinutes()).padStart(2,'0'); var ap=h>=12?'PM':'AM'; h=h%12||12; return h+':'+m+' '+ap; }
+
+    var dayMap = {};
+    function _ensureDay(dk,ts){ if(!dayMap[dk]){ dayMap[dk]={ts:ts,entries:[],fluids:[],supps:[],symptoms:[]}; } if(ts<dayMap[dk].ts) dayMap[dk].ts=ts; }
+
+    d.mLogs.forEach(function(l){
+      var dk=_dayKey(l.ts); _ensureDay(dk,l.ts);
+      var slotLabel = l.type==='snack' ? 'Snack ('+_fmtHHMM(l.ts)+')' : (l.slot?l.slot.charAt(0).toUpperCase()+l.slot.slice(1):'Meal');
+      dayMap[dk].entries.push({ts:l.ts,label:slotLabel,text:l.text||'',isSnack:l.type==='snack'});
+    });
+
+    d.hLogs.forEach(function(l){
+      var dk=_dayKey(l.ts); _ensureDay(dk,l.ts);
+      var cfg=CONFIG.drinks.filter(function(dr){return dr.id===l.type;})[0];
+      dayMap[dk].fluids.push((cfg?cfg.label:l.type)+' ('+Math.round(l.oz)+' oz)');
+    });
+
+    d.sLogs.forEach(function(l){
+      var dk=_dayKey(l.mealTs||l.ts); _ensureDay(dk,l.mealTs||l.ts);
+      var slot=l.slot?(l.slot.charAt(0).toUpperCase()+l.slot.slice(1)):'';
+      dayMap[dk].supps.push((slot?slot+': ':'')+l.items.map(function(i){return i.name;}).join(', '));
+    });
+
+    var _SL={'headache':'Headache','migraine':'Migraine','fatigue':'Fatigue','energy_crash':'Energy crash','brain_fog':'Brain fog','mood_anxiety':'Mood/anxiety','joint_pain':'Joint pain','inflammation':'Inflammation','bloating':'Bloating','nausea':'Nausea','skin':'Skin rash/itch','sleep_quality':'Sleep quality','dizziness':'Dizziness'};
+    var _SVL={1:'Mild',2:'Moderate',3:'Severe'};
+    d.symLogs.forEach(function(l){
+      var dk=_dayKey(l.ts); _ensureDay(dk,l.ts);
+      var syms=(l.symptoms||[]).map(function(k){return _SL[k]||k;}).join(', ');
+      var sev=_SVL[l.severity]||'';
+      dayMap[dk].symptoms.push(_fmtHHMM(l.ts)+'  '+syms+(sev?' ['+sev+']':'')+(l.note?' — '+l.note:''));
+    });
+
+    var dayKeys=Object.keys(dayMap).sort(function(a,b){return dayMap[b].ts-dayMap[a].ts;});
+    if(!dayKeys.length){ _infoBox('No data logged in selected range.'); return; }
+
+    var LW=_BODY_W*0.6; var RW=_BODY_W*0.38; var GAP=_BODY_W-LW-RW;
+
+    dayKeys.forEach(function(dk){
+      var day=dayMap[dk];
+      var dLabel=(function(){ var d2=new Date(day.ts); return d2.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}); })();
+
+      // Sort entries chronologically
+      day.entries.sort(function(a,b){return a.ts-b.ts;});
+
+      // Build left col: deduplicate non-snack slot labels
+      var leftLines=[];
+      var seenSlots={};
+      day.entries.forEach(function(e){
+        if(e.isSnack){
+          leftLines.push(e.label+':  '+e.text);
+        } else {
+          if(!seenSlots[e.label]){ seenSlots[e.label]=true; leftLines.push(e.label+':  '+e.text); }
+          else { leftLines.push('    '+e.text); }
+        }
+      });
+      if(day.fluids.length) leftLines.push('Fluids:  '+day.fluids.join('  ·  '));
+      if(day.supps.length) day.supps.forEach(function(s){ leftLines.push('Rx/Supp:  '+s); });
+      if(!leftLines.length) leftLines.push('No entries');
+      var rightLines=day.symptoms.length?day.symptoms:['None'];
+
+      // Estimate height
+      var lH=0; leftLines.forEach(function(l){ lH+=_doc.splitTextToSize(l,LW-2).length*4.5; });
+      var rH=0; rightLines.forEach(function(l){ rH+=_doc.splitTextToSize(l,RW-2).length*4.5; });
+      var blockH=Math.max(lH,rH)+14;
+      _checkY(blockH);
+
+      // Date header
+      _doc.setFillColor(237,240,244);
+      _doc.rect(_ML,_y,_BODY_W,6,'F');
+      _doc.setFontSize(8.5); _doc.setTextColor(_C.navy); _doc.setFont('helvetica','bold');
+      _doc.text(dLabel,_ML+2,_y+4.2);
+      _doc.setFont('helvetica','normal');
+      _y+=7;
+
+      // Column divider
+      var divX=_ML+LW+GAP/2;
+      var divYstart=_y;
+      var divYend=_y+Math.max(lH,rH)+2;
+
+      // Left col
+      var yL=_y;
+      _doc.setFontSize(7.5); _doc.setTextColor(_C.tx);
+      leftLines.forEach(function(line){
+        _doc.splitTextToSize(line,LW-2).forEach(function(wl){ _doc.text(wl,_ML+1,yL); yL+=4.5; });
+      });
+
+      // Right col
+      var yR=_y;
+      _doc.setFontSize(7.5); _doc.setTextColor(_C.mt);
+      rightLines.forEach(function(line){
+        _doc.splitTextToSize(line,RW-2).forEach(function(wl){ _doc.text(wl,divX+2,yR); yR+=4.5; });
+      });
+
+      // Draw divider after content so height is known
+      _doc.setDrawColor(_C.bd);
+      _doc.line(divX,divYstart,divX,Math.max(yL,yR)+1);
+
+      _y=Math.max(yL,yR)+4;
+      _doc.line(_ML,_y-1,_ML+_BODY_W,_y-1);
+    });
   }
 
   function _buildPage4(d) {
     _newPage();
-    // ── Meals & Nutrition ──
-    _sectionHeader('Meals & Nutrition');
-    _row('Total entries logged', d.mLogs.length);
-    var foods = d.mLogs.filter(function(l){return l.type==='food';});
-    var snacks = d.mLogs.filter(function(l){return l.type==='snack';});
-    _row('Meals logged', foods.length);
-    _row('Snacks logged', snacks.length);
-    _row('Avg entries per day', (d.mLogs.length/d.days).toFixed(1));
-    _y += 2;
 
+    _sectionHeader('Most Frequently Logged Foods (' + d.rangeLabel + ')');
     if (d.topFoods.length) {
-      _subHeader('Most Frequently Logged Foods');
-      var fRows2 = [];
-      for (var _fi = 0; _fi < d.topFoods.length; _fi += 2) {
-        var _fl = d.topFoods[_fi];
-        var _fr = d.topFoods[_fi+1] || '';
-        fRows2.push([_fl.charAt(0).toUpperCase()+_fl.slice(1), _fr ? _fr.charAt(0).toUpperCase()+_fr.slice(1) : '']);
+      var fRows2=[];
+      for(var _fi=0;_fi<d.topFoods.length;_fi+=2){
+        var _fl=d.topFoods[_fi],_fr=d.topFoods[_fi+1]||'';
+        fRows2.push([_fl.charAt(0).toUpperCase()+_fl.slice(1),_fr?_fr.charAt(0).toUpperCase()+_fr.slice(1):'']);
       }
-      _table(['Food Item','Food Item'],[].concat(fRows2),[91,91]);
-    } else {
-      _infoBox('No meal data in selected range.');
-    }
+      _table(['Food Item','Food Item'],fRows2,[91,91]);
+    } else { _infoBox('No meal data in selected range.'); }
+    _y += 4;
 
-    // ── Supplements & Medications ──
-    _checkY(20);
-    _sectionHeader('Supplements & Medications Log');
-    if (!d.sLogs.length) {
-      _infoBox('No supplement or medication entries in selected range.');
-    } else {
-      _subHeader('Log Entries (' + d.rangeLabel + ')');
-      var logRows = d.sLogs.map(function(l){
-        var dt = _fmtDate(l.mealTs || l.ts);
-        var slot = l.slot ? (l.slot.charAt(0).toUpperCase() + l.slot.slice(1)) : '—';
-        var names = l.items.map(function(i){ return i.name; }).join(', ');
-        if (names.length > 60) names = names.slice(0, 57) + '…';
-        return [dt, slot, names];
-      });
-      _table(['Date','Slot','Items'], logRows, [32, 28, 122]);
+    _sectionHeader('Hydration Summary');
+    _row('Total logged', d.totalOz + ' oz');
+    _row('Average per day', d.avgOzDay + ' oz');
+    _row('Daily goal', (d.goals.hydrationOz||64) + ' oz');
+    _row('Goal achievement', d.avgOzDay && d.goals.hydrationOz ? Math.round((d.avgOzDay/d.goals.hydrationOz)*100)+'%' : '—', true);
+    if (Object.keys(d.drinkCounts).length) {
+      _y += 2; _subHeader('Drink Type Breakdown');
+      var dkRows=Object.keys(d.drinkCounts).map(function(k){
+        var cfg=CONFIG.drinks.filter(function(dr){return dr.id===k;})[0];
+        var lbl=cfg?cfg.label:k;
+        return [lbl,d.drinkCounts[k]+' servings',Math.round((d.drinkCounts[k]/d.hLogs.length)*100)+'%'];
+      }).sort(function(a,b){return parseInt(b[1])-parseInt(a[1]);});
+      _table(['Drink Type','Count','% of Logs'],dkRows,[80,50,52]);
     }
     _y += 4;
 
-    // ── Notes for clinician ──
     _sectionHeader('Notes for Clinician');
     _checkY(30);
     _doc.setFillColor(249,251,253);
-    _doc.roundedRect(_ML, _y, _BODY_W, 35, 2, 2, 'F');
+    _doc.roundedRect(_ML,_y,_BODY_W,35,2,2,'F');
     _doc.setFontSize(8); _doc.setTextColor(_C.mt);
-    _doc.text('This report was generated from self-reported health tracking data logged by the patient', _ML+3, _y+6);
-    _doc.text('using the Asëa personal health pattern app. All data is stored locally on the patient\'s', _ML+3, _y+11);
-    _doc.text('device and has not been processed by any external system.', _ML+3, _y+16);
-    _doc.text('Data represents observations and patterns — not clinical measurements or diagnoses.', _ML+3, _y+22);
-    _doc.text('Trends shown here are intended to support clinical conversation, not replace examination.', _ML+3, _y+28);
+    _doc.text('This report was generated from self-reported health tracking data logged by the patient',_ML+3,_y+6);
+    _doc.text('using the Asëa personal health pattern app. All data is stored locally on the patient\'s',_ML+3,_y+11);
+    _doc.text('device and has not been processed by any external system.',_ML+3,_y+16);
+    _doc.text('Data represents observations and patterns — not clinical measurements or diagnoses.',_ML+3,_y+22);
+    _doc.text('Trends shown here are intended to support clinical conversation, not replace examination.',_ML+3,_y+28);
     _y += 40;
-
     _doc.setFontSize(7.5); _doc.setTextColor(_C.mt);
-    _doc.text('Asëa — Personal Health Pattern Tracker. Not a medical device. Not for diagnostic use.', _ML, _y);
+    _doc.text('Asëa — Personal Health Pattern Tracker. Not a medical device. Not for diagnostic use.',_ML,_y);
   }
 
   // ── Public API ────────────────────────────────────────────
