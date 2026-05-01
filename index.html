@@ -1578,6 +1578,20 @@ input, textarea { font-family: inherit; }
 .insight-confidence.strong { background: rgba(74,155,127,0.12); color: #4A9B7F; }
 .insight-confidence.early  { background: var(--accp); color: var(--acc); }
 
+/* Directional indicator — positive/early cards only */
+.insight-dir-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+.insight-dir-badge--positive { background: rgba(74,155,127,0.15); color: #4A9B7F; }
+.insight-dir-badge--early    { background: var(--accp); color: var(--acc); }
+.insight-dir-icon { width: 10px; height: 10px; }
+
 .insight-text {
   font-size: 17px;
   font-weight: 500;
@@ -1738,6 +1752,8 @@ input, textarea { font-family: inherit; }
 .insight-confidence.medium { background: rgba(193,123,58,0.12); color: #C17B3A; }
 .insight-confidence.strong { background: rgba(74,155,127,0.12); color: #4A9B7F; }
 .insight-confidence.early  { background: var(--accp); color: var(--acc); }
+.insight-dir-badge--positive { background: rgba(74,155,127,0.20); color: #6EC4AA; }
+.insight-dir-badge--early    { background: var(--accp); color: var(--acc); }
 
 .insight-text {
   font-size: 17px;
@@ -10213,7 +10229,10 @@ var ScreenInsights = (function() {
       if (ins.id === 'SM05' && ins._sm05Positive) return _CATS.positive;
       return _CATS.bp; // Supp/Med rules — use BP blue (health-adjacent)
     }
-    if (prefix === 'HT') return _CATS.digestion; // Hydration timing — digestion category
+    if (prefix === 'HT') {
+      if (ins.id === 'HTP') return _CATS.positive;
+      return _CATS.digestion; // HT1/HT2 timing nudges — digestion category
+    }
     if (prefix === 'G')  return _CATS.glucose;
     if (prefix === 'BP') return _CATS.bp;
     if (prefix === 'E')  return _CATS.energy;
@@ -10257,12 +10276,18 @@ var ScreenInsights = (function() {
     function _buildCard(ins, idx, isTop) {
       var cat   = _getCat(ins);
       var delay = (idx * 130) + 'ms';
+      // Directional indicator: shown only on positive/early cards
+      var isPositive = (cat.mod === '--positive' || cat.mod === '--early');
+      var dirIcon = isPositive
+        ? '<svg class="insight-dir-icon" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9.5V2.5M6 2.5L2.5 6M6 2.5L9.5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '';
       var h = '';
       h += '<div class="card insight-card insight-card' + cat.mod + (isTop ? ' insight-card--top' : '') + '" style="animation-delay:' + delay + ';">';
       h += '<div class="card-padded insight-card-inner">';
       h += '<div class="insight-card-header">';
       h += '<div class="insight-icon-wrap insight-icon-wrap' + cat.mod + '">' + ins.icon + '</div>';
       h += '<div class="insight-badges">';
+      if (dirIcon) h += '<span class="insight-dir-badge insight-dir-badge' + cat.mod + '">' + dirIcon + '</span>';
       h += '<span class="insight-cat-pill insight-cat-pill' + cat.mod + '">' + Utils.esc(cat.label) + '</span>';
       h += '<span class="insight-confidence ' + Utils.esc(ins.strength) + '">' + Utils.esc(ins.subLabel) + '</span>';
       h += '</div></div>';
@@ -12275,6 +12300,32 @@ var InsightEngine = (function() {
       // FMD booklet (MCT oils as therapeutic fat category).
     },
 
+    {
+      id: 'FQ12', priority: 1, windowDays: 14,
+      inputTag: 'caffeine', outputType: 'trend', outputKey: 'stable',
+      windowH: null, threshold: 3, icon: '☕',
+      text: 'You\'ve been logging coffee well after waking on several recent days. That timing works with your natural cortisol rhythm — your cortisol awakening response peaks in the first 30–45 minutes, then begins to drop. Waiting lets caffeine do its job without amplifying an already-elevated state.',
+      tip: 'Keep it going. This is one of the simplest ways to support more stable energy across the day.',
+      // Rationale: Positive counterpart to FQ9. Fires when coffee is logged
+      // 90+ min after wakeTime on 3+ of last 14 days. Suppressed if FQ9
+      // (bad-timing nudge) also qualifies — FQ9 takes precedence.
+      // Same cortisol awakening response science as FQ9 — positive frame.
+      // Source: Lovallo WR et al., Pharmacol Biochem Behav 2006;
+      // Clow A et al., Int Rev Neurobiol 2010.
+    },
+
+    // ── HYDRATION POSITIVE (HTP) ──────────────────────────────
+    {
+      id: 'HTP', priority: 1, windowDays: 14,
+      inputTag: null, outputType: 'trend', outputKey: 'stable',
+      windowH: null, threshold: 5, icon: '💧',
+      text: 'You\'ve been consistently hitting or getting close to your hydration goal. Staying well hydrated supports kidney function, energy levels, blood pressure regulation, and digestion — most people underestimate how much it affects how they feel.',
+      tip: 'Keep the habit going. Spreading intake across the day — rather than catching up in the evening — gives your body the most benefit.',
+      // Rationale: Positive hydration habit reinforcement. Fires when user
+      // meets ≥80% of daily goal on 5+ of last 14 logged days.
+      // Suppressed if HT1 or HT2 also firing — don't mix praise and concern.
+    },
+
     // ── SUPPLEMENT/MED RULES (SM-series) ─────────────────────
     // SM01/SM04 — now unblocked: symptom tracker built in v25-00.
 
@@ -12814,6 +12865,45 @@ var InsightEngine = (function() {
       }).length;
     }
 
+    }
+
+    // FQ12: coffee 90+ min after wake — positive cortisol timing reinforcement
+    // Positive counterpart to FQ9. Suppressed if FQ9 also qualifies (FQ9 wins).
+    if (rule.id === 'FQ12') {
+      var p12 = s.profile;
+      var goodTimingCount = (s.logs.drinks || []).filter(function(d) {
+        if (d.ts < cutoff) return false;
+        if (!d.tags || d.tags.indexOf('caffeine') === -1) return false;
+        var logDate = new Date(d.ts);
+        var dow = logDate.getDay();
+        var isWeekend = (dow === 0 || dow === 6);
+        var anchor = isWeekend ? (p12.wakeTimeWeekend || p12.wakeTimeWeekday) : (p12.wakeTimeWeekday || p12.wakeTimeWeekend);
+        if (!anchor) return false;
+        var parts = anchor.split(':');
+        var wakeMs = parseInt(parts[0], 10) * 3600000 + parseInt(parts[1], 10) * 60000;
+        var logMs  = logDate.getHours() * 3600000 + logDate.getMinutes() * 60000;
+        var diffMin = (logMs - wakeMs) / 60000;
+        return diffMin > 90; // positive: after the 90-min window
+      }).length;
+      // Suppress if FQ9 (bad timing) also has 3+ hits — don't praise and warn simultaneously
+      var badTimingCount = (s.logs.drinks || []).filter(function(d) {
+        if (d.ts < cutoff) return false;
+        if (!d.tags || d.tags.indexOf('caffeine') === -1) return false;
+        var logDate = new Date(d.ts);
+        var dow = logDate.getDay();
+        var isWeekend = (dow === 0 || dow === 6);
+        var p12b = s.profile;
+        var anchor = isWeekend ? (p12b.wakeTimeWeekend || p12b.wakeTimeWeekday) : (p12b.wakeTimeWeekday || p12b.wakeTimeWeekend);
+        if (!anchor) return false;
+        var parts = anchor.split(':');
+        var wakeMs = parseInt(parts[0], 10) * 3600000 + parseInt(parts[1], 10) * 60000;
+        var logMs  = logDate.getHours() * 3600000 + logDate.getMinutes() * 60000;
+        var diffMin = (logMs - wakeMs) / 60000;
+        return diffMin >= 0 && diffMin <= 90;
+      }).length;
+      return (badTimingCount >= 3) ? 0 : goodTimingCount;
+    }
+
     // FQ10: fermented foods (probiotic tag) — microbiome nudge
     // Covers kimchi, sauerkraut, yogurt (FOOD_DB) + free-text (kombucha, kefir, miso, tempeh).
     // Fires after 3+ probiotic-tagged meal logs in the 14-day window.
@@ -13281,28 +13371,68 @@ var InsightEngine = (function() {
       return 0;
     }
 
-    // HT1: no fluids before 10am on 5+ of last 14 days
-    // Suppressed if user is already hitting ≥80% of daily goal on average
-    // (they're managing their hydration fine despite the late start).
+    // HT1: no fluids before 10am on 3+ of last 14 days — tiered text based on goal %
+    // Threshold dropped from 5→3 to fire sooner on early users.
+    // Suppressed if user is already hitting ≥80% of daily goal on average.
+    // Text tier: <30% of goal → gentle nudge; 30–60% → neutral observation.
     if (rule.id === 'HT1') {
       var goalHT1  = s.goals.hydrationOz || 64;
-      var dayMap   = {};
+      var dayMapHT1 = {};
       (s.logs.hydration || []).forEach(function(log) {
         if (log.ts < cutoff) return;
         var d    = new Date(log.ts);
         var key  = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
-        if (!dayMap[key]) dayMap[key] = { beforeTen: 0, total: 0 };
-        dayMap[key].total += (log.oz || 0);
-        if (d.getHours() < 10) dayMap[key].beforeTen += (log.oz || 0);
+        if (!dayMapHT1[key]) dayMapHT1[key] = { beforeTen: 0, total: 0 };
+        dayMapHT1[key].total += (log.oz || 0);
+        if (d.getHours() < 10) dayMapHT1[key].beforeTen += (log.oz || 0);
       });
-      var days = Object.values ? Object.values(dayMap) : Object.keys(dayMap).map(function(k) { return dayMap[k]; });
-      if (days.length < 5) return 0;
-      // Suppression: if avg daily total ≥80% of goal, don't nag
-      var avgTotal = days.reduce(function(sum, d) { return sum + d.total; }, 0) / days.length;
-      if (avgTotal >= goalHT1 * 0.8) return 0;
-      // Count days with zero fluids before 10am AND at least some logging (not just empty days)
-      var lateStartDays = days.filter(function(d) { return d.total > 4 && d.beforeTen === 0; }).length;
+      var daysHT1 = Object.values ? Object.values(dayMapHT1) : Object.keys(dayMapHT1).map(function(k) { return dayMapHT1[k]; });
+      if (daysHT1.length < 3) return 0;
+      var avgTotalHT1 = daysHT1.reduce(function(sum, d) { return sum + d.total; }, 0) / daysHT1.length;
+      if (avgTotalHT1 >= goalHT1 * 0.8) return 0;
+      var lateStartDays = daysHT1.filter(function(d) { return d.total > 4 && d.beforeTen === 0; }).length;
+      if (lateStartDays < 3) return 0;
+      // Set tiered text dynamically based on avg % of goal
+      var pct = avgTotalHT1 / goalHT1;
+      if (pct < 0.30) {
+        rule.text = 'Your fluid intake has been well below your daily goal on most days recently. Hydration affects energy, kidney function, blood pressure, and digestion more than most people realise — even mild deficits add up over time.';
+        rule.tip  = 'Start small: a glass of water first thing in the morning before anything else. It doesn\'t need to be a big change to make a difference.';
+      } else {
+        rule.text = 'You\'re getting some fluids in each day, but your logs are mostly showing intake later in the day. Spreading hydration earlier helps your body use it more effectively.';
+        rule.tip  = 'Try reaching about half your daily goal before midday. It\'s easier than it sounds once it\'s a habit.';
+      }
       return lateStartDays;
+    }
+
+    // HTP: positive hydration — goal met (≥80%) on 5+ of last 14 logged days.
+    // Suppressed if HT1 or HT2 also firing — don't mix praise and concern.
+    if (rule.id === 'HTP') {
+      var goalHTP = s.goals.hydrationOz || 64;
+      var dayMapHTP = {};
+      (s.logs.hydration || []).forEach(function(log) {
+        if (log.ts < cutoff) return;
+        var d   = new Date(log.ts);
+        var key = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+        dayMapHTP[key] = (dayMapHTP[key] || 0) + (log.oz || 0);
+      });
+      var daysHTP = Object.keys(dayMapHTP).map(function(k) { return dayMapHTP[k]; });
+      var goalDays = daysHTP.filter(function(oz) { return oz >= goalHTP * 0.8; }).length;
+      if (goalDays < 5) return 0;
+      // Suppress if HT1 or HT2 would fire (don't praise alongside a concern)
+      // Re-check HT1 late-start count quickly
+      var lateCheck = {};
+      (s.logs.hydration || []).forEach(function(log) {
+        if (log.ts < cutoff) return;
+        var d   = new Date(log.ts);
+        var key = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+        if (!lateCheck[key]) lateCheck[key] = { b10: 0, total: 0 };
+        lateCheck[key].total += (log.oz || 0);
+        if (d.getHours() < 10) lateCheck[key].b10 += (log.oz || 0);
+      });
+      var lateVals = Object.values ? Object.values(lateCheck) : Object.keys(lateCheck).map(function(k) { return lateCheck[k]; });
+      var lateCount = lateVals.filter(function(d) { return d.total > 4 && d.b10 === 0; }).length;
+      if (lateCount >= 3) return 0;
+      return goalDays;
     }
 
     // HT2: >60% of daily oz logged after 6pm on 3+ of last 14 days
@@ -16535,18 +16665,18 @@ var HealthReport = (function() {
     var pg = _doc.internal.getCurrentPageInfo().pageNumber;
     _doc.setFontSize(8); _doc.setTextColor(_C.mt);
     _doc.text('Generated by Asëa  •  Private & Confidential  •  Not a medical diagnosis', _ML, _PAGE_H - 8);
-    _doc.text('Page ' + pg, _W - _MR, _PAGE_H - 8, { align:'right' });
+    _doc.text('Page ' + pg + ' of 4', _W - _MR, _PAGE_H - 8, { align:'right' });
   }
 
   function _sectionHeader(title) {
-    _checkY(14);
+    _checkY(16);
     _doc.setFillColor(_C.navy);
-    _doc.rect(_ML, _y, _BODY_W, 7, 'F');
-    _doc.setFontSize(8); _doc.setTextColor(_C.white);
+    _doc.rect(_ML, _y, _BODY_W, 9, 'F');
+    _doc.setFontSize(10); _doc.setTextColor(_C.white);
     _doc.setFont('helvetica','bold');
-    _doc.text(title.toUpperCase(), _ML + 3, _y + 4.8);
+    _doc.text(title.toUpperCase(), _ML + 3, _y + 6.2);
     _doc.setFont('helvetica','normal');
-    _y += 10;
+    _y += 14;
   }
 
   function _subHeader(title) {
@@ -16737,7 +16867,6 @@ var HealthReport = (function() {
       _row('Highest systolic', Math.max.apply(null,d.bpLogs.map(function(l){return l.sys;})) + ' mmHg');
       _row('Lowest systolic',  Math.min.apply(null,d.bpLogs.map(function(l){return l.sys;})) + ' mmHg');
       _infoBox('Reference ranges: Normal <120/80  |  Elevated 120-129/<80  |  High \u2265130/80 mmHg');
-      _y += 2;
       if (d.bpReadings.length) {
         _subHeader('Readings (up to last 14)');
         _table(['Date','Reading','Heart Rate'],d.bpReadings.map(function(r){return [r.date,r.val,r.hr];}),[55,75,52]);
@@ -16766,7 +16895,6 @@ var HealthReport = (function() {
     _row('Total BM entries', d.bLogs.length);
     _row('Avg per logged day', d.bLogs.length ? (d.bLogs.length/d.bmDaysLogged).toFixed(1)+'/day' : '—', true);
     _infoBox('Reference: Normal bowel frequency is typically 3\u00d7/week to 3\u00d7/day. Average shown is per day with at least one entry.');
-    _y += 2;
     var bTypes = Object.keys(d.bristolCounts).filter(function(k){return d.bristolCounts[k]>0;});
     if (bTypes.length) {
       _subHeader('Stool Consistency (Bristol Scale)');
@@ -16791,7 +16919,7 @@ var HealthReport = (function() {
 
     d.mLogs.forEach(function(l){
       var dk=_dayKey(l.ts); _ensureDay(dk,l.ts);
-      var slotLabel = l.type==='snack' ? 'Snack ('+_fmtHHMM(l.ts)+')' : (l.slot?l.slot.charAt(0).toUpperCase()+l.slot.slice(1):'Meal');
+      var slotLabel = l.type==='snack' ? 'Snack' : (l.slot?l.slot.charAt(0).toUpperCase()+l.slot.slice(1):'Meal');
       dayMap[dk].entries.push({ts:l.ts,label:slotLabel,text:l.text||'',isSnack:l.type==='snack'});
     });
 
@@ -16848,13 +16976,14 @@ var HealthReport = (function() {
       var seenSlots={};
       day.entries.forEach(function(e){
         if(e.isSnack){
-          leftLines.push({txt:e.label+':  '+e.text,indent:false});
+          leftLines.push({txt:_fmtHHMM(e.ts)+'  Snack:  '+e.text,indent:false});
         } else {
-          if(!seenSlots[e.label]){
-            seenSlots[e.label]=true;
-            leftLines.push({txt:e.label+':  '+e.text,indent:false});
+          var slotName=e.label;
+          if(!seenSlots[slotName]){
+            seenSlots[slotName]=true;
+            leftLines.push({txt:_fmtHHMM(e.ts)+'  '+slotName+':  '+e.text,indent:false});
           } else {
-            leftLines.push({txt:'•  '+e.text,indent:true});
+            leftLines.push({txt:'  ×  '+e.text,indent:true});
           }
         }
       });
