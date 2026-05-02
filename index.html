@@ -601,12 +601,19 @@ input, textarea { font-family: inherit; }
 .screen {
   display: none;
   min-height: 100%;
-  animation: screenIn 0.22s ease;
 }
 .screen.active { display: block; }
+.screen.screen-enter .screen-scroll-body,
+.screen.screen-enter .bp-scroll-body,
+.screen.screen-enter .gluc-scroll-body,
+.screen.screen-enter .wt-scroll-body,
+.screen.screen-enter .sym-screen-body,
+.screen.screen-enter .meals-scroll-body,
+.screen.screen-enter .bowel-scroll-body,
+#screen-hydration.screen-enter #hydration-scroll-body { animation: screenSlideDown 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
 
-@keyframes screenIn {
-  from { opacity: 0; transform: translateY(6px); }
+@keyframes screenSlideDown {
+  from { opacity: 0; transform: translateY(-40px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -3238,9 +3245,9 @@ html:not([data-theme]), [data-theme=""] { --radial-label-color: #fff; }
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 18px; cursor: pointer;
-  transition: opacity 0.55s ease;
+  opacity: 1;
+  transition: opacity 0.45s ease;
 }
-#asea-splash.splash-fade-in { animation: splashIn 0.65s ease forwards; }
 #asea-splash.splash-fade-out { opacity: 0; pointer-events: none; }
 @keyframes splashIn {
   from { opacity: 0; transform: scale(0.97); }
@@ -3314,6 +3321,33 @@ html:not([data-theme]), [data-theme=""] { --radial-label-color: #fff; }
   background: var(--accp);
   border-radius: 10px;
   border: 1px solid rgba(92,110,74,0.3);
+}
+
+/* ── Symptom screen ── */
+#screen-symptom .screen-header { position: sticky; top: 0; z-index: 10; }
+.sym-screen-body { padding: 0 24px; padding-top: 20px; }
+.sym-screen-last {
+  font-size: 13px; color: var(--mt); margin-bottom: 20px; min-height: 18px;
+}
+.sym-screen-last strong { color: var(--tx); }
+.sym-log-list { margin-top: 24px; }
+.sym-log-row {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 12px 14px; background: var(--sf); border-radius: 12px;
+  margin-bottom: 8px;
+}
+.sym-log-info { flex: 1; }
+.sym-log-main { font-size: 14px; font-weight: 500; color: var(--tx); margin-bottom: 2px; }
+.sym-log-sub  { font-size: 12px; color: var(--mt); }
+.sym-log-sev  { font-size: 11px; color: var(--mt); margin-top: 2px; }
+.sym-log-del  {
+  background: none; border: none; padding: 4px; cursor: pointer;
+  color: var(--mt); opacity: 0.6; flex-shrink: 0; margin-left: 8px;
+}
+.sym-log-del:active { opacity: 1; }
+.sym-log-section-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--mt); margin: 24px 0 10px;
 }
 
 /* ── Blood Pressure screen ── */
@@ -6103,6 +6137,69 @@ html:not([data-theme]), [data-theme=""] { --radial-label-color: #fff; }
         <div style="height:120px;"></div>
       </div>
     </div><!-- /screen-weight -->
+
+    <!-- Symptom screen -->
+    <div id="screen-symptom" class="screen" role="main" aria-label="Symptoms">
+      <div class="screen-header">
+        <div class="screen-header-row">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button class="icon-btn" id="sym-screen-back-btn" aria-label="Back">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="screen-title" style="margin:0;">Symptoms</div>
+          </div>
+          <div class="header-actions">
+            <button class="icon-btn" id="sym-screen-log-btn" aria-label="Today's log" style="position:relative;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+              <span class="hyd-log-badge" id="sym-screen-log-badge" style="display:none;"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="sym-screen-body">
+        <div class="sym-screen-last" id="sym-screen-last">No symptoms logged yet</div>
+        <div class="sym-section-label">Symptoms</div>
+        <div class="sym-chip-grid" id="sym-screen-chip-grid">
+          <button class="sym-chip" data-sym="headache">Headache</button>
+          <button class="sym-chip" data-sym="migraine">Migraine</button>
+          <button class="sym-chip" data-sym="fatigue">Fatigue</button>
+          <button class="sym-chip" data-sym="energy_crash">Energy crash</button>
+          <button class="sym-chip" data-sym="brain_fog">Brain fog</button>
+          <button class="sym-chip" data-sym="mood_anxiety">Mood / anxiety</button>
+          <button class="sym-chip" data-sym="joint_pain">Joint pain</button>
+          <button class="sym-chip" data-sym="inflammation">Inflammation</button>
+          <button class="sym-chip" data-sym="bloating">Bloating</button>
+          <button class="sym-chip" data-sym="nausea">Nausea</button>
+          <button class="sym-chip" data-sym="skin">Skin (rash / itch)</button>
+          <button class="sym-chip" data-sym="sleep_quality">Sleep quality</button>
+          <button class="sym-chip" data-sym="dizziness">Dizziness</button>
+        </div>
+        <div class="sym-section-label">Severity</div>
+        <div class="sym-severity-row" id="sym-screen-severity-row">
+          <button class="sym-sev-btn" data-sev="1">
+            <div>Mild</div>
+            <div class="sym-sev-label">Noticeable</div>
+          </button>
+          <button class="sym-sev-btn" data-sev="2">
+            <div>Moderate</div>
+            <div class="sym-sev-label">Affecting my day</div>
+          </button>
+          <button class="sym-sev-btn" data-sev="3">
+            <div>Severe</div>
+            <div class="sym-sev-label">Hard to function</div>
+          </button>
+        </div>
+        <div class="sym-section-label">Note <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mt);font-size:11px;">(optional)</span></div>
+        <textarea class="sym-note-input" id="sym-screen-note" rows="2" placeholder="Any context worth remembering…"></textarea>
+        <div class="sym-time-row">
+          <span class="sym-time-label">Time</span>
+          <div id="sym-screen-time-picker" style="flex:1;"></div>
+        </div>
+        <button class="sym-save-btn" id="sym-screen-save-btn">Log Entry</button>
+        <div style="height:120px;"></div>
+      </div>
+    </div><!-- /screen-symptom -->
+
     <div id="screen-meals" class="screen" role="main" aria-label="Meals">
       <div class="screen-header">
         <div class="screen-header-row">
@@ -7191,6 +7288,12 @@ html:not([data-theme]), [data-theme=""] { --radial-label-color: #fff; }
 </div>
 
 <!-- Blood Pressure log sheet -->
+<div class="sheet" id="sheet-sym-log" role="dialog" aria-modal="true" aria-label="Symptom log">
+  <div class="sheet-inner">
+    <!-- content injected by ScreenSymptom._openLogSheet() -->
+  </div>
+</div>
+
 <div class="sheet" id="sheet-bp-log" role="dialog" aria-modal="true" aria-label="Blood pressure log">
   <div class="sheet-inner">
     <!-- content injected by ScreenBP._openLogSheet() -->
@@ -7625,7 +7728,7 @@ html:not([data-theme]), [data-theme=""] { --radial-label-color: #fff; }
 </div>
 
 <!-- Splash screen — sits outside #app, removed after animation -->
-<div id="asea-splash" class="splash-fade-in" role="presentation" aria-hidden="true">
+<div id="asea-splash" role="presentation" aria-hidden="true">
   <div class="splash-mark" style="font-size:72px;color:var(--acc);line-height:1;">✦</div>
   <div class="splash-wordmark">Asëa</div>
   <div class="splash-tap-hint">Tap to continue</div>
@@ -8540,7 +8643,7 @@ var Router = (function() {
 
   var _current = null;
   var _previous = null;
-  var _screens = ['today', 'track', 'insights', 'you', 'onboarding', 'settings', 'hydration', 'drink-library', 'bowel', 'bp', 'glucose', 'weight', 'meals', 'shop'];
+  var _screens = ['today', 'track', 'insights', 'you', 'onboarding', 'settings', 'hydration', 'drink-library', 'bowel', 'bp', 'glucose', 'weight', 'meals', 'shop', 'symptom'];
   var _onActivate = null; // registered by App after init
 
   function onActivate(fn) { _onActivate = fn; }
@@ -8558,7 +8661,17 @@ var Router = (function() {
     _previous = _current;
     _current = screenId;
     var next = document.getElementById('screen-' + screenId);
-    if (next) next.classList.add('active');
+    if (next) {
+      next.classList.add('active');
+      // Slide-down entrance for sub-screens only (not main nav tabs)
+      var _subScreens = ['hydration','drink-library','bowel','bp','glucose','weight','meals','symptom','shop','settings'];
+      if (_subScreens.indexOf(screenId) >= 0) {
+        next.classList.remove('screen-enter');
+        void next.offsetWidth; // force reflow to restart animation
+        next.classList.add('screen-enter');
+        setTimeout(function() { next.classList.remove('screen-enter'); }, 500);
+      }
+    }
     var nextNav = document.querySelector('.nav-item[data-screen="' + screenId + '"]');
     if (nextNav) { nextNav.classList.add('active'); nextNav.setAttribute('aria-current', 'page'); }
 
@@ -14195,9 +14308,203 @@ var ScreenSymptom = (function() {
     dizziness:    'Dizziness'
   };
 
-  var _symTimePicker = null;
+  var _symScreenTimePicker = null;
 
-  // ── Reset sheet to blank state ─────────────────────────────
+  var SEV_LABELS = { 1: 'Mild', 2: 'Moderate', 3: 'Severe' };
+
+  // ── Render full screen ─────────────────────────────────────
+  function render() {
+    var s = State.get();
+    var today = Utils.dayStart();
+    var logs = (s.logs.symptoms || []).filter(function(l) { return l.ts >= today; })
+                                      .slice().reverse();
+
+    // Last logged sub-text
+    var lastEl = document.getElementById('sym-screen-last');
+    if (lastEl) {
+      if (logs.length) {
+        var last = logs[0];
+        var lastLabels = (last.symptoms || []).map(function(k) { return CHIP_LABELS[k] || k; }).join(', ');
+        lastEl.innerHTML = 'Last: <strong>' + Utils.esc(lastLabels) + '</strong>';
+      } else {
+        lastEl.textContent = 'No symptoms logged today';
+      }
+    }
+
+    // Badge
+    var badge = document.getElementById('sym-screen-log-badge');
+    if (badge) {
+      if (logs.length) { badge.textContent = logs.length; badge.style.display = 'flex'; }
+      else { badge.style.display = 'none'; }
+    }
+
+    // Init time picker
+    var pickerEl = document.getElementById('sym-screen-time-picker');
+    if (pickerEl) {
+      var now = new Date();
+      var hh = String(now.getHours()).padStart(2, '0');
+      var mm = String(now.getMinutes()).padStart(2, '0');
+      _symScreenTimePicker = Components.buildTimePicker(pickerEl, hh + ':' + mm, null);
+    }
+
+    // Reset chips + severity + note
+    document.querySelectorAll('#sym-screen-chip-grid .sym-chip').forEach(function(c) {
+      c.classList.remove('selected');
+    });
+    document.querySelectorAll('#sym-screen-severity-row .sym-sev-btn').forEach(function(b) {
+      b.classList.remove('selected');
+    });
+    var noteEl = document.getElementById('sym-screen-note');
+    if (noteEl) noteEl.value = '';
+  }
+
+  // ── Open today's log as bottom sheet ──────────────────────
+  function _openLogSheet() {
+    var s = State.get();
+    var today = Utils.dayStart();
+    var logs = (s.logs.symptoms || []).filter(function(l) { return l.ts >= today; })
+                                      .slice().reverse();
+
+    var html = '<div class="sheet-handle"></div>'
+      + '<div class="sheet-title-row">'
+      + '<div class="sheet-title">Today\'s Symptoms</div>'
+      + '<button class="icon-btn" id="sym-log-close-btn" aria-label="Close">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+      + '</button>'
+      + '</div>'
+      + '<div id="sym-log-list" style="padding:0 20px;">';
+
+    if (!logs.length) {
+      html += '<p style="color:var(--mt);font-size:14px;text-align:center;padding:24px 0;">No symptoms logged today.</p>';
+    } else {
+      logs.forEach(function(l) {
+        var labelStr = (l.symptoms || []).map(function(k) { return CHIP_LABELS[k] || k; }).join(', ');
+        var sevStr   = l.severity ? (SEV_LABELS[l.severity] || '') : '';
+        var noteStr  = l.note ? ' · ' + Utils.esc(l.note) : '';
+        html += '<div class="hyd-log-row" data-id="' + Utils.esc(l.id) + '">'
+          + '<div class="hyd-log-info">'
+          + '<div class="hyd-log-main">' + Utils.esc(labelStr) + '</div>'
+          + '<div class="hyd-log-sub">' + Utils.fmtTime(l.ts) + (sevStr ? ' · ' + sevStr : '') + noteStr + '</div>'
+          + '</div>'
+          + '<button class="hyd-log-del" data-id="' + Utils.esc(l.id) + '" aria-label="Delete">'
+          + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>'
+          + '</button>'
+          + '</div>';
+      });
+    }
+    html += '<div style="height:40px;"></div></div>';
+
+    var sheet = document.getElementById('sheet-sym-log');
+    sheet.querySelector('.sheet-inner').innerHTML = html;
+
+    document.getElementById('sym-log-close-btn').addEventListener('click', function() {
+      Components.closeSheet();
+    });
+
+    sheet.querySelector('.sheet-inner').addEventListener('click', function(e) {
+      var btn = e.target.closest('.hyd-log-del[data-id]');
+      if (!btn) return;
+      var id = btn.dataset.id;
+      var row = sheet.querySelector('.hyd-log-row[data-id="' + id + '"]');
+      var entry = (State.get().logs.symptoms || []).find(function(e) { return e.id === id; });
+      requestAnimationFrame(function() {
+        State.removeLog('symptoms', id);
+        Storage.sched();
+        render();
+        ScreenTrack.render();
+        ScreenToday.render();
+        if (row) row.remove();
+        var badge = document.getElementById('sym-screen-log-badge');
+        var remaining = sheet.querySelectorAll('.hyd-log-row').length;
+        if (badge) {
+          if (remaining) { badge.textContent = remaining; badge.style.display = 'flex'; }
+          else { badge.style.display = 'none'; }
+        }
+        Components.toast('Entry removed', entry ? function() {
+          State.pushLog('symptoms', entry);
+          Storage.sched();
+          render();
+          ScreenTrack.render();
+          ScreenToday.render();
+          _openLogSheet();
+        } : null);
+      });
+    });
+
+    Components.openSheet('sheet-sym-log');
+  }
+
+  // ── Bind screen events ─────────────────────────────────────
+  function bindScreenEvents() {
+    // Back
+    var backBtn = document.getElementById('sym-screen-back-btn');
+    if (backBtn) backBtn.addEventListener('click', function() { Router.back(); });
+
+    // Log list button — opens today's log sheet
+    var logBtn = document.getElementById('sym-screen-log-btn');
+    if (logBtn) logBtn.addEventListener('click', function() { _openLogSheet(); });
+
+    // Chip multi-select (screen)
+    var grid = document.getElementById('sym-screen-chip-grid');
+    if (grid) grid.addEventListener('click', function(e) {
+      var chip = e.target.closest('.sym-chip[data-sym]');
+      if (!chip) return;
+      Utils.haptic('light');
+      chip.classList.toggle('selected');
+    });
+
+    // Severity single-select (screen)
+    var sevRow = document.getElementById('sym-screen-severity-row');
+    if (sevRow) sevRow.addEventListener('click', function(e) {
+      var btn = e.target.closest('.sym-sev-btn[data-sev]');
+      if (!btn) return;
+      Utils.haptic('light');
+      var already = btn.classList.contains('selected');
+      sevRow.querySelectorAll('.sym-sev-btn').forEach(function(b) { b.classList.remove('selected'); });
+      if (!already) btn.classList.add('selected');
+    });
+
+    // Save
+    var saveBtn = document.getElementById('sym-screen-save-btn');
+    if (saveBtn) saveBtn.addEventListener('click', function() {
+      var selected = [];
+      document.querySelectorAll('#sym-screen-chip-grid .sym-chip.selected').forEach(function(c) {
+        selected.push(c.dataset.sym);
+      });
+      if (selected.length === 0) {
+        Components.toast('Select at least one symptom');
+        return;
+      }
+      var sevEl = document.querySelector('#sym-screen-severity-row .sym-sev-btn.selected');
+      var severity = sevEl ? parseInt(sevEl.dataset.sev, 10) : 1;
+      var note = (document.getElementById('sym-screen-note').value || '').trim();
+      var timeVal = _symScreenTimePicker ? _symScreenTimePicker.getValue() : '';
+      var ts = Date.now();
+      if (timeVal && /^\d{2}:\d{2}$/.test(timeVal)) {
+        var parts = timeVal.split(':');
+        var d = new Date();
+        d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+        ts = d.getTime();
+      }
+      var entry = { id: Utils.uid(), ts: ts, symptoms: selected, severity: severity, note: note };
+      State.pushLog('symptoms', entry);
+      Storage.sched();
+      ScreenToday.render();
+      ScreenTrack.render();
+      render();
+      var labels = selected.map(function(k) { return CHIP_LABELS[k] || k; }).join(', ');
+      Components.toast('Symptoms logged: ' + labels, function() {
+        State.removeLog('symptoms', entry.id);
+        Storage.sched();
+        ScreenToday.render();
+        ScreenTrack.render();
+        render();
+      });
+    });
+
+  }
+
+
   function resetSheet() {
     document.querySelectorAll('#sym-chip-grid .sym-chip').forEach(function(c) {
       c.classList.remove('selected');
@@ -14319,7 +14626,7 @@ var ScreenSymptom = (function() {
     return count + ' log' + (count > 1 ? 's' : '') + ' · ' + labelStr;
   }
 
-  return { openSheet: openSheet, bindEvents: bindEvents, getTodaySub: getTodaySub };
+  return { openSheet: openSheet, bindEvents: bindEvents, getTodaySub: getTodaySub, render: render, bindScreenEvents: bindScreenEvents };
 
 })();
 var FabDrinkSheet = (function() {
@@ -14985,6 +15292,7 @@ var ScreenBP = (function() {
       if (!btn) return;
       var id = btn.dataset.id;
       var row = sheet.querySelector('.hyd-log-row[data-id="' + id + '"]');
+      var entry = (State.get().logs.bp || []).find(function(e) { return e.id === id; });
       requestAnimationFrame(function() {
         State.removeLog('bp', id);
         Storage.sched();
@@ -14999,9 +15307,14 @@ var ScreenBP = (function() {
           if (remaining) { badge.textContent = remaining; badge.style.display = 'flex'; }
           else { badge.style.display = 'none'; }
         }
-        Components.toast('Reading deleted', function() {
-          // undo not wired for log-sheet deletes (matches Hydration/Bowel behaviour)
-        });
+        Components.toast('Reading deleted', entry ? function() {
+          State.pushLog('bp', entry);
+          Storage.sched();
+          render();
+          ScreenTrack.render();
+          ScreenToday.render();
+          _openLogSheet();
+        } : null);
       });
     });
 
@@ -15297,6 +15610,7 @@ var ScreenGlucose = (function() {
       if (!btn) return;
       var id = btn.dataset.id;
       var row = sheet.querySelector('.hyd-log-row[data-id="' + id + '"]');
+      var entry = (State.get().logs.glucose || []).find(function(e) { return e.id === id; });
       requestAnimationFrame(function() {
         State.removeLog('glucose', id);
         Storage.sched();
@@ -15310,7 +15624,14 @@ var ScreenGlucose = (function() {
           if (remaining) { badge.textContent = remaining; badge.style.display = 'flex'; }
           else { badge.style.display = 'none'; }
         }
-        Components.toast('Reading deleted');
+        Components.toast('Reading deleted', entry ? function() {
+          State.pushLog('glucose', entry);
+          Storage.sched();
+          render();
+          ScreenTrack.render();
+          ScreenToday.render();
+          _openLogSheet();
+        } : null);
       });
     });
 
@@ -15607,6 +15928,7 @@ var ScreenWeight = (function() {
       if (!btn) return;
       var id = btn.dataset.id;
       var row = sheet.querySelector('.hyd-log-row[data-id="' + id + '"]');
+      var entry = (State.get().logs.weight || []).find(function(e) { return e.id === id; });
       requestAnimationFrame(function() {
         State.removeLog('weight', id);
         Storage.sched();
@@ -15620,7 +15942,14 @@ var ScreenWeight = (function() {
           if (remaining) { badge.textContent = remaining; badge.style.display = 'flex'; }
           else { badge.style.display = 'none'; }
         }
-        Components.toast('Reading deleted');
+        Components.toast('Reading deleted', entry ? function() {
+          State.pushLog('weight', entry);
+          Storage.sched();
+          render();
+          ScreenTrack.render();
+          ScreenToday.render();
+          _openLogSheet();
+        } : null);
       });
     });
 
@@ -16163,13 +16492,17 @@ var ScreenMeals = (function() {
       var btn = e.target.closest('.meals-log-delete[data-meal-id]');
       if (!btn) return;
       var id = btn.dataset.mealId;
+      var entry = (State.get().logs.meals || []).find(function(e) { return e.id === id; });
       State.removeLog('meals', id);
       Storage.sched();
       render();
       ScreenToday.render();
-      Components.toast('Entry removed', function() {
-        // No undo for delete — toast is just confirmation
-      });
+      Components.toast('Entry removed', entry ? function() {
+        State.pushLog('meals', entry);
+        Storage.sched();
+        render();
+        ScreenToday.render();
+      } : null);
     });
 
     // Supp/med management shortcut → You screen
@@ -16264,11 +16597,17 @@ var ScreenMeals = (function() {
         var btn = e.target.closest('.suppmed-log-delete[data-log-id]');
         if (!btn) return;
         var id = btn.dataset.logId;
+        var entry = (State.get().logs.suppLogs || []).find(function(e) { return e.id === id; });
         State.removeLog('suppLogs', id);
         Storage.sched();
         _renderSuppMedStrips();
         ScreenToday.render();
-        Components.toast('Entry removed');
+        Components.toast('Entry removed', entry ? function() {
+          State.pushLog('suppLogs', entry);
+          Storage.sched();
+          _renderSuppMedStrips();
+          ScreenToday.render();
+        } : null);
       });
     }
 
@@ -18703,6 +19042,7 @@ var App = (function() {
       if (screenId === 'bp')            ScreenBP.render();
       if (screenId === 'glucose')        ScreenGlucose.render();
       if (screenId === 'weight')         ScreenWeight.render();
+      if (screenId === 'symptom')        ScreenSymptom.render();
       if (screenId === 'meals')          ScreenMeals.render();
       if (screenId === 'shop')           ScreenShop.render();
     });
@@ -18765,11 +19105,13 @@ var App = (function() {
     (function() {
       var splash = document.getElementById('asea-splash');
       if (!splash) return;
-      // First launch: 3.5s (premium feel), subsequent: 2s (snappy)
+      // First launch: 2s + tap hint (onboarding feel), subsequent: 1s (snappy, no hint)
       var _splashKey = 'asea-splash-seen';
       var _firstLaunch = !localStorage.getItem(_splashKey);
       if (_firstLaunch) localStorage.setItem(_splashKey, '1');
-      var HOLD_MS = _firstLaunch ? 3500 : 2000;
+      var HOLD_MS = _firstLaunch ? 2000 : 1000;
+      var tapHint = splash.querySelector('.splash-tap-hint');
+      if (tapHint) tapHint.style.display = _firstLaunch ? '' : 'none';
       var dismissed = false;
 
       function dismiss() {
@@ -18925,6 +19267,7 @@ var App = (function() {
   function _bindSheets() {
     // Symptom sheet
     ScreenSymptom.bindEvents();
+    ScreenSymptom.bindScreenEvents();
 
     // Meal FAB sheet — wired through ScreenMeals
     ScreenMeals.bindFabSheet();
@@ -19125,10 +19468,10 @@ var App = (function() {
       if (action === 'hydration') { Router.go('hydration'); return; }
       if (action === 'meal')      { Router.go('meals');     return; }
       if (action === 'bowel')     { Router.go('bowel');     return; }
-      if (action === 'bp')        { _bpInitSheet(); Components.openSheet('sheet-bp'); return; }
+      if (action === 'bp')        { Router.go('bp');        return; }
       if (action === 'glucose')   { Router.go('glucose');   return; }
-      if (action === 'weight')    { ScreenWeight.openEntrySheet(); return; }
-      if (action === 'symptom')   { ScreenSymptom.openSheet(); return; }
+      if (action === 'weight')    { Router.go('weight');    return; }
+      if (action === 'symptom')   { Router.go('symptom');   return; }
       _handleAction(action);
     });
   }
