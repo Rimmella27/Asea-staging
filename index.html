@@ -924,16 +924,12 @@ input, textarea { font-family: inherit; }
 #radial-overlay {
   position: fixed;
   inset: 0;
-  background: var(--ov);
+  background: transparent;
   z-index: 90;
-  opacity: 0;
+  opacity: 1;
   pointer-events: none;
-  transition: opacity 0.22s ease;
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
 }
 #radial-overlay.visible {
-  opacity: 1;
   pointer-events: all;
 }
 
@@ -957,71 +953,112 @@ input, textarea { font-family: inherit; }
   gap: 5px;
   pointer-events: none;
   opacity: 0;
-  transform: scale(0.6) translateY(20px);
-  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34,1.4,0.64,1);
+  transform: scale(0.5) translateY(24px);
+  transition: opacity 0.22s ease, transform 0.36s cubic-bezier(0.34,1.5,0.64,1);
 }
+
 .radial-item.visible {
   opacity: 1;
   transform: scale(1) translateY(0);
   pointer-events: all;
 }
 
-/* Stagger: left group (inputs) first, right group (outputs) second */
-/* Order in DOM: shop, meal, drink, bowel, bp, glucose */
-.radial-item:nth-child(1) { transition-delay: 0.00s; } /* shop */
-.radial-item:nth-child(2) { transition-delay: 0.04s; } /* meal */
-.radial-item:nth-child(3) { transition-delay: 0.08s; } /* drink */
-.radial-item:nth-child(4) { transition-delay: 0.02s; } /* bowel */
-.radial-item:nth-child(5) { transition-delay: 0.06s; } /* bp */
-.radial-item:nth-child(6) { transition-delay: 0.10s; } /* glucose */
+/* Bloom: inner all at once → shop → bp+weight → glucose+symptom */
+/* No SVG in radial-menu — meal=child 1, symptom=child 8 */
+.radial-item:nth-child(1) { transition-delay: 0.00s; } /* meal    inner */
+.radial-item:nth-child(2) { transition-delay: 0.00s; } /* drink   inner */
+.radial-item:nth-child(3) { transition-delay: 0.00s; } /* bowel   inner */
+.radial-item:nth-child(4) { transition-delay: 0.44s; } /* glucose outer far-left */
+.radial-item:nth-child(5) { transition-delay: 0.32s; } /* bp      outer mid-left */
+.radial-item:nth-child(6) { transition-delay: 0.18s; } /* shop    outer crown — first */
+.radial-item:nth-child(7) { transition-delay: 0.32s; } /* weight  outer mid-right */
+.radial-item:nth-child(8) { transition-delay: 0.44s; } /* symptom outer far-right */
 
 .radial-btn {
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
+  border: 2px solid rgba(255,255,255,0.35);
   cursor: pointer;
   box-shadow: 0 4px 20px rgba(0,0,0,0.26);
   transition: transform 0.15s;
   -webkit-tap-highlight-color: transparent;
-  font-size: 22px;
   line-height: 1;
 }
 .radial-btn:active { transform: scale(0.88); }
 
-/* Left group — inputs */
-.radial-btn.group-input {
-  width: 52px;
-  height: 52px;
-  font-size: 22px;
+/* Inner ring — 56px */
+.radial-btn.ring-inner {
+  width: 56px;
+  height: 56px;
+  font-size: 24px;
 }
-/* Right group — outputs */
-.radial-btn.group-output {
-  width: 52px;
-  height: 52px;
-  font-size: 22px;
+/* Outer ring — 40px */
+.radial-btn.ring-outer {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+}
+/* Shop crown — mid-tier 50px */
+.radial-btn.ring-outer.type-shop {
+  width: 50px;
+  height: 50px;
+  font-size: 21px;
 }
 
-/* Individual colors — inputs (left) */
-.radial-btn.type-shop    { background: linear-gradient(145deg, #6a9158, #4d7040); }
+/* Colors */
 .radial-btn.type-meal    { background: linear-gradient(145deg, #d4874a, #b86e32); }
 .radial-btn.type-drink   { background: linear-gradient(145deg, #4a8fd4, #3270b8); }
-
-/* Individual colors — outputs (right) */
 .radial-btn.type-bowel   { background: linear-gradient(145deg, #9f74af, #7d5591); }
+.radial-btn.type-shop    { background: linear-gradient(145deg, #6a9158, #4d7040); }
 .radial-btn.type-bp      { background: linear-gradient(145deg, #d45a5a, #b83e3e); }
 .radial-btn.type-glucose { background: linear-gradient(145deg, #4aaa8a, #328a6e); }
+.radial-btn.type-weight  { background: linear-gradient(145deg, #b8a44a, #9a8832); }
+.radial-btn.type-symptom { background: linear-gradient(145deg, #c45a8a, #a83e6e); }
 
 .radial-label {
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #fff;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  color: var(--radial-label-color, #1a1a2e);
+  text-shadow: var(--radial-label-shadow, 0 1px 3px rgba(255,255,255,0.4));
   white-space: nowrap;
 }
+/* Light theme (default) — dark label */
+html:not([data-theme]), [data-theme=""] {
+  --radial-label-color: #0F2250;
+  --radial-label-shadow: 0 1px 2px rgba(255,255,255,0.5);
+}
+/* Natural theme — dark label */
+[data-theme="natural"] {
+  --radial-label-color: #2d3a1f;
+  --radial-label-shadow: 0 1px 2px rgba(255,255,255,0.4);
+}
+/* Merica theme — dark label */
+[data-theme="merica"] {
+  --radial-label-color: #0F1E3C;
+  --radial-label-shadow: 0 1px 2px rgba(255,255,255,0.4);
+}
+/* Dark theme — light label */
+[data-theme="dark"] {
+  --radial-label-color: #DEDED8;
+  --radial-label-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+
+/* Radial arc SVG — inside #app, before footer (footer paints over it naturally) */
+#radial-arc-svg {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  overflow: hidden;
+  display: block;
+}
+#radial-arc-svg.visible { opacity: 1; }
 
 /* ══════════════════════════════════════════════
    TODAY SCREEN
@@ -6707,6 +6744,8 @@ input, textarea { font-family: inherit; }
   <!-- ══════════════════════════════════════
        FOOTER NAV
   ══════════════════════════════════════ -->
+  <!-- Arc shading SVG — inside #app, before footer so footer paints on top -->
+  <svg id="radial-arc-svg" aria-hidden="true"></svg>
   <nav id="footer-nav" role="navigation" aria-label="Main navigation">
 
     <!-- SVG wave background -->
@@ -6787,33 +6826,41 @@ input, textarea { font-family: inherit; }
 <!-- Radial overlay -->
 <div id="radial-overlay" aria-hidden="true"></div>
 
-<!-- Radial menu -->
+<!-- Radial menu — DOM order: meal, drink, bowel (inner), glucose, bp, shop, weight, symptom (outer) -->
 <div id="radial-menu" aria-hidden="true" role="menu">
-  <!-- LEFT GROUP: Inputs (Shop, Meal, Drink) — 58px, warmer -->
-  <div class="radial-item" id="ri-shop">
-    <button class="radial-btn type-shop group-input" data-action="shop" aria-label="Shop" role="menuitem">🛒</button>
-    <span class="radial-label">Shop</span>
-  </div>
+  <!-- INNER RING: most frequent, r=75 -->
   <div class="radial-item" id="ri-meal">
-    <button class="radial-btn type-meal group-input" data-action="meal" aria-label="Log meal" role="menuitem">🍽️</button>
+    <button class="radial-btn type-meal ring-inner" data-action="meal" aria-label="Log meal" role="menuitem">🍽️</button>
     <span class="radial-label">Meal</span>
   </div>
   <div class="radial-item" id="ri-drink">
-    <button class="radial-btn type-drink group-input" data-action="drink" aria-label="Log drink" role="menuitem">💧</button>
+    <button class="radial-btn type-drink ring-inner" data-action="drink" aria-label="Log drink" role="menuitem">💧</button>
     <span class="radial-label">Drink</span>
   </div>
-  <!-- RIGHT GROUP: Outputs (BM, BP, Glucose) — 52px, cooler -->
   <div class="radial-item" id="ri-bowel">
-    <button class="radial-btn type-bowel group-output" data-action="bowel" aria-label="Log bowel" role="menuitem">🌿</button>
+    <button class="radial-btn type-bowel ring-inner" data-action="bowel" aria-label="Log bowel" role="menuitem">🌿</button>
     <span class="radial-label">BM</span>
   </div>
+  <!-- OUTER RING: occasional, r=148 — bloom from crown outward -->
+  <div class="radial-item" id="ri-glucose">
+    <button class="radial-btn type-glucose ring-outer" data-action="glucose" aria-label="Log glucose" role="menuitem">📊</button>
+    <span class="radial-label">Glucose</span>
+  </div>
   <div class="radial-item" id="ri-bp">
-    <button class="radial-btn type-bp group-output" data-action="bp" aria-label="Log blood pressure" role="menuitem">❤️</button>
+    <button class="radial-btn type-bp ring-outer" data-action="bp" aria-label="Log blood pressure" role="menuitem">❤️</button>
     <span class="radial-label">BP</span>
   </div>
-  <div class="radial-item" id="ri-glucose">
-    <button class="radial-btn type-glucose group-output" data-action="glucose" aria-label="Log glucose" role="menuitem">📊</button>
-    <span class="radial-label">Glucose</span>
+  <div class="radial-item" id="ri-shop">
+    <button class="radial-btn type-shop ring-outer" data-action="shop" aria-label="Shop" role="menuitem">🛒</button>
+    <span class="radial-label">Shop</span>
+  </div>
+  <div class="radial-item" id="ri-weight">
+    <button class="radial-btn type-weight ring-outer" data-action="weight" aria-label="Log weight" role="menuitem">⚖️</button>
+    <span class="radial-label">Weight</span>
+  </div>
+  <div class="radial-item" id="ri-symptom">
+    <button class="radial-btn type-symptom ring-outer" data-action="symptom" aria-label="Log symptom" role="menuitem">🩺</button>
+    <span class="radial-label">Symptom</span>
   </div>
 </div>
 
@@ -11132,53 +11179,120 @@ var FAB = (function() {
 
   var _open = false;
 
-  // True semicircle: 6 items at 30° intervals, R=175
-  // 21px gap between adjacent buttons — comfortable thumb targets
-  // Arc 150°→30° left to right: Drink, Meal, Shop | Bowel, BP, Glucose
+  // Double-arc layout. All coords are offset from FAB center.
+  // Negative Y = up (screen coords). h = half of icon diameter for centering.
+  // Inner ring r=75:  Meal(210°), Drink(270°=top), BM(330°)
+  // Outer ring r=148 evenly spaced: Glucose(210°), BP(240°), Shop(270°=crown), Weight(300°), Symptom(330°)
+  // x = r*cos(a°), y = -r*sin(a°)  [screen Y inverted]
+  // Computed: cos/sin in degrees
+  // Inner r=90, outer r=175 (wider gap to clear inner icon labels)
+  // x = r*cos(a°), y = -r*sin(a°)
   var _positions = {
-    'ri-drink':  { x: -152, y:  -87, h: 26 },  // 150°
-    'ri-meal':   { x: -103, y: -142, h: 26 },  // 126°
-    'ri-shop':   { x:  -36, y: -171, h: 26 },  // 102°
-    'ri-bowel':  { x:   36, y: -171, h: 26 },  //  78°
-    'ri-bp':     { x:  103, y: -142, h: 26 },  //  54°
-    'ri-glucose':{ x:  152, y:  -87, h: 26 },  //  30°
+    // Inner ring r=90 (h=28 for 56px icon)
+    'ri-meal':    { x: -78,  y: -45,  h: 28 }, // 210° r=90
+    'ri-drink':   { x:   0,  y: -90,  h: 28 }, // 270° r=90
+    'ri-bowel':   { x:  78,  y: -45,  h: 28 }, // 330° r=90
+    // Outer ring r=175 (h=20 for 40px; shop h=25 for 50px)
+    'ri-glucose': { x: -152, y:  -88, h: 20 }, // 210° r=175
+    'ri-bp':      { x:  -88, y: -152, h: 20 }, // 240° r=175
+    'ri-shop':    { x:    0, y: -175, h: 25 }, // 270° r=175 crown
+    'ri-weight':  { x:   88, y: -152, h: 20 }, // 300° r=175
+    'ri-symptom': { x:  152, y:  -88, h: 20 }, // 330° r=175
   };
 
   function _positionItems() {
     var fabEl = document.getElementById('fab');
     if (!fabEl) return;
-
-    // Use FAB's position relative to the radial menu's coordinate space.
-    // radial-menu is fixed, left:50%, max-width:430px — its left edge depends on viewport.
     var menuEl = document.getElementById('radial-menu');
     var menuRect = menuEl.getBoundingClientRect();
     var fabRect = fabEl.getBoundingClientRect();
-
-    // FAB center in menu-local coordinates
-    var fabCx = fabRect.left + fabRect.width / 2 - menuRect.left;
+    var fabCx = fabRect.left + fabRect.width  / 2 - menuRect.left;
     var fabCy = fabRect.top  + fabRect.height / 2 - menuRect.top;
-
     Object.keys(_positions).forEach(function(id) {
       var el = document.getElementById(id);
       if (!el) return;
-      var pos = _positions[id];
-      el.style.left = (fabCx + pos.x - pos.h) + 'px';
-      el.style.top  = (fabCy + pos.y - pos.h) + 'px';
+      var p = _positions[id];
+      el.style.left = (fabCx + p.x - p.h) + 'px';
+      el.style.top  = (fabCy + p.y - p.h) + 'px';
     });
+  }
+
+  function _drawArcs() {
+    var svg = document.getElementById('radial-arc-svg');
+    var fabEl = document.getElementById('fab');
+    var appEl = document.getElementById('app');
+    if (!svg || !fabEl || !appEl) return;
+
+    var appRect = appEl.getBoundingClientRect();
+    var fabRect = fabEl.getBoundingClientRect();
+    var fabCx = fabRect.left + fabRect.width  / 2 - appRect.left;
+    var fabCy = fabRect.top  + fabRect.height / 2 - appRect.top;
+    var W     = appRect.width;
+    var outerR = 210; // outermost arc radius
+
+    // SVG is sized to exactly contain the arcs:
+    // width = full menu width, height = outerR (arcs extend outerR above FAB center)
+    // SVG is positioned so its bottom edge sits at FAB center Y
+    var svgH = outerR;
+    svg.style.width  = W + 'px';
+    svg.style.height = svgH + 'px';
+    svg.style.top    = (fabCy - svgH) + 'px';
+    svg.style.left   = '0';
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + svgH);
+
+    // In SVG local coords, FAB center is at (fabCx, svgH) — bottom of SVG
+    var cx = fabCx;
+    var cy = svgH; // FAB center sits at bottom edge of SVG
+
+    function annulusPath(r1, r2) {
+      var fabR = fabRect.width / 2;
+      var safeR1 = Math.max(r1, fabR + 4);
+      return [
+        'M', (cx - r2).toFixed(1), cy.toFixed(1),
+        'A', r2, r2, 0, 1, 1, (cx + r2).toFixed(1), cy.toFixed(1),
+        'L', (cx + safeR1).toFixed(1), cy.toFixed(1),
+        'A', safeR1, safeR1, 0, 1, 0, (cx - safeR1).toFixed(1), cy.toFixed(1),
+        'Z'
+      ].join(' ');
+    }
+
+    // Theme-aware arc color — read actual accent color from CSS variable
+    var theme = document.documentElement.getAttribute('data-theme') || '';
+    var arcRGB, arcA1, arcA2;
+    if (theme === 'dark') {
+      arcRGB = '75,127,190';  arcA1 = 0.45; arcA2 = 0.36; // blue tint
+    } else if (theme === 'natural' || theme === '') {
+      arcRGB = '107,125,88';  arcA1 = 0.42; arcA2 = 0.34; // sage green tint
+    } else if (theme === 'merica') {
+      arcRGB = '107,30,30';   arcA1 = 0.42; arcA2 = 0.34; // maroon tint
+    } else {
+      arcRGB = '24,64,122';   arcA1 = 0.42; arcA2 = 0.34; // navy tint (light)
+    }
+    var arcFill1 = 'rgba(' + arcRGB + ',' + arcA1 + ')';
+    var arcFill2 = 'rgba(' + arcRGB + ',' + arcA2 + ')';
+
+    svg.innerHTML =
+      '<path d="' + annulusPath(81,  99) + '" fill="' + arcFill1 + '"/>' +
+      '<path d="' + annulusPath(168, 182) + '" fill="' + arcFill2 + '"/>';
   }
 
   function open() {
     _open = true;
     _positionItems();
+    _drawArcs();
     var overlay = document.getElementById('radial-overlay');
-    var fab = document.getElementById('fab');
-    var menu = document.getElementById('radial-menu');
+    var arc     = document.getElementById('radial-arc-svg');
+    var fab     = document.getElementById('fab');
+    var menu    = document.getElementById('radial-menu');
     if (overlay) { overlay.classList.add('visible'); overlay.setAttribute('aria-hidden', 'false'); }
-    if (fab) { fab.classList.add('open'); fab.setAttribute('aria-expanded', 'true'); }
-    if (menu) menu.setAttribute('aria-hidden', 'false');
+    if (arc)     arc.classList.add('visible');
+    if (fab)     { fab.classList.add('open'); fab.setAttribute('aria-expanded', 'true'); }
+    if (menu)    menu.setAttribute('aria-hidden', 'false');
     Utils.haptic('medium');
-
-    // Stagger items in
+    // Clear any close-phase delay overrides, then add visible on next frame
+    document.querySelectorAll('.radial-item').forEach(function(el) {
+      el.style.transitionDelay = '';
+    });
     requestAnimationFrame(function() {
       document.querySelectorAll('.radial-item').forEach(function(el) {
         el.classList.add('visible');
@@ -11189,14 +11303,18 @@ var FAB = (function() {
   function close() {
     _open = false;
     var overlay = document.getElementById('radial-overlay');
-    var fab = document.getElementById('fab');
-    var menu = document.getElementById('radial-menu');
+    var arc     = document.getElementById('radial-arc-svg');
+    var fab     = document.getElementById('fab');
+    var menu    = document.getElementById('radial-menu');
+    // Zero out delays on close so items collapse instantly without stagger
     document.querySelectorAll('.radial-item').forEach(function(el) {
+      el.style.transitionDelay = '0s';
       el.classList.remove('visible');
     });
     if (overlay) { overlay.classList.remove('visible'); overlay.setAttribute('aria-hidden', 'true'); }
-    if (fab) { fab.classList.remove('open'); fab.setAttribute('aria-expanded', 'false'); }
-    if (menu) menu.setAttribute('aria-hidden', 'true');
+    if (arc)     arc.classList.remove('visible');
+    if (fab)     { fab.classList.remove('open'); fab.setAttribute('aria-expanded', 'false'); }
+    if (menu)    menu.setAttribute('aria-hidden', 'true');
     Utils.haptic('light');
   }
 
@@ -18315,10 +18433,11 @@ var App = (function() {
       return;
     }
     var sheetMap = {
-      bowel:    'sheet-bowel',
-      bp:       'sheet-bp',
-      glucose:  'sheet-glucose',
-      shop:     'shop',
+      bowel:   'sheet-bowel',
+      bp:      'sheet-bp',
+      glucose: 'sheet-glucose',
+      weight:  'sheet-weight-log',
+      symptom: 'sheet-symptom',
     };
     if (action === 'shop') {
       Router.go('shop');
