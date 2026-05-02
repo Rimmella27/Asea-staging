@@ -575,7 +575,10 @@ input, textarea { font-family: inherit; }
 /* ── app shell ── */
 #app {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--nav-h) + var(--safe-bottom));
   display: flex;
   flex-direction: column;
   max-width: 430px;
@@ -786,11 +789,16 @@ input, textarea { font-family: inherit; }
 ══════════════════════════════════════════════ */
 
 #footer-nav {
-  position: relative;
-  flex-shrink: 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   height: calc(var(--nav-h) + var(--safe-bottom));
   background: transparent;
   pointer-events: none;
+  z-index: 98;
+  max-width: 430px;
+  margin: 0 auto;
 }
 
 /* SVG wave background */
@@ -879,7 +887,7 @@ input, textarea { font-family: inherit; }
 ══════════════════════════════════════════════ */
 
 #fab-wrap {
-  position: absolute;
+  position: fixed;
   left: 50%;
   transform: translateX(-50%);
   bottom: calc(28px + var(--safe-bottom));
@@ -928,9 +936,13 @@ input, textarea { font-family: inherit; }
   z-index: 90;
   opacity: 1;
   pointer-events: none;
+  transition: background 0.2s, backdrop-filter 0.2s;
 }
 #radial-overlay.visible {
   pointer-events: all;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 #radial-menu {
@@ -938,7 +950,7 @@ input, textarea { font-family: inherit; }
   left: 50%;
   transform: translateX(-50%);
   bottom: 0;
-  z-index: 95;
+  z-index: 99;
   width: 100%;
   max-width: 430px;
   height: 100%;
@@ -981,7 +993,8 @@ input, textarea { font-family: inherit; }
   justify-content: center;
   border: 2px solid rgba(255,255,255,0.35);
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.26);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.36), 0 2px 8px rgba(0,0,0,0.22);
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.22));
   transition: transform 0.15s;
   -webkit-tap-highlight-color: transparent;
   line-height: 1;
@@ -1019,45 +1032,20 @@ input, textarea { font-family: inherit; }
 
 .radial-label {
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--radial-label-color, #1a1a2e);
-  text-shadow: var(--radial-label-shadow, 0 1px 3px rgba(255,255,255,0.4));
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.7), 0 0 8px rgba(0,0,0,0.5);
   white-space: nowrap;
 }
-/* Light theme (default) — dark label */
-html:not([data-theme]), [data-theme=""] {
-  --radial-label-color: #0F2250;
-  --radial-label-shadow: 0 1px 2px rgba(255,255,255,0.5);
-}
-/* Natural theme — dark label */
-[data-theme="natural"] {
-  --radial-label-color: #2d3a1f;
-  --radial-label-shadow: 0 1px 2px rgba(255,255,255,0.4);
-}
-/* Merica theme — dark label */
-[data-theme="merica"] {
-  --radial-label-color: #0F1E3C;
-  --radial-label-shadow: 0 1px 2px rgba(255,255,255,0.4);
-}
-/* Dark theme — light label */
-[data-theme="dark"] {
-  --radial-label-color: #DEDED8;
-  --radial-label-shadow: 0 1px 4px rgba(0,0,0,0.6);
-}
+/* All themes: white label — reads on blurred dark overlay */
+html:not([data-theme]), [data-theme=""] { --radial-label-color: #fff; }
+[data-theme="natural"]  { --radial-label-color: #fff; }
+[data-theme="merica"]   { --radial-label-color: #fff; }
+[data-theme="dark"]     { --radial-label-color: #fff; }
 
 /* Radial arc SVG — inside #app, before footer (footer paints over it naturally) */
-#radial-arc-svg {
-  position: absolute;
-  bottom: 0; left: 0;
-  width: 100%;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.22s ease;
-  overflow: hidden;
-  display: block;
-}
 #radial-arc-svg.visible { opacity: 1; }
 
 /* ══════════════════════════════════════════════
@@ -4374,6 +4362,76 @@ html:not([data-theme]), [data-theme=""] {
 }
 .meal-entry-time:focus { border-color: var(--acc); }
 
+/* ── Custom time picker (modal overlay — avoids OS teal chrome) ── */
+.ctp-display {
+  width: 100%; box-sizing: border-box;
+  background: var(--sf); border: 2px solid transparent;
+  border-radius: 14px; padding: 12px 14px;
+  font-family: var(--font-body); font-size: 15px;
+  color: var(--tx); cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  transition: border-color 0.15s;
+}
+.ctp-display:hover { border-color: var(--acc); }
+.ctp-display-time { font-weight: 600; flex: 1; }
+.ctp-display-icon { color: var(--mt); flex-shrink: 0; }
+
+/* Modal overlay */
+.ctp-modal-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.ctp-modal {
+  background: var(--sf); border-radius: 20px;
+  padding: 24px 20px 16px; width: 100%; max-width: 320px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.28);
+}
+.ctp-modal-title {
+  font-size: 13px; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--mt);
+  text-align: center; margin-bottom: 18px;
+}
+.ctp-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.ctp-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.ctp-col-label { font-size: 10px; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--mt); }
+.ctp-spin-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--acc); padding: 6px 16px; border-radius: 8px;
+  font-size: 20px; line-height: 1;
+  transition: background 0.12s;
+}
+.ctp-spin-btn:active { background: rgba(0,0,0,0.08); }
+.ctp-value {
+  font-family: var(--font-display); font-size: 36px; font-weight: 600;
+  color: var(--tx); min-width: 56px; text-align: center;
+}
+.ctp-sep { font-family: var(--font-display); font-size: 36px; color: var(--mt); padding-bottom: 2px; }
+.ctp-ampm { display: flex; flex-direction: column; gap: 6px; margin-left: 8px; }
+.ctp-ampm-btn {
+  padding: 8px 16px; border-radius: 20px; border: 2px solid transparent;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  background: var(--bg); color: var(--mt);
+  transition: all 0.15s;
+}
+.ctp-ampm-btn.selected { background: var(--acc); color: #fff; border-color: var(--acc); }
+.ctp-modal-actions {
+  display: flex; justify-content: flex-end; gap: 12px;
+  margin-top: 20px; padding-top: 16px;
+  border-top: 1px solid var(--bd, rgba(0,0,0,0.08));
+}
+.ctp-btn-cancel {
+  background: none; border: none; cursor: pointer;
+  font-size: 15px; font-weight: 600; color: var(--mt); padding: 8px 12px;
+}
+.ctp-btn-done {
+  background: var(--acc); color: #fff; border: none; cursor: pointer;
+  font-size: 15px; font-weight: 700; padding: 8px 20px;
+  border-radius: 20px;
+}
+
 /* Supp/Med management link — top of scroll body, always visible */
 .meals-suppmed-link {
   display: block; width: 100%;
@@ -5886,7 +5944,7 @@ html:not([data-theme]), [data-theme=""] {
 
         <!-- Time -->
         <div class="bowel-section-label" style="margin-top:16px;">TIME <span class="hyd-tap-hint">adjust if logging later</span></div>
-        <input type="time" id="bowel-log-time-input" class="meal-entry-time" style="width:100%;box-sizing:border-box;margin-bottom:4px;" aria-label="Log time">
+        <div id="bowel-log-time-picker"></div>
 
         <button class="bowel-save-btn" id="bowel-screen-save-btn">Log Entry</button>
 
@@ -5990,6 +6048,8 @@ html:not([data-theme]), [data-theme=""] {
           <button class="gluc-pill" data-ctx="bed_time">Bed Time</button>
         </div>
         <div class="gluc-hint" id="gluc-screen-hint"></div>
+        <div class="gluc-section-label" style="margin-top:16px;">TIME <span class="hyd-tap-hint">adjust if logging later</span></div>
+        <div id="gluc-screen-time-picker" style="margin-bottom:12px;"></div>
         <button class="log-entry-btn" id="gluc-log-entry-btn" disabled>Log Entry</button>
         <!-- Trend graph — rendered by TrendGraph.render() via ScreenGlucose.render() -->
         <div id="gluc-trend-graph"></div>
@@ -6338,7 +6398,7 @@ html:not([data-theme]), [data-theme=""] {
         <div id="suppmed-status-area"></div>
         <!-- Time field -->
         <div class="meal-entry-label" style="margin-top:16px;" id="suppmed-time-label">Time</div>
-        <input id="suppmed-entry-time" class="meal-entry-time" type="time" aria-label="Time taken">
+        <div id="suppmed-time-picker"></div>
         <button id="suppmed-entry-save-btn" class="btn-primary" style="width:100%;margin-top:20px;">Save</button>
       </div>
     </div>
@@ -6665,8 +6725,8 @@ html:not([data-theme]), [data-theme=""] {
       <!-- Backdate row — shown only on long-press -->
       <div id="oz-picker-time-row" style="display:none;margin-bottom:12px;">
         <label class="entry-label" style="font-size:12px;color:var(--mt);margin-bottom:4px;display:block;">TIME LOGGED</label>
-        <input type="time" id="oz-picker-time-input" class="form-input" style="width:100%;box-sizing:border-box;margin-bottom:10px;">
-        <button class="btn-primary" id="oz-picker-backdate-log-btn">Log</button>
+        <div id="oz-picker-time-picker"></div>
+        <button class="btn-primary" id="oz-picker-backdate-log-btn" style="margin-top:10px;">Log</button>
       </div>
       <button class="btn-ghost" id="oz-picker-cancel">Cancel</button>
     </div>
@@ -6745,8 +6805,41 @@ html:not([data-theme]), [data-theme=""] {
        FOOTER NAV
   ══════════════════════════════════════ -->
   <!-- Arc shading SVG — inside #app, before footer so footer paints on top -->
-  <svg id="radial-arc-svg" aria-hidden="true"></svg>
-  <nav id="footer-nav" role="navigation" aria-label="Main navigation">
+  
+  <!-- Nav moved outside #app — sits above overlay blur -->
+
+  <!-- Toast host -->
+  <!-- ── PHOTO CROP MODAL — must be in DOM before App.init() runs ── -->
+  <div id="photo-crop-modal" style="display:none;" aria-modal="true" role="dialog" aria-label="Crop photo">
+    <div class="crop-modal-bg"></div>
+    <div class="crop-modal-inner">
+      <div class="crop-modal-title">Position your photo</div>
+      <div class="crop-modal-hint">Drag to center your face in the circle</div>
+      <div class="crop-viewport" id="crop-viewport">
+        <img id="crop-img" src="" alt="" draggable="false">
+        <div class="crop-circle-overlay"></div>
+      </div>
+      <div class="crop-modal-actions">
+        <button class="btn-ghost" id="crop-cancel-btn">Cancel</button>
+        <button class="btn-primary" id="crop-use-btn">Use Photo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Photo source sheet — shared by all photo entry points -->
+  <div id="toast-host" aria-live="polite" aria-atomic="true"></div>
+
+</div><!-- /app -->
+
+<!-- FAB — outside #app so it sits above backdrop-filter overlay -->
+<div id="fab-wrap">
+  <button id="fab" aria-label="Log something" aria-expanded="false">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+</div>
+
+<!-- Nav — outside #app so it sits above backdrop-filter overlay -->
+<nav id="footer-nav" role="navigation" aria-label="Main navigation">
 
     <!-- SVG wave background -->
     <svg id="nav-wave-bg" viewBox="0 0 430 80" preserveAspectRatio="none" aria-hidden="true">
@@ -6755,7 +6848,6 @@ html:not([data-theme]), [data-theme=""] {
           <feDropShadow dx="0" dy="-5" stdDeviation="8" flood-color="var(--acc)" flood-opacity="0.22"/>
         </filter>
       </defs>
-      <!-- Starts mid-high left, crests ~x=170 (left of FAB), descends right -->
       <path
         d="M0,18 C60,16 120,4 175,4 C210,4 240,14 310,16 C355,18 402,6 430,6 L430,80 L0,80 Z"
         fill="var(--sf)"
@@ -6791,37 +6883,7 @@ html:not([data-theme]), [data-theme=""] {
       </button>
     </div>
 
-    <!-- FAB -->
-    <div id="fab-wrap">
-      <button id="fab" aria-label="Log something" aria-expanded="false">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      </button>
-    </div>
-
-  </nav>
-
-  <!-- Toast host -->
-  <!-- ── PHOTO CROP MODAL — must be in DOM before App.init() runs ── -->
-  <div id="photo-crop-modal" style="display:none;" aria-modal="true" role="dialog" aria-label="Crop photo">
-    <div class="crop-modal-bg"></div>
-    <div class="crop-modal-inner">
-      <div class="crop-modal-title">Position your photo</div>
-      <div class="crop-modal-hint">Drag to center your face in the circle</div>
-      <div class="crop-viewport" id="crop-viewport">
-        <img id="crop-img" src="" alt="" draggable="false">
-        <div class="crop-circle-overlay"></div>
-      </div>
-      <div class="crop-modal-actions">
-        <button class="btn-ghost" id="crop-cancel-btn">Cancel</button>
-        <button class="btn-primary" id="crop-use-btn">Use Photo</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Photo source sheet — shared by all photo entry points -->
-  <div id="toast-host" aria-live="polite" aria-atomic="true"></div>
-
-</div><!-- /app -->
+</nav>
 
 <!-- Radial overlay -->
 <div id="radial-overlay" aria-hidden="true"></div>
@@ -6958,8 +7020,8 @@ html:not([data-theme]), [data-theme=""] {
       <!-- Backdate row — shown only on long-press -->
       <div id="fab-oz-time-row" style="display:none;margin-bottom:12px;">
         <label class="entry-label" style="font-size:12px;color:var(--mt);margin-bottom:4px;display:block;">TIME LOGGED</label>
-        <input type="time" id="fab-oz-time-input" class="form-input" style="width:100%;box-sizing:border-box;margin-bottom:10px;">
-        <button class="btn-primary" id="fab-oz-backdate-log-btn">Log</button>
+        <div id="fab-oz-time-picker"></div>
+        <button class="btn-primary" id="fab-oz-backdate-log-btn" style="margin-top:10px;">Log</button>
       </div>
     </div>
   </div>
@@ -7031,7 +7093,7 @@ html:not([data-theme]), [data-theme=""] {
         <input id="fab-meal-amount" class="meal-entry-time" type="text" placeholder="e.g. 2 cups, 1 tbsp, 300g" autocomplete="off" aria-label="Amount">
       </div>
       <div class="meal-entry-label" style="margin-top:14px;">Time</div>
-      <input id="fab-meal-time" class="meal-entry-time" type="time" aria-label="Meal time">
+      <div id="fab-meal-time-picker"></div>
       <button id="fab-meal-save-btn" class="btn-primary" style="width:100%;margin-top:20px;">Save</button>
     </div>
   </div>
@@ -7077,7 +7139,7 @@ html:not([data-theme]), [data-theme=""] {
     <textarea class="sym-note-input" id="sym-note-input" rows="2" placeholder="Any context worth remembering…"></textarea>
     <div class="sym-time-row">
       <span class="sym-time-label">Time</span>
-      <input type="time" id="sym-time-input" class="sym-time-input" aria-label="Time of symptom">
+      <div id="sym-time-picker" style="flex:1;"></div>
     </div>
     <button class="sym-save-btn" id="sym-save-btn">Save</button>
   </div>
@@ -7119,6 +7181,10 @@ html:not([data-theme]), [data-theme=""] {
         <button class="pill-option" data-sym="nausea">Nausea</button>
         <button class="pill-option" data-sym="pain">Pain</button>
       </div>
+    </div>
+    <div class="form-group" style="margin-top:4px;">
+      <label class="form-label">Time <span style="font-weight:400;color:var(--mt);">· adjust if logging later</span></label>
+      <div id="bowel-sheet-time-picker"></div>
     </div>
     <button class="btn-primary" id="bowel-save-btn">Save</button>
   </div>
@@ -7243,6 +7309,37 @@ html:not([data-theme]), [data-theme=""] {
 <div class="sheet" id="sheet-weight-log" role="dialog" aria-modal="true" aria-label="Weight log">
   <div class="sheet-inner">
     <!-- content injected by ScreenWeight._openLogSheet() -->
+  </div>
+</div>
+
+<!-- Weight entry sheet (FAB quick-log) -->
+<div class="sheet" id="sheet-weight-entry" role="dialog" aria-modal="true" aria-label="Log weight">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Weight</div>
+  <div class="sheet-body">
+    <div class="form-group">
+      <label class="form-label">Last reading: <span id="wte-last-label">—</span></label>
+      <div style="position:relative;">
+        <input class="form-input" id="wte-val" type="number" inputmode="decimal"
+          placeholder="—"
+          style="text-align:center;font-size:32px;font-family:var(--font-display);padding-right:60px;"
+          autocomplete="off" aria-label="Weight value">
+        <span id="wte-unit-label" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--mt);font-weight:600;">lbs</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Time of day</label>
+      <div style="margin-bottom:10px;">
+        <div class="meal-entry-label">Time</div>
+        <div id="wte-time-picker"></div>
+      </div>
+      <div class="wt-tod-grid" id="wte-tod-grid">
+        <button class="wt-tod-pill" data-tod="morning">Morning</button>
+        <button class="wt-tod-pill" data-tod="afternoon">Afternoon</button>
+        <button class="wt-tod-pill" data-tod="evening">Evening</button>
+      </div>
+    </div>
+    <button class="btn-primary" id="wte-save-btn">Save</button>
   </div>
 </div>
 
@@ -7475,6 +7572,11 @@ html:not([data-theme]), [data-theme=""] {
           <span class="bp-hr-unit">bpm</span>
         </div>
       </div>
+      <!-- Time -->
+      <div style="margin-top:14px;">
+        <div class="meal-entry-label">Time</div>
+        <div id="bp-sheet-time-picker"></div>
+      </div>
       <!-- Time of day -->
       <div class="wt-tod-grid" id="bp-fab-tod-grid" style="margin-top:14px;">
         <button class="wt-tod-pill" data-tod="morning">Morning</button>
@@ -7514,6 +7616,10 @@ html:not([data-theme]), [data-theme=""] {
         <button class="gluc-pill pill-option" data-ctx="bedtime">Bedtime</button>
       </div>
     </div>
+    <div class="form-group" style="margin-top:4px;">
+      <label class="form-label">Time <span style="font-weight:400;color:var(--mt);">· adjust if logging later</span></label>
+      <div id="glucose-sheet-time-picker"></div>
+    </div>
     <button class="btn-primary" id="glucose-save-btn">Save</button>
   </div>
 </div>
@@ -7536,7 +7642,7 @@ var CONFIG = {
   appName:            'Asëa',
   appNameClean:       'Asea',
   tagline:            'Reveal the patterns your body already knows',
-  version:            'v25-07',
+  version:            'v25-11',
   storageKey:         'asea-v40',
   themeKey:           'asea-theme-v40',
   maxUsers:           1,
@@ -8671,7 +8777,128 @@ var Components = (function() {
     }
   }
 
-  return { toast, openSheet, closeSheet, bindPillGroup, bindPillGroupMulti, getSelectedPills, getSelectedPillsMulti, initCollapsingHeaders };
+  // ── Custom time picker ────────────────────────────────────────────────────────
+  // Usage: Components.buildTimePicker(containerEl, initialHHMM, onChange)
+  // containerEl : <div> that gets the display row (tap to open modal)
+  // initialHHMM : '09:38' 24h string, or null for current time
+  // onChange     : optional fn(HH:MM) called when user taps Done
+  // Returns      : { getValue() → 'HH:MM' 24h string }
+  function buildTimePicker(containerEl, initialHHMM, onChange) {
+    var now   = new Date();
+    var initH = now.getHours();
+    var initM = now.getMinutes();
+
+    if (initialHHMM && /^\d{2}:\d{2}$/.test(initialHHMM)) {
+      var parts = initialHHMM.split(':');
+      initH = parseInt(parts[0], 10);
+      initM = parseInt(parts[1], 10);
+    }
+
+    var isPM = initH >= 12;
+    var h12  = initH % 12 || 12;
+    var mins = Math.floor(initM / 5) * 5;
+
+    function _fmt(n) { return String(n).padStart(2, '0'); }
+    function _24h() {
+      var h24 = isPM ? (h12 === 12 ? 12 : h12 + 12) : (h12 === 12 ? 0 : h12);
+      return _fmt(h24) + ':' + _fmt(mins);
+    }
+    function _displayStr() {
+      return _fmt(h12) + ':' + _fmt(mins) + ' ' + (isPM ? 'PM' : 'AM');
+    }
+    function _updateDisplay() {
+      var el = containerEl.querySelector('.ctp-display-time');
+      if (el) el.textContent = _displayStr();
+    }
+
+    containerEl.innerHTML =
+      '<div class="ctp-display" role="button" tabindex="0" aria-label="Select time">' +
+        '<svg class="ctp-display-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' +
+        '<span class="ctp-display-time">' + _displayStr() + '</span>' +
+        '<svg class="ctp-display-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>' +
+      '</div>';
+
+    function _openModal() {
+      var mIsPM = isPM, mH12 = h12, mMins = mins;
+
+      function mFmt(n) { return String(n).padStart(2, '0'); }
+      function mRefresh() {
+        modal.querySelector('.ctp-value-h').textContent = mFmt(mH12);
+        modal.querySelector('.ctp-value-m').textContent = mFmt(mMins);
+        modal.querySelectorAll('.ctp-ampm-btn').forEach(function(b) {
+          b.classList.toggle('selected', b.dataset.p === (mIsPM ? 'pm' : 'am'));
+        });
+      }
+
+      var modal = document.createElement('div');
+      modal.className = 'ctp-modal-overlay';
+      modal.innerHTML =
+        '<div class="ctp-modal">' +
+          '<div class="ctp-modal-title">Set Time</div>' +
+          '<div class="ctp-row">' +
+            '<div class="ctp-col">' +
+              '<div class="ctp-col-label">Hour</div>' +
+              '<button class="ctp-spin-btn" data-spin="h-up" aria-label="Hour up">▲</button>' +
+              '<div class="ctp-value ctp-value-h"></div>' +
+              '<button class="ctp-spin-btn" data-spin="h-dn" aria-label="Hour down">▼</button>' +
+            '</div>' +
+            '<div class="ctp-sep">:</div>' +
+            '<div class="ctp-col">' +
+              '<div class="ctp-col-label">Min</div>' +
+              '<button class="ctp-spin-btn" data-spin="m-up" aria-label="Minute up">▲</button>' +
+              '<div class="ctp-value ctp-value-m"></div>' +
+              '<button class="ctp-spin-btn" data-spin="m-dn" aria-label="Minute down">▼</button>' +
+            '</div>' +
+            '<div class="ctp-ampm">' +
+              '<button class="ctp-ampm-btn" data-p="am">AM</button>' +
+              '<button class="ctp-ampm-btn" data-p="pm">PM</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ctp-modal-actions">' +
+            '<button class="ctp-btn-cancel">Cancel</button>' +
+            '<button class="ctp-btn-done">Done</button>' +
+          '</div>' +
+        '</div>';
+
+      document.body.appendChild(modal);
+      mRefresh();
+
+      modal.addEventListener('click', function(e) {
+        var spin = e.target.closest('.ctp-spin-btn[data-spin]');
+        if (spin) {
+          var t = spin.dataset.spin;
+          if (t === 'h-up') { mH12 = mH12 >= 12 ? 1 : mH12 + 1; }
+          if (t === 'h-dn') { mH12 = mH12 <= 1 ? 12 : mH12 - 1; }
+          if (t === 'm-up') { mMins = mMins >= 55 ? 0 : mMins + 5; }
+          if (t === 'm-dn') { mMins = mMins <= 0 ? 55 : mMins - 5; }
+          mRefresh();
+          return;
+        }
+        var ampm = e.target.closest('.ctp-ampm-btn[data-p]');
+        if (ampm) { mIsPM = ampm.dataset.p === 'pm'; mRefresh(); return; }
+        if (e.target.closest('.ctp-btn-done')) {
+          isPM = mIsPM; h12 = mH12; mins = mMins;
+          _updateDisplay();
+          document.body.removeChild(modal);
+          if (typeof onChange === 'function') onChange(_24h());
+          return;
+        }
+        if (e.target.closest('.ctp-btn-cancel') || e.target === modal) {
+          document.body.removeChild(modal);
+        }
+      });
+    }
+
+    var display = containerEl.querySelector('.ctp-display');
+    display.addEventListener('click', _openModal);
+    display.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _openModal(); }
+    });
+
+    return { getValue: _24h };
+  }
+
+  return { toast, openSheet, closeSheet, bindPillGroup, bindPillGroupMulti, getSelectedPills, getSelectedPillsMulti, initCollapsingHeaders, buildTimePicker };
 
 })();
 
@@ -9765,7 +9992,7 @@ var ScreenHydration = (function() {
     // Oz picker grid — long-press to backdate, tap to log now
     var ozGrid = document.getElementById('oz-picker-grid');
     var ozTimeRow = document.getElementById('oz-picker-time-row');
-    var ozTimeInput = document.getElementById('oz-picker-time-input');
+    var _ozTimePicker = null;
 
     ozGrid.addEventListener('touchstart', function(e) {
       var btn = e.target.closest('.hyd-picker-oz-btn[data-oz]');
@@ -9778,7 +10005,8 @@ var ScreenHydration = (function() {
         var now = new Date();
         var hh = String(now.getHours()).padStart(2, '0');
         var mm = String(now.getMinutes()).padStart(2, '0');
-        ozTimeInput.value = hh + ':' + mm;
+        var ozPickerEl = document.getElementById('oz-picker-time-picker');
+        if (ozPickerEl) _ozTimePicker = Components.buildTimePicker(ozPickerEl, hh + ':' + mm, null);
         ozTimeRow.style.display = '';
       }, 500);
     }, { passive: true });
@@ -9804,11 +10032,14 @@ var ScreenHydration = (function() {
       var drinkId = _pendingDrinkId;
 
       var tsOverride = null;
-      if (_pendingBackdate && ozTimeInput.value) {
-        var parts = ozTimeInput.value.split(':');
-        var d = new Date();
-        d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
-        tsOverride = d.getTime();
+      if (_pendingBackdate && _ozTimePicker) {
+        var tVal = _ozTimePicker.getValue();
+        if (tVal) {
+          var parts = tVal.split(':');
+          var d = new Date();
+          d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+          tsOverride = d.getTime();
+        }
       }
 
       _pendingDrinkId  = null;
@@ -9831,11 +10062,14 @@ var ScreenHydration = (function() {
     document.getElementById('oz-picker-backdate-log-btn').addEventListener('click', function() {
       if (!_pendingDrinkId || !_pendingOz) return;
       var tsOverride = null;
-      if (ozTimeInput.value) {
-        var parts = ozTimeInput.value.split(':');
-        var d = new Date();
-        d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
-        tsOverride = d.getTime();
+      if (_ozTimePicker) {
+        var tVal = _ozTimePicker.getValue();
+        if (tVal) {
+          var parts = tVal.split(':');
+          var d = new Date();
+          d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+          tsOverride = d.getTime();
+        }
       }
       var drinkId = _pendingDrinkId;
       var oz      = _pendingOz;
@@ -11185,13 +11419,13 @@ var FAB = (function() {
   // Outer ring r=148 evenly spaced: Glucose(210°), BP(240°), Shop(270°=crown), Weight(300°), Symptom(330°)
   // x = r*cos(a°), y = -r*sin(a°)  [screen Y inverted]
   // Computed: cos/sin in degrees
-  // Inner r=90, outer r=175 (wider gap to clear inner icon labels)
+  // Inner r=105, outer r=175 (wider gap to clear inner icon labels)
   // x = r*cos(a°), y = -r*sin(a°)
   var _positions = {
-    // Inner ring r=90 (h=28 for 56px icon)
-    'ri-meal':    { x: -78,  y: -45,  h: 28 }, // 210° r=90
-    'ri-drink':   { x:   0,  y: -90,  h: 28 }, // 270° r=90
-    'ri-bowel':   { x:  78,  y: -45,  h: 28 }, // 330° r=90
+    // Inner ring r=105 (h=28 for 56px icon)
+    'ri-meal':    { x: -91,  y: -52,  h: 28 }, // 210° r=105
+    'ri-drink':   { x:   0,  y: -105, h: 28 }, // 270° r=105
+    'ri-bowel':   { x:  91,  y: -52,  h: 28 }, // 330° r=105
     // Outer ring r=175 (h=20 for 40px; shop h=25 for 50px)
     'ri-glucose': { x: -152, y:  -88, h: 20 }, // 210° r=175
     'ri-bp':      { x:  -88, y: -152, h: 20 }, // 240° r=175
@@ -11218,34 +11452,26 @@ var FAB = (function() {
   }
 
   function _drawArcs() {
-    var svg = document.getElementById('radial-arc-svg');
-    var fabEl = document.getElementById('fab');
-    var appEl = document.getElementById('app');
-    if (!svg || !fabEl || !appEl) return;
+    var overlay = document.getElementById('radial-overlay');
+    var fabEl   = document.getElementById('fab');
+    var appEl   = document.getElementById('app');
+    if (!overlay || !fabEl || !appEl) return;
 
     var appRect = appEl.getBoundingClientRect();
     var fabRect = fabEl.getBoundingClientRect();
-    var fabCx = fabRect.left + fabRect.width  / 2 - appRect.left;
-    var fabCy = fabRect.top  + fabRect.height / 2 - appRect.top;
-    var W     = appRect.width;
-    var outerR = 210; // outermost arc radius
+    var fabCx   = fabRect.left + fabRect.width  / 2;
+    var fabCy   = fabRect.top  + fabRect.height / 2;
+    var W       = window.innerWidth;
+    var outerR  = 210;
+    var svgH    = outerR;
+    var svgTop  = fabCy - svgH;
 
-    // SVG is sized to exactly contain the arcs:
-    // width = full menu width, height = outerR (arcs extend outerR above FAB center)
-    // SVG is positioned so its bottom edge sits at FAB center Y
-    var svgH = outerR;
-    svg.style.width  = W + 'px';
-    svg.style.height = svgH + 'px';
-    svg.style.top    = (fabCy - svgH) + 'px';
-    svg.style.left   = '0';
-    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + svgH);
-
-    // In SVG local coords, FAB center is at (fabCx, svgH) — bottom of SVG
+    // cx in SVG coords = fabCx (viewport coords, SVG is full-screen)
     var cx = fabCx;
-    var cy = svgH; // FAB center sits at bottom edge of SVG
+    var cy = svgH; // FAB center at bottom edge of SVG
 
     function annulusPath(r1, r2) {
-      var fabR = fabRect.width / 2;
+      var fabR   = fabRect.width / 2;
       var safeR1 = Math.max(r1, fabR + 4);
       return [
         'M', (cx - r2).toFixed(1), cy.toFixed(1),
@@ -11256,24 +11482,40 @@ var FAB = (function() {
       ].join(' ');
     }
 
-    // Theme-aware arc color — read actual accent color from CSS variable
     var theme = document.documentElement.getAttribute('data-theme') || '';
     var arcRGB, arcA1, arcA2;
     if (theme === 'dark') {
-      arcRGB = '75,127,190';  arcA1 = 0.45; arcA2 = 0.36; // blue tint
+      arcRGB = '75,127,190';  arcA1 = 0.45; arcA2 = 0.34;
     } else if (theme === 'natural' || theme === '') {
-      arcRGB = '107,125,88';  arcA1 = 0.42; arcA2 = 0.34; // sage green tint
+      arcRGB = '107,125,88';  arcA1 = 0.42; arcA2 = 0.32;
     } else if (theme === 'merica') {
-      arcRGB = '107,30,30';   arcA1 = 0.42; arcA2 = 0.34; // maroon tint
+      arcRGB = '107,30,30';   arcA1 = 0.42; arcA2 = 0.32;
     } else {
-      arcRGB = '24,64,122';   arcA1 = 0.42; arcA2 = 0.34; // navy tint (light)
+      arcRGB = '24,64,122';   arcA1 = 0.42; arcA2 = 0.32;
     }
     var arcFill1 = 'rgba(' + arcRGB + ',' + arcA1 + ')';
     var arcFill2 = 'rgba(' + arcRGB + ',' + arcA2 + ')';
 
-    svg.innerHTML =
-      '<path d="' + annulusPath(81,  99) + '" fill="' + arcFill1 + '"/>' +
-      '<path d="' + annulusPath(168, 182) + '" fill="' + arcFill2 + '"/>';
+    // Remove any previous arc SVG injected into overlay
+    var existing = overlay.querySelector('.radial-arc-inner');
+    if (existing) existing.remove();
+
+    var svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svgEl.classList.add('radial-arc-inner');
+    svgEl.setAttribute('aria-hidden', 'true');
+    svgEl.setAttribute('viewBox', '0 0 ' + W + ' ' + svgH);
+    svgEl.style.cssText = 'position:fixed;top:' + svgTop + 'px;left:0;width:' + W + 'px;height:' + svgH + 'px;pointer-events:none;';
+
+    var p1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p1.setAttribute('d', annulusPath(97, 113));
+    p1.setAttribute('fill', arcFill1);
+    var p2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p2.setAttribute('d', annulusPath(168, 182));
+    p2.setAttribute('fill', arcFill2);
+
+    svgEl.appendChild(p1);
+    svgEl.appendChild(p2);
+    overlay.appendChild(svgEl);
   }
 
   function open() {
@@ -11281,11 +11523,9 @@ var FAB = (function() {
     _positionItems();
     _drawArcs();
     var overlay = document.getElementById('radial-overlay');
-    var arc     = document.getElementById('radial-arc-svg');
     var fab     = document.getElementById('fab');
     var menu    = document.getElementById('radial-menu');
     if (overlay) { overlay.classList.add('visible'); overlay.setAttribute('aria-hidden', 'false'); }
-    if (arc)     arc.classList.add('visible');
     if (fab)     { fab.classList.add('open'); fab.setAttribute('aria-expanded', 'true'); }
     if (menu)    menu.setAttribute('aria-hidden', 'false');
     Utils.haptic('medium');
@@ -11303,7 +11543,6 @@ var FAB = (function() {
   function close() {
     _open = false;
     var overlay = document.getElementById('radial-overlay');
-    var arc     = document.getElementById('radial-arc-svg');
     var fab     = document.getElementById('fab');
     var menu    = document.getElementById('radial-menu');
     // Zero out delays on close so items collapse instantly without stagger
@@ -11311,8 +11550,13 @@ var FAB = (function() {
       el.style.transitionDelay = '0s';
       el.classList.remove('visible');
     });
-    if (overlay) { overlay.classList.remove('visible'); overlay.setAttribute('aria-hidden', 'true'); }
-    if (arc)     arc.classList.remove('visible');
+    if (overlay) {
+      overlay.classList.remove('visible');
+      overlay.setAttribute('aria-hidden', 'true');
+      // Remove injected arc SVG on close
+      var arcInner = overlay.querySelector('.radial-arc-inner');
+      if (arcInner) arcInner.remove();
+    }
     if (fab)     { fab.classList.remove('open'); fab.setAttribute('aria-expanded', 'false'); }
     if (menu)    menu.setAttribute('aria-hidden', 'true');
     Utils.haptic('light');
@@ -13745,16 +13989,20 @@ var ScreenBowel = (function() {
 
   // ── Full render ───────────────────────────────────────────
 
+  var _bowelTimePicker = null;
+
   function render() {
     _renderTypeList();
     _renderColorGrid();
     _renderSymptoms();
     _renderBadge();
-    // Initialize time field to now
-    var ti = document.getElementById('bowel-log-time-input');
-    if (ti && !ti._userEdited) {
+    // Initialize custom time picker to now
+    var pickerEl = document.getElementById('bowel-log-time-picker');
+    if (pickerEl) {
       var now = new Date();
-      ti.value = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+      var hh = String(now.getHours()).padStart(2, '0');
+      var mm = String(now.getMinutes()).padStart(2, '0');
+      _bowelTimePicker = Components.buildTimePicker(pickerEl, hh + ':' + mm, null);
     }
   }
 
@@ -13764,20 +14012,20 @@ var ScreenBowel = (function() {
     _selectedType     = 4;
     _selectedColor    = 'brown'; // reset to default
     _selectedSymptoms = [];
-    var ti = document.getElementById('bowel-log-time-input');
-    if (ti) { ti._userEdited = false; }
   }
 
   // ── Save entry ────────────────────────────────────────────
 
   function _save() {
-    var timeInput = document.getElementById('bowel-log-time-input');
     var ts = Date.now();
-    if (timeInput && timeInput.value) {
-      var parts = timeInput.value.split(':');
-      var d = new Date();
-      d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
-      ts = d.getTime();
+    if (_bowelTimePicker) {
+      var val = _bowelTimePicker.getValue();
+      if (val) {
+        var parts = val.split(':');
+        var d = new Date();
+        d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+        ts = d.getTime();
+      }
     }
     var entry = {
       id:          Utils.uid(),
@@ -13810,12 +14058,6 @@ var ScreenBowel = (function() {
     document.getElementById('bowel-back-btn').addEventListener('click', function() {
       Router.back();
     });
-
-    // Mark time field as user-edited when they change it
-    var bowelTimeInput = document.getElementById('bowel-log-time-input');
-    if (bowelTimeInput) {
-      bowelTimeInput.addEventListener('change', function() { this._userEdited = true; });
-    }
 
     // Type selector — event delegation
     document.getElementById('bowel-type-list').addEventListener('click', function(e) {
@@ -13953,6 +14195,8 @@ var ScreenSymptom = (function() {
     dizziness:    'Dizziness'
   };
 
+  var _symTimePicker = null;
+
   // ── Reset sheet to blank state ─────────────────────────────
   function resetSheet() {
     document.querySelectorAll('#sym-chip-grid .sym-chip').forEach(function(c) {
@@ -13963,13 +14207,13 @@ var ScreenSymptom = (function() {
     });
     var note = document.getElementById('sym-note-input');
     if (note) note.value = '';
-    // Auto-fill current time
-    var timeEl = document.getElementById('sym-time-input');
-    if (timeEl) {
+    // Auto-fill current time via custom picker
+    var pickerEl = document.getElementById('sym-time-picker');
+    if (pickerEl) {
       var now = new Date();
       var hh = String(now.getHours()).padStart(2, '0');
       var mm = String(now.getMinutes()).padStart(2, '0');
-      timeEl.value = hh + ':' + mm;
+      _symTimePicker = Components.buildTimePicker(pickerEl, hh + ':' + mm, null);
     }
   }
 
@@ -14023,8 +14267,8 @@ var ScreenSymptom = (function() {
         var severity = sevEl ? parseInt(sevEl.dataset.sev, 10) : 1;
         var note = (document.getElementById('sym-note-input').value || '').trim();
 
-        // Compute ts from time input — use today's date + entered time
-        var timeVal = (document.getElementById('sym-time-input') || {}).value || '';
+        // Compute ts from custom time picker — use today's date + entered time
+        var timeVal = _symTimePicker ? _symTimePicker.getValue() : '';
         var ts = Date.now();
         if (timeVal && /^\d{2}:\d{2}$/.test(timeVal)) {
           var parts = timeVal.split(':');
@@ -14193,11 +14437,14 @@ var FabDrinkSheet = (function() {
     document.getElementById('fab-oz-backdate-log-btn').addEventListener('click', function() {
       if (!_pendingDrinkId || !_pendingOz) return;
       var tsOverride = null;
-      if (fabTimeInput.value) {
-        var parts = fabTimeInput.value.split(':');
-        var d = new Date();
-        d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
-        tsOverride = d.getTime();
+      if (_fabOzTimePicker) {
+        var tVal = _fabOzTimePicker.getValue();
+        if (tVal) {
+          var parts = tVal.split(':');
+          var d = new Date();
+          d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+          tsOverride = d.getTime();
+        }
       }
       var drinkId = _pendingDrinkId;
       var oz      = _pendingOz;
@@ -14229,7 +14476,7 @@ var FabDrinkSheet = (function() {
     // Oz grid — long-press to backdate, tap to log now
     var fabOzGrid     = document.getElementById('fab-oz-grid');
     var fabTimeRow    = document.getElementById('fab-oz-time-row');
-    var fabTimeInput  = document.getElementById('fab-oz-time-input');
+    var _fabOzTimePicker = null;
 
     fabOzGrid.addEventListener('touchstart', function(e) {
       var btn = e.target.closest('.hyd-picker-oz-btn[data-oz]');
@@ -14242,7 +14489,8 @@ var FabDrinkSheet = (function() {
         var now = new Date();
         var hh = String(now.getHours()).padStart(2, '0');
         var mm = String(now.getMinutes()).padStart(2, '0');
-        fabTimeInput.value = hh + ':' + mm;
+        var fabOzPickerEl = document.getElementById('fab-oz-time-picker');
+        if (fabOzPickerEl) _fabOzTimePicker = Components.buildTimePicker(fabOzPickerEl, hh + ':' + mm, null);
         fabTimeRow.style.display = '';
       }, 500);
     }, { passive: true });
@@ -14265,11 +14513,14 @@ var FabDrinkSheet = (function() {
       var drinkId = _pendingDrinkId;
 
       var tsOverride = null;
-      if (_pendingBackdate && fabTimeInput.value) {
-        var parts = fabTimeInput.value.split(':');
-        var d = new Date();
-        d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
-        tsOverride = d.getTime();
+      if (_pendingBackdate && _fabOzTimePicker) {
+        var tVal = _fabOzTimePicker.getValue();
+        if (tVal) {
+          var parts = tVal.split(':');
+          var d = new Date();
+          d.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+          tsOverride = d.getTime();
+        }
       }
 
       _pendingDrinkId  = null;
@@ -14929,6 +15180,7 @@ var ScreenBP = (function() {
 var ScreenGlucose = (function() {
 
   var _ctx = null; // currently selected context pill value
+  var _glucScreenTimePicker = null;
 
   var _CTX_LABELS = {
     fasting:     'Fasting',
@@ -14953,6 +15205,15 @@ var ScreenGlucose = (function() {
       } else {
         lastEl.textContent = 'No readings yet';
       }
+    }
+
+    // Time picker — init to now on every render (screen entry)
+    var pickerEl = document.getElementById('gluc-screen-time-picker');
+    if (pickerEl) {
+      var now = new Date();
+      var hh = String(now.getHours()).padStart(2, '0');
+      var mm = String(now.getMinutes()).padStart(2, '0');
+      _glucScreenTimePicker = Components.buildTimePicker(pickerEl, hh + ':' + mm, null);
     }
 
     // Badge
@@ -15075,6 +15336,15 @@ var ScreenGlucose = (function() {
     }
 
     var entry = { id: Utils.uid(), ts: Date.now(), val: val, context: _ctx };
+    if (_glucScreenTimePicker) {
+      var tVal = _glucScreenTimePicker.getValue();
+      if (tVal) {
+        var tParts = tVal.split(':');
+        var tD = new Date();
+        tD.setHours(parseInt(tParts[0], 10), parseInt(tParts[1], 10), 0, 0);
+        entry.ts = tD.getTime();
+      }
+    }
     State.pushLog('glucose', entry);
     Storage.sched();
 
@@ -15484,7 +15754,132 @@ var ScreenWeight = (function() {
     }
   }
 
-  return { render: render, bindEvents: bindEvents };
+  // ── FAB quick-entry sheet ──────────────────────────────────
+  var _entryTod        = null;
+  var _entryTodManual  = false;
+  var _wteTimePicker   = null;
+
+  function openEntrySheet() {
+    var s    = State.get();
+    var unit = _unit(s);
+    var last = _lastReading(s);
+
+    var unitEl = document.getElementById('wte-unit-label');
+    if (unitEl) unitEl.textContent = unit;
+
+    var lastEl = document.getElementById('wte-last-label');
+    if (lastEl) {
+      if (last) {
+        var todLabels = { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' };
+        lastEl.innerHTML = '<strong>' + last.val + ' ' + unit + '</strong>'
+          + ' <span style="color:var(--mt);font-size:12px;">\u00b7 ' + (todLabels[last.timeOfDay] || '') + '</span>';
+      } else {
+        lastEl.textContent = '\u2014';
+      }
+    }
+
+    var valEl = document.getElementById('wte-val');
+    if (valEl) {
+      valEl.value = '';
+      valEl.placeholder = last ? String(last.val) : '\u2014';
+    }
+
+    // Auto-set time picker and TOD from current time
+    var now = new Date();
+    var hh  = String(now.getHours()).padStart(2, '0');
+    var mm  = String(now.getMinutes()).padStart(2, '0');
+    var wtePickerEl = document.getElementById('wte-time-picker');
+    if (wtePickerEl) _wteTimePicker = Components.buildTimePicker(wtePickerEl, hh + ':' + mm, function(val) {
+      if (_entryTodManual) return;
+      var h = parseInt(val.split(':')[0], 10);
+      var tod = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+      _entryTod = tod;
+      document.querySelectorAll('#wte-tod-grid .wt-tod-pill').forEach(function(p) {
+        p.classList.toggle('selected', p.dataset.tod === tod);
+      });
+    });
+
+    _entryTodManual = false;
+    var autoTod = now.getHours() < 12 ? 'morning' : now.getHours() < 17 ? 'afternoon' : 'evening';
+    _entryTod = autoTod;
+    document.querySelectorAll('#wte-tod-grid .wt-tod-pill').forEach(function(p) {
+      p.classList.toggle('selected', p.dataset.tod === autoTod);
+    });
+
+    Components.openSheet('sheet-weight-entry');
+  }
+
+  function _bindEntrySheet() {
+    var todGrid = document.getElementById('wte-tod-grid');
+    if (todGrid) {
+      todGrid.addEventListener('click', function(e) {
+        var pill = e.target.closest('.wt-tod-pill[data-tod]');
+        if (!pill) return;
+        Utils.haptic('light');
+        var already = pill.classList.contains('selected');
+        document.querySelectorAll('#wte-tod-grid .wt-tod-pill').forEach(function(p) {
+          p.classList.remove('selected');
+        });
+        if (!already) { _entryTod = pill.dataset.tod; _entryTodManual = true; }
+        else           { _entryTod = null; _entryTodManual = false; }
+      });
+    }
+
+    var saveBtn = document.getElementById('wte-save-btn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function() {
+        requestAnimationFrame(function() {
+          var s    = State.get();
+          var unit = _unit(s);
+          var valEl = document.getElementById('wte-val');
+          var raw  = parseFloat(valEl ? valEl.value : '');
+          var minV = unit === 'kg' ? 20  : 44;
+          var maxV = unit === 'kg' ? 300 : 660;
+
+          if (isNaN(raw) || raw < minV || raw > maxV) {
+            Components.toast('Enter a valid weight to save');
+            return;
+          }
+          if (!_entryTod) {
+            Components.toast('Select a time of day to save');
+            return;
+          }
+
+          var ts = Date.now();
+          if (_wteTimePicker) {
+            var tval = _wteTimePicker.getValue();
+            var tparts = tval.split(':');
+            var td = new Date();
+            td.setHours(parseInt(tparts[0], 10), parseInt(tparts[1], 10), 0, 0);
+            ts = td.getTime();
+          }
+
+          var entry = {
+            id:        Utils.uid(),
+            ts:        ts,
+            val:       raw,
+            unit:      unit,
+            timeOfDay: _entryTod
+          };
+
+          State.pushLog('weight', entry);
+          Storage.sched();
+          Components.closeSheet();
+          ScreenTrack.render();
+          ScreenToday.render();
+
+          Components.toast('Weight logged', function() {
+            State.removeLog('weight', entry.id);
+            Storage.sched();
+            ScreenTrack.render();
+            ScreenToday.render();
+          });
+        });
+      });
+    }
+  }
+
+  return { render: render, bindEvents: bindEvents, openEntrySheet: openEntrySheet, _bindEntrySheet: _bindEntrySheet };
 
 })();
 
@@ -15881,12 +16276,18 @@ var ScreenMeals = (function() {
   }
 
   // ── FAB quick-entry sheet ──────────────────────────────────
+  var _fabMealTimePicker = null;
+
   function openFabSheet() {
     var h = new Date().getHours();
     var defaultSlot = h < 11 ? 'breakfast' : h < 15 ? 'lunch' : h < 20 ? 'dinner' : 'snack';
     _setFabSlot(defaultSlot);
     document.getElementById('fab-meal-text').value = '';
-    document.getElementById('fab-meal-time').value = _nowTimeStr();
+    // Build custom time picker pre-filled to now
+    var pickerEl = document.getElementById('fab-meal-time-picker');
+    if (pickerEl) {
+      _fabMealTimePicker = Components.buildTimePicker(pickerEl, _nowTimeStr(), null);
+    }
     // Reset amount
     var amtInput = document.getElementById('fab-meal-amount');
     if (amtInput) amtInput.value = '';
@@ -15969,7 +16370,7 @@ var ScreenMeals = (function() {
       var rawText = Utils.cleanText(document.getElementById('fab-meal-text').value);
       if (!rawText) { Components.toast('Please describe what you had'); return; }
       var slot    = _getFabSlot();
-      var timeStr = document.getElementById('fab-meal-time').value;
+      var timeStr = _fabMealTimePicker ? _fabMealTimePicker.getValue() : _nowTimeStr();
       var mealTs  = _timeStrToTs(timeStr);
       var isSnack = slot === 'snack';
       var amtEl   = document.getElementById('fab-meal-amount');
@@ -16035,6 +16436,7 @@ var ScreenMeals = (function() {
   var _pendingSuppType = null;  // 'supp'|'med'
   var _skippedItems    = {};    // itemIds user tapped to uncheck in group path
   var _pathBActive     = false; // true when individual picker (Path B) is showing
+  var _suppmedTimePicker = null;
 
   // ── Helper: compute group items for a slot + type from inventory ────────
   function _computeGroup(slot, itemType) {
@@ -16076,7 +16478,12 @@ var ScreenMeals = (function() {
     var slotLabel = slot.charAt(0).toUpperCase() + slot.slice(1);
     var typeLabel = itemType === 'med' ? 'Medications' : 'Supplements';
     document.getElementById('suppmed-entry-title').textContent = slotLabel + ' ' + typeLabel;
-    document.getElementById('suppmed-entry-time').value = _nowTimeStr();
+
+    // Build custom time picker pre-filled to now
+    var pickerEl = document.getElementById('suppmed-time-picker');
+    if (pickerEl) {
+      _suppmedTimePicker = Components.buildTimePicker(pickerEl, _nowTimeStr(), null);
+    }
 
     _renderSuppMedSheet();
     Components.openSheet('sheet-suppmed-entry');
@@ -16091,7 +16498,7 @@ var ScreenMeals = (function() {
     var groupEl  = document.getElementById('suppmed-group-list');
     var statusEl = document.getElementById('suppmed-status-area');
     var timeEl   = document.getElementById('suppmed-time-label');
-    var timeInEl = document.getElementById('suppmed-entry-time');
+    var timeInEl = document.getElementById('suppmed-time-picker');
     var saveEl   = document.getElementById('suppmed-entry-save-btn');
 
     groupEl.innerHTML  = '';
@@ -16197,7 +16604,7 @@ var ScreenMeals = (function() {
     var groupEl  = document.getElementById('suppmed-group-list');
     var statusEl = document.getElementById('suppmed-status-area');
     var timeEl   = document.getElementById('suppmed-time-label');
-    var timeInEl = document.getElementById('suppmed-entry-time');
+    var timeInEl = document.getElementById('suppmed-time-picker');
     var saveEl   = document.getElementById('suppmed-entry-save-btn');
 
     statusEl.innerHTML = '';
@@ -16281,7 +16688,7 @@ var ScreenMeals = (function() {
       return;
     }
 
-    var timeStr    = document.getElementById('suppmed-entry-time').value;
+    var timeStr    = _suppmedTimePicker ? _suppmedTimePicker.getValue() : _nowTimeStr();
     var mealTs     = _timeStrToTs(timeStr);
     var typeWord   = _pendingSuppType === 'med' ? 'Med' : 'Supp';
     var slotLabel  = _pendingSuppSlot.charAt(0).toUpperCase() + _pendingSuppSlot.slice(1);
@@ -16335,7 +16742,7 @@ var ScreenMeals = (function() {
       return;
     }
 
-    var timeStr  = document.getElementById('suppmed-entry-time').value;
+    var timeStr  = _suppmedTimePicker ? _suppmedTimePicker.getValue() : _nowTimeStr();
     var mealTs   = _timeStrToTs(timeStr);
     var typeWord = _pendingSuppType === 'med' ? 'Med' : 'Supp';
 
@@ -18316,6 +18723,7 @@ var App = (function() {
     ScreenBP.bindEvents();
     ScreenGlucose.bindEvents();
     ScreenWeight.bindEvents();
+    ScreenWeight._bindEntrySheet();
     ScreenMeals.bindEvents();
     ScreenShop.bindEvents();
     ScreenYou.bindEvents();
@@ -18404,6 +18812,42 @@ var App = (function() {
     // avatar-btn is now a <label for="avatar-file-input"> — click handled natively
   }
 
+  /* ── BP sheet helpers (Boot scope — needed by _handleAction and _bindSheets) ── */
+  var _bp_fab_tod    = null;
+  var _bp_tod_manual = false;
+
+  function _todFromHour(h) {
+    if (h < 12) return 'morning';
+    if (h < 17) return 'afternoon';
+    return 'evening';
+  }
+
+  function _bpSetTod(tod, manual) {
+    _bp_fab_tod    = tod;
+    _bp_tod_manual = !!manual;
+    document.querySelectorAll('#bp-fab-tod-grid .wt-tod-pill').forEach(function(p) {
+      p.classList.toggle('selected', p.dataset.tod === tod);
+    });
+  }
+
+  var _bpTimePicker = null; // holds picker instance, set on each sheet open
+  var _bowelSheetTimePicker = null;
+  var _glucSheetTimePicker  = null;
+
+  function _bpInitSheet() {
+    var now = new Date();
+    var hh  = String(now.getHours()).padStart(2, '0');
+    var mm  = String(now.getMinutes()).padStart(2, '0');
+    var pickerEl = document.getElementById('bp-sheet-time-picker');
+    if (pickerEl) _bpTimePicker = Components.buildTimePicker(pickerEl, hh + ':' + mm, function(val) {
+      if (_bp_tod_manual) return;
+      var h = parseInt(val.split(':')[0], 10);
+      _bpSetTod(_todFromHour(h), false);
+    });
+    _bp_tod_manual = false;
+    _bpSetTod(_todFromHour(now.getHours()), false);
+  }
+
   /* ── FAB ── */
   function _bindFAB() {
     document.getElementById('fab').addEventListener('click', function(e) {
@@ -18433,12 +18877,41 @@ var App = (function() {
       return;
     }
     var sheetMap = {
-      bowel:   'sheet-bowel',
-      bp:      'sheet-bp',
-      glucose: 'sheet-glucose',
-      weight:  'sheet-weight-log',
       symptom: 'sheet-symptom',
     };
+    if (action === 'bp') {
+      _bpInitSheet();
+      Components.openSheet('sheet-bp');
+      return;
+    }
+    if (action === 'weight') {
+      ScreenWeight.openEntrySheet();
+      return;
+    }
+    if (action === 'bowel') {
+      var bNow = new Date();
+      var bHH = String(bNow.getHours()).padStart(2,'0');
+      var bMM = String(bNow.getMinutes()).padStart(2,'0');
+      var bEl = document.getElementById('bowel-sheet-time-picker');
+      if (bEl) _bowelSheetTimePicker = Components.buildTimePicker(bEl, bHH + ':' + bMM, null);
+      Components.openSheet('sheet-bowel');
+      return;
+    }
+    if (action === 'glucose') {
+      var gNow = new Date();
+      var gHH = String(gNow.getHours()).padStart(2,'0');
+      var gMM = String(gNow.getMinutes()).padStart(2,'0');
+      var gEl = document.getElementById('glucose-sheet-time-picker');
+      if (gEl) _glucSheetTimePicker = Components.buildTimePicker(gEl, gHH + ':' + gMM, null);
+      var lastLbl = document.getElementById('glucose-last-label');
+      if (lastLbl) {
+        var _gs = State.get();
+        var _gl = (_gs.logs.glucose || []);
+        lastLbl.textContent = _gl.length ? _gl[_gl.length-1].val + ' mg/dL' : '—';
+      }
+      Components.openSheet('sheet-glucose');
+      return;
+    }
     if (action === 'shop') {
       Router.go('shop');
       return;
@@ -18478,7 +18951,17 @@ var App = (function() {
       var symptoms     = Components.getSelectedPillsMulti('bowel-symptom-pills', 'sym');
       var colorSelected = document.querySelector('#bowel-sheet-color-strip .bowel-sheet-color-dot.selected');
       var color        = colorSelected ? colorSelected.dataset.sheetColor : null;
-      var entry = { id: Utils.uid(), ts: Date.now(), bristolType: parseInt(bristolType, 10), color: color, symptoms: symptoms };
+      var ts = Date.now();
+      if (_bowelSheetTimePicker) {
+        var bVal = _bowelSheetTimePicker.getValue();
+        if (bVal) {
+          var bParts = bVal.split(':');
+          var bD = new Date();
+          bD.setHours(parseInt(bParts[0], 10), parseInt(bParts[1], 10), 0, 0);
+          ts = bD.getTime();
+        }
+      }
+      var entry = { id: Utils.uid(), ts: ts, bristolType: parseInt(bristolType, 10), color: color, symptoms: symptoms };
       State.pushLog('bowel', entry);
       Storage.sched();
       // Reset color selection to brown for next open
@@ -18501,7 +18984,7 @@ var App = (function() {
     // Blood Pressure
     // BP crisis threshold: ≥180 systolic OR ≥120 diastolic
     // Hard-coded — no AI, no inference. Standard medical reference threshold.
-    var _bp_fab_tod = null; // time-of-day for FAB sheet entry
+    // _bp_fab_tod, _bp_tod_manual, _bpInitSheet, _bpSetTod, _todFromHour hoisted to Boot scope.
 
     function _isBPCrisis(sys, dia) {
       return (sys >= 180 || dia >= 120);
@@ -18518,9 +19001,19 @@ var App = (function() {
       var sys = Utils.parseNum(document.getElementById('bp-sys').value, 50, 250);
       var dia = Utils.parseNum(document.getElementById('bp-dia').value, 30, 150);
       if (!sys || !dia) { Components.toast('Please enter valid readings'); return; }
-      var hr  = Utils.parseNum((document.getElementById('bp-sheet-hr') || {}).value || '', 30, 250);
+      var hr     = Utils.parseNum((document.getElementById('bp-sheet-hr') || {}).value || '', 30, 250);
       var crisis = _isBPCrisis(sys, dia);
-      var entry = { id: Utils.uid(), ts: Date.now(), sys: sys, dia: dia, hr: hr || null, timeOfDay: _bp_fab_tod || null, crisis: crisis };
+
+      var ts = Date.now();
+      if (_bpTimePicker) {
+        var tval = _bpTimePicker.getValue();
+        var tparts = tval.split(':');
+        var td = new Date();
+        td.setHours(parseInt(tparts[0], 10), parseInt(tparts[1], 10), 0, 0);
+        ts = td.getTime();
+      }
+
+      var entry = { id: Utils.uid(), ts: ts, sys: sys, dia: dia, hr: hr || null, timeOfDay: _bp_fab_tod || null, crisis: crisis };
       State.pushLog('bp', entry);
       Storage.sched();
       Components.closeSheet();
@@ -18530,8 +19023,8 @@ var App = (function() {
       if (sheetHrEl) sheetHrEl.value = '';
       var alertEl = document.getElementById('bp-crisis-alert');
       if (alertEl) alertEl.style.display = 'none';
-      // Reset FAB tod selection
-      _bp_fab_tod = null;
+      _bp_fab_tod    = null;
+      _bp_tod_manual = false;
       document.querySelectorAll('#bp-fab-tod-grid .wt-tod-pill').forEach(function(p) { p.classList.remove('selected'); });
       var lastLbl = document.getElementById('bp-last-label');
       if (lastLbl) lastLbl.textContent = sys + '/' + dia;
@@ -18554,13 +19047,10 @@ var App = (function() {
       }
     });
 
-    // BP: auto-advance systolic → diastolic
     var bpSys = document.getElementById('bp-sys');
     if (bpSys) {
       bpSys.addEventListener('input', function() {
-        if (this.value.length >= 3) {
-          document.getElementById('bp-dia').focus();
-        }
+        if (this.value.length >= 3) { document.getElementById('bp-dia').focus(); }
         _checkBPCrisis();
       });
     }
@@ -18575,7 +19065,6 @@ var App = (function() {
       });
     }
 
-    // FAB BP sheet — time of day grid
     var bpFabTodGrid = document.getElementById('bp-fab-tod-grid');
     if (bpFabTodGrid) {
       bpFabTodGrid.addEventListener('click', function(e) {
@@ -18584,8 +19073,8 @@ var App = (function() {
         Utils.haptic('light');
         var already = pill.classList.contains('selected');
         bpFabTodGrid.querySelectorAll('.wt-tod-pill').forEach(function(p) { p.classList.remove('selected'); });
-        if (!already) { pill.classList.add('selected'); _bp_fab_tod = pill.dataset.tod; }
-        else { _bp_fab_tod = null; }
+        if (!already) { _bpSetTod(pill.dataset.tod, true); }
+        else { _bp_fab_tod = null; _bp_tod_manual = false; }
       });
     }
 
@@ -18596,7 +19085,17 @@ var App = (function() {
       var val = Utils.parseNum(document.getElementById('glucose-val').value, 10, 600);
       if (!val) { Components.toast('Please enter a valid glucose reading'); return; }
       var ctx = Components.getSelectedPills('glucose-context-pills', 'ctx') || 'before_meal';
-      var entry = { id: Utils.uid(), ts: Date.now(), val: val, context: ctx };
+      var ts = Date.now();
+      if (_glucSheetTimePicker) {
+        var gVal = _glucSheetTimePicker.getValue();
+        if (gVal) {
+          var gParts = gVal.split(':');
+          var gD = new Date();
+          gD.setHours(parseInt(gParts[0], 10), parseInt(gParts[1], 10), 0, 0);
+          ts = gD.getTime();
+        }
+      }
+      var entry = { id: Utils.uid(), ts: ts, val: val, context: ctx };
       State.pushLog('glucose', entry);
       Storage.sched();
       Components.closeSheet();
@@ -18626,9 +19125,9 @@ var App = (function() {
       if (action === 'hydration') { Router.go('hydration'); return; }
       if (action === 'meal')      { Router.go('meals');     return; }
       if (action === 'bowel')     { Router.go('bowel');     return; }
-      if (action === 'bp')        { Router.go('bp');        return; }
+      if (action === 'bp')        { _bpInitSheet(); Components.openSheet('sheet-bp'); return; }
       if (action === 'glucose')   { Router.go('glucose');   return; }
-      if (action === 'weight')    { Router.go('weight');    return; }
+      if (action === 'weight')    { ScreenWeight.openEntrySheet(); return; }
       if (action === 'symptom')   { ScreenSymptom.openSheet(); return; }
       _handleAction(action);
     });
